@@ -1,0 +1,37 @@
+import Cover from "@/components/sections/Cover";
+import Greeting from "@/components/sections/Greeting";
+import Couple from "@/components/sections/Couple";
+import Divider from "@/components/ui/Divider";
+import Calendar from "@/components/sections/Calendar";
+import Gallery from "@/components/sections/Gallery";
+import Location from "@/components/sections/Location";
+import Contact from "@/components/sections/Contact";
+import Account from "@/components/sections/Account";
+import Rsvp from "@/components/sections/Rsvp";
+import Guestbook from "@/components/sections/Guestbook";
+import Footer from "@/components/sections/Footer";
+
+export default function Home() {
+  return (
+    <main className="min-h-dvh bg-bg">
+      <Cover />
+      <Greeting />
+      <Couple />
+      <Divider />
+      <Calendar />
+      <Divider />
+      <Gallery />
+      <Divider />
+      <Location />
+      <Divider />
+      <Contact />
+      <Divider />
+      <Account />
+      <Divider />
+      <Rsvp />
+      <Divider />
+      <Guestbook />
+      <Footer />
+    </main>
+  );
+}

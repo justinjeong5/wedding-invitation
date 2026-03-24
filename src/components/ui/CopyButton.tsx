@@ -1,0 +1,42 @@
+"use client";
+
+import { useState } from "react";
+
+interface CopyButtonProps {
+  text: string;
+  label?: string;
+}
+
+export default function CopyButton({ text, label = "복사" }: CopyButtonProps) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+      }
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      alert("복사에 실패했습니다. 직접 복사해주세요.");
+    }
+  };
+
+  return (
+    <button
+      onClick={handleCopy}
+      className="px-3 py-1.5 text-xs border border-primary/30 rounded text-primary hover:bg-primary/5 transition-colors"
+    >
+      {copied ? "복사 완료" : label}
+    </button>
+  );
+}
