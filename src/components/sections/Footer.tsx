@@ -45,8 +45,8 @@ export default function Footer() {
   };
 
   return (
-    <footer className="py-12 px-6 text-center">
-      <div className="max-w-lg mx-auto">
+    <footer className="py-12 px-5 text-center">
+      <div>
         <div className="flex gap-3 justify-center mb-8">
           <button
             onClick={handleKakaoShare}

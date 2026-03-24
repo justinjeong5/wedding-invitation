@@ -16,7 +16,7 @@ export default function SectionWrapper({
   return (
     <motion.section
       id={id}
-      className={`px-6 py-16 max-w-lg mx-auto ${className ?? ""}`}
+      className={`px-5 py-16 w-full ${className ?? ""}`}
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}

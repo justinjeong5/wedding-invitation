@@ -35,7 +35,7 @@ export default function Gallery() {
         </h2>
 
         {/* Swiper carousel */}
-        <div className="mx-auto max-w-sm mb-6">
+        <div className="mb-6">
           <Swiper
             modules={[Autoplay, Pagination]}
             autoplay={{ delay: 3500, disableOnInteraction: false }}
@@ -64,7 +64,7 @@ export default function Gallery() {
         </div>
 
         {/* Thumbnail grid */}
-        <div className="grid grid-cols-4 gap-1.5 max-w-sm mx-auto">
+        <div className="grid grid-cols-3 gap-1.5 min-[360px]:grid-cols-4">
           {gallery.images.map((image, index) => (
             <div
               key={index}

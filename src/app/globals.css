@@ -32,6 +32,12 @@ body {
 
 * {
   -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+}
+
+img, video, svg {
+  max-width: 100%;
+  height: auto;
 }
 
 /* 어르신 모드 — 글자, 버튼, 간격 확대 */

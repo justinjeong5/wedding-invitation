@@ -14,7 +14,7 @@ import AccessibilityToggle from "@/components/ui/AccessibilityToggle";
 
 export default function Home() {
   return (
-    <main className="min-h-dvh bg-bg">
+    <main className="min-h-dvh bg-bg w-full max-w-[480px] mx-auto overflow-hidden">
       <AccessibilityToggle />
       <Cover />
       <Greeting />

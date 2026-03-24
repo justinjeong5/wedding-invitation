@@ -71,7 +71,7 @@ export default function Account() {
         축하의 마음을 전해주세요
       </p>
 
-      <div className="flex gap-3">
+      <div className="flex flex-col gap-3 min-[360px]:flex-row">
         <AccountList accounts={groom.accounts} side="신랑측" />
         <AccountList accounts={bride.accounts} side="신부측" />
       </div>
