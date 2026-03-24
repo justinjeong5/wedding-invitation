@@ -5,6 +5,7 @@ import SectionWrapper from "@/components/ui/SectionWrapper";
 import {
   submitGuestbook,
   getGuestbookEntries,
+  updateGuestbookEntry,
   deleteGuestbookEntry,
 } from "@/actions/guestbook";
 import type { GuestbookEntry } from "@/types";
@@ -16,25 +17,55 @@ function formatDate(dateStr: string) {
 
 function GuestbookItem({
   entry,
-  onDeleted,
+  onChanged,
 }: {
   entry: GuestbookEntry;
-  onDeleted: () => void;
+  onChanged: () => void;
 }) {
-  const [showDelete, setShowDelete] = useState(false);
+  const [activeAction, setActiveAction] = useState<
+    "edit" | "delete" | null
+  >(null);
   const [password, setPassword] = useState("");
+  const [editMessage, setEditMessage] = useState(entry.message);
   const [error, setError] = useState("");
-  const [deleting, setDeleting] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const reset = () => {
+    setActiveAction(null);
+    setPassword("");
+    setEditMessage(entry.message);
+    setError("");
+  };
 
   const handleDelete = async () => {
-    setDeleting(true);
+    if (!password) return;
+    setLoading(true);
+    setError("");
     const result = await deleteGuestbookEntry(entry.id, password);
     if (result.success) {
-      onDeleted();
+      onChanged();
     } else {
       setError(result.error ?? "삭제 실패");
     }
-    setDeleting(false);
+    setLoading(false);
+  };
+
+  const handleEdit = async () => {
+    if (!password || !editMessage.trim()) return;
+    setLoading(true);
+    setError("");
+    const result = await updateGuestbookEntry(
+      entry.id,
+      password,
+      editMessage
+    );
+    if (result.success) {
+      onChanged();
+      reset();
+    } else {
+      setError(result.error ?? "수정 실패");
+    }
+    setLoading(false);
   };
 
   return (
@@ -44,35 +75,96 @@ function GuestbookItem({
         <div className="flex items-center gap-2">
           <span className="text-[10px] text-text-muted">
             {formatDate(entry.created_at)}
+            {entry.edited && (
+              <span className="text-text-muted/50 ml-1">(편집됨)</span>
+            )}
           </span>
-          <button
-            onClick={() => setShowDelete(!showDelete)}
-            className="text-text-muted/50 text-xs hover:text-text-muted"
-          >
-            &times;
-          </button>
+          {!activeAction && (
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setActiveAction("edit")}
+                className="text-text-muted/50 text-[10px] hover:text-text-muted min-h-0 px-0.5"
+              >
+                수정
+              </button>
+              <button
+                onClick={() => setActiveAction("delete")}
+                className="text-text-muted/50 text-xs hover:text-text-muted min-h-0 px-0.5"
+              >
+                &times;
+              </button>
+            </div>
+          )}
         </div>
       </div>
-      <p className="text-sm text-text-light whitespace-pre-line">{entry.message}</p>
 
-      {showDelete && (
-        <div className="mt-3 flex gap-2">
-          <input
-            type="password"
-            placeholder="비밀번호"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="flex-1 px-3 py-1.5 text-xs border border-border rounded bg-bg focus:outline-none focus:border-primary"
+      {activeAction === "edit" ? (
+        <div className="mt-2 space-y-2">
+          <textarea
+            value={editMessage}
+            onChange={(e) => setEditMessage(e.target.value)}
+            rows={2}
+            className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-bg focus:outline-none focus:border-primary resize-none"
           />
-          <button
-            onClick={handleDelete}
-            disabled={deleting}
-            className="px-3 py-1.5 text-xs bg-red-500/10 text-red-500 rounded disabled:opacity-50"
-          >
-            삭제
-          </button>
-          {error && <p className="text-red-500 text-[10px] self-center">{error}</p>}
+          <div className="flex gap-2">
+            <input
+              type="password"
+              placeholder="비밀번호"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleEdit()}
+              className="flex-1 min-w-0 px-3 py-1.5 text-xs border border-border rounded bg-bg focus:outline-none focus:border-primary"
+            />
+            <button
+              onClick={handleEdit}
+              disabled={loading || !password || !editMessage.trim()}
+              className="px-3 py-1.5 text-xs text-primary border border-primary/30 rounded hover:bg-primary/5 transition-colors disabled:opacity-50 shrink-0"
+            >
+              {loading ? "수정 중..." : "수정"}
+            </button>
+            <button
+              onClick={reset}
+              className="px-3 py-1.5 text-xs text-text-muted border border-border rounded hover:bg-bg transition-colors shrink-0"
+            >
+              취소
+            </button>
+          </div>
+          {error && <p className="text-red-500 text-[10px]">{error}</p>}
         </div>
+      ) : activeAction === "delete" ? (
+        <div className="mt-2 space-y-2">
+          <p className="text-sm text-text-light whitespace-pre-line">
+            {entry.message}
+          </p>
+          <div className="flex gap-2">
+            <input
+              type="password"
+              placeholder="비밀번호"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleDelete()}
+              className="flex-1 min-w-0 px-3 py-1.5 text-xs border border-border rounded bg-bg focus:outline-none focus:border-primary"
+            />
+            <button
+              onClick={handleDelete}
+              disabled={loading || !password}
+              className="px-3 py-1.5 text-xs text-red-500 border border-red-200 rounded hover:bg-red-50 transition-colors disabled:opacity-50 shrink-0"
+            >
+              {loading ? "삭제 중..." : "삭제"}
+            </button>
+            <button
+              onClick={reset}
+              className="px-3 py-1.5 text-xs text-text-muted border border-border rounded hover:bg-bg transition-colors shrink-0"
+            >
+              취소
+            </button>
+          </div>
+          {error && <p className="text-red-500 text-[10px]">{error}</p>}
+        </div>
+      ) : (
+        <p className="text-sm text-text-light whitespace-pre-line">
+          {entry.message}
+        </p>
       )}
     </div>
   );
@@ -82,7 +174,10 @@ function GuestbookSkeleton() {
   return (
     <div className="space-y-3">
       {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="bg-bg-card p-4 rounded-lg border border-border animate-pulse">
+        <div
+          key={i}
+          className="bg-bg-card p-4 rounded-lg border border-border animate-pulse"
+        >
           <div className="flex justify-between mb-2">
             <div className="h-4 w-16 bg-border/50 rounded" />
             <div className="h-3 w-20 bg-border/30 rounded" />
@@ -174,7 +269,7 @@ export default function Guestbook() {
             <GuestbookItem
               key={entry.id}
               entry={entry}
-              onDeleted={loadEntries}
+              onChanged={loadEntries}
             />
           ))
         )}

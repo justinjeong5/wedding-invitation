@@ -2,6 +2,7 @@ export interface GuestbookEntry {
   id: string;
   name: string;
   message: string;
+  edited: boolean;
   created_at: string;
 }
 

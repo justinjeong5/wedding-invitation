@@ -40,12 +40,50 @@ export async function submitGuestbook(
 export async function getGuestbookEntries(): Promise<GuestbookEntry[]> {
   const { data, error } = await supabase
     .from("guestbook")
-    .select("id, name, message, created_at")
+    .select("id, name, message, edited, created_at")
     .order("created_at", { ascending: false })
     .limit(50);
 
   if (error) return [];
   return data ?? [];
+}
+
+export async function updateGuestbookEntry(
+  id: string,
+  password: string,
+  newMessage: string
+): Promise<GuestbookFormState> {
+  if (!newMessage.trim()) {
+    return { success: false, error: "메시지를 입력해주세요." };
+  }
+
+  const serviceClient = getServiceClient();
+
+  const { data } = await serviceClient
+    .from("guestbook")
+    .select("password")
+    .eq("id", id)
+    .single();
+
+  if (!data) {
+    return { success: false, error: "메시지를 찾을 수 없습니다." };
+  }
+
+  const isMatch = await bcrypt.compare(password, data.password);
+  if (!isMatch) {
+    return { success: false, error: "비밀번호가 일치하지 않습니다." };
+  }
+
+  const { error } = await serviceClient
+    .from("guestbook")
+    .update({ message: newMessage.trim(), edited: true })
+    .eq("id", id);
+
+  if (error) {
+    return { success: false, error: "수정에 실패했습니다." };
+  }
+
+  return { success: true };
 }
 
 export async function deleteGuestbookEntry(
