@@ -11,12 +11,22 @@ const ALLOWED_TYPES = new Set([
   "image/heif",
 ]);
 
+const MAX_ASPECT_RATIO = 3; // 가로:세로 또는 세로:가로 최대 3:1
+
 export function validateImage(file: File): string | null {
   if (!ALLOWED_TYPES.has(file.type)) {
     return "JPG, PNG, WebP, HEIC 형식만 업로드할 수 있습니다.";
   }
   if (file.size > MAX_INPUT_SIZE) {
     return "파일 크기는 30MB 이하여야 합니다.";
+  }
+  return null;
+}
+
+export function validateAspectRatio(width: number, height: number): string | null {
+  const ratio = Math.max(width / height, height / width);
+  if (ratio > MAX_ASPECT_RATIO) {
+    return "일반적인 사진 비율이 아닙니다. (배너, 파노라마 등은 업로드할 수 없습니다)";
   }
   return null;
 }

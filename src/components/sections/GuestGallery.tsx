@@ -15,7 +15,7 @@ import {
   getGuestPhotos,
   deleteGuestPhoto,
 } from "@/actions/guest-gallery";
-import { validateImage, resizeImage } from "@/lib/image-resize";
+import { validateImage, validateAspectRatio, resizeImage } from "@/lib/image-resize";
 import { useThrottledRefresh } from "@/hooks/useThrottledRefresh";
 import type { GuestPhoto } from "@/types";
 
@@ -86,9 +86,26 @@ function UploadForm({ onUploaded }: { onUploaded: () => void }) {
     }
 
     setFileError(null);
-    setPreview(URL.createObjectURL(file));
+    const previewUrl = URL.createObjectURL(file);
+    setPreview(previewUrl);
     setResizing(true);
     try {
+      // 비율 검증을 위해 이미지 로드
+      const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+        const i = new window.Image();
+        i.onload = () => resolve(i);
+        i.onerror = reject;
+        i.src = previewUrl;
+      });
+      const ratioError = validateAspectRatio(img.naturalWidth, img.naturalHeight);
+      if (ratioError) {
+        setFileError(ratioError);
+        setPreview(null);
+        resizedFileRef.current = null;
+        e.target.value = "";
+        setResizing(false);
+        return;
+      }
       resizedFileRef.current = await resizeImage(file);
     } catch {
       resizedFileRef.current = file;
@@ -551,7 +568,7 @@ export default function GuestGallery() {
     setLoading(false);
   }, []);
 
-  const { refreshing, refresh } = useThrottledRefresh(loadInitial);
+  const { refreshing, cooldown, refresh } = useThrottledRefresh(loadInitial);
 
   const loadMore = useCallback(async () => {
     if (loadingMore || !hasMore || photos.length === 0) return;
@@ -651,7 +668,7 @@ export default function GuestGallery() {
         <div className="flex justify-end mb-2">
           <button
             onClick={refresh}
-            disabled={refreshing}
+            disabled={refreshing || cooldown > 0}
             className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] text-text-muted border border-border rounded-full hover:border-primary/30 hover:text-primary transition-colors disabled:opacity-50"
             style={{ minHeight: "auto" }}
           >
@@ -668,7 +685,7 @@ export default function GuestGallery() {
                 d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M20.015 4.356v4.992"
               />
             </svg>
-            새로고침
+            {cooldown > 0 ? `${cooldown}초` : "새로고침"}
           </button>
         </div>
       )}
