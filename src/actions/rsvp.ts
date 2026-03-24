@@ -36,20 +36,18 @@ export async function submitRsvp(
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
+  const id = crypto.randomUUID();
 
-  const { data, error } = await supabase
-    .from("rsvp")
-    .insert({
-      name,
-      side,
-      attendance,
-      guest_count: attendance ? guestCount : 0,
-      meal: attendance ? meal : false,
-      message,
-      password: hashedPassword,
-    })
-    .select("id")
-    .single();
+  const { error } = await supabase.from("rsvp").insert({
+    id,
+    name,
+    side,
+    attendance,
+    guest_count: attendance ? guestCount : 0,
+    meal: attendance ? meal : false,
+    message,
+    password: hashedPassword,
+  });
 
   if (error) {
     return { success: false, error: "전송에 실패했습니다. 다시 시도해주세요." };
@@ -58,7 +56,95 @@ export async function submitRsvp(
   return {
     success: true,
     data: {
-      id: data.id,
+      id,
+      name,
+      side,
+      attendance,
+      guest_count: attendance ? guestCount : 0,
+      meal: attendance ? meal : false,
+      message,
+    },
+  };
+}
+
+export async function verifyRsvpPassword(
+  id: string,
+  password: string
+): Promise<{ success: boolean; error?: string }> {
+  const serviceClient = getServiceClient();
+
+  const { data } = await serviceClient
+    .from("rsvp")
+    .select("password")
+    .eq("id", id)
+    .single();
+
+  if (!data) {
+    return { success: false, error: "참석 정보를 찾을 수 없습니다." };
+  }
+
+  const isMatch = await bcrypt.compare(password, data.password);
+  if (!isMatch) {
+    return { success: false, error: "비밀번호가 일치하지 않습니다." };
+  }
+
+  return { success: true };
+}
+
+export async function updateRsvp(
+  _prevState: RsvpFormState,
+  formData: FormData
+): Promise<RsvpFormState> {
+  const id = formData.get("id") as string;
+  const password = formData.get("password") as string;
+  const name = formData.get("name") as string;
+  const side = formData.get("side") as string;
+  const attendance = formData.get("attendance") === "true";
+  const guestCount = parseInt(formData.get("guest_count") as string, 10) || 1;
+  const meal = formData.get("meal") === "true";
+  const message = (formData.get("message") as string) || null;
+
+  if (!id || !name || !side || !password) {
+    return { success: false, error: "필수 항목이 누락되었습니다." };
+  }
+
+  const serviceClient = getServiceClient();
+
+  const { data: existing } = await serviceClient
+    .from("rsvp")
+    .select("password")
+    .eq("id", id)
+    .single();
+
+  if (!existing) {
+    return { success: false, error: "참석 정보를 찾을 수 없습니다." };
+  }
+
+  const isMatch = await bcrypt.compare(password, existing.password);
+  if (!isMatch) {
+    return { success: false, error: "비밀번호가 일치하지 않습니다." };
+  }
+
+  const { error } = await serviceClient
+    .from("rsvp")
+    .update({
+      name,
+      side,
+      attendance,
+      guest_count: attendance ? guestCount : 0,
+      meal: attendance ? meal : false,
+      message,
+    })
+    .eq("id", id);
+
+  if (error) {
+    return { success: false, error: "수정에 실패했습니다. 다시 시도해주세요." };
+  }
+
+  return {
+    success: true,
+    data: {
+      id,
       name,
       side,
       attendance,

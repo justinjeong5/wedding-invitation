@@ -3,7 +3,12 @@
 import { useActionState, useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import SectionWrapper from "@/components/ui/SectionWrapper";
-import { submitRsvp, deleteRsvp } from "@/actions/rsvp";
+import {
+  submitRsvp,
+  updateRsvp,
+  verifyRsvpPassword,
+  deleteRsvp,
+} from "@/actions/rsvp";
 
 const STORAGE_KEY = "wedding_rsvp";
 
@@ -76,6 +81,80 @@ function FormGroup({
   );
 }
 
+function PasswordPrompt({
+  onVerified,
+  onCancel,
+  actionLabel,
+  rsvpId,
+  isDelete,
+}: {
+  onVerified: (password: string) => void;
+  onCancel: () => void;
+  actionLabel: string;
+  rsvpId: string;
+  isDelete?: boolean;
+}) {
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async () => {
+    if (!password) return;
+    setLoading(true);
+    setError(null);
+
+    if (isDelete) {
+      const result = await deleteRsvp(rsvpId, password);
+      if (result.success) {
+        onVerified(password);
+      } else {
+        setError(result.error ?? "실패했습니다.");
+      }
+    } else {
+      const result = await verifyRsvpPassword(rsvpId, password);
+      if (result.success) {
+        onVerified(password);
+      } else {
+        setError(result.error ?? "비밀번호가 일치하지 않습니다.");
+      }
+    }
+    setLoading(false);
+  };
+
+  return (
+    <motion.div {...fadeIn} className="mt-4">
+      <div className="flex gap-2 max-w-xs mx-auto">
+        <input
+          type="password"
+          placeholder="비밀번호"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+          className="flex-1 min-w-0 px-3 py-2 text-sm border border-border rounded-lg bg-bg focus:outline-none focus:border-primary"
+        />
+        <button
+          onClick={handleSubmit}
+          disabled={loading || !password}
+          className={`px-4 py-2 text-sm border rounded-lg transition-colors disabled:opacity-50 shrink-0 ${
+            isDelete
+              ? "text-red-500 border-red-200 hover:bg-red-50"
+              : "text-primary border-primary/30 hover:bg-primary/5"
+          }`}
+        >
+          {loading ? "확인 중..." : actionLabel}
+        </button>
+        <button
+          onClick={onCancel}
+          className="px-3 py-2 text-sm text-text-muted border border-border rounded-lg hover:bg-bg transition-colors shrink-0"
+        >
+          취소
+        </button>
+      </div>
+      {error && <p className="text-red-500 text-xs mt-2">{error}</p>}
+    </motion.div>
+  );
+}
+
 function RsvpSummary({
   data,
   justSubmitted,
@@ -84,28 +163,12 @@ function RsvpSummary({
 }: {
   data: SavedRsvp;
   justSubmitted: boolean;
-  onEdit: () => void;
+  onEdit: (password: string) => void;
   onDelete: () => void;
 }) {
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [deletePassword, setDeletePassword] = useState("");
-  const [deleting, setDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
-
-  const handleDelete = async () => {
-    if (!deletePassword) return;
-    setDeleting(true);
-    setDeleteError(null);
-
-    const result = await deleteRsvp(data.id, deletePassword);
-
-    if (result.success) {
-      onDelete();
-    } else {
-      setDeleteError(result.error ?? "삭제에 실패했습니다.");
-    }
-    setDeleting(false);
-  };
+  const [activePrompt, setActivePrompt] = useState<
+    "edit" | "delete" | null
+  >(null);
 
   return (
     <SectionWrapper id="rsvp" className="text-center">
@@ -168,46 +231,41 @@ function RsvpSummary({
 
         <div className="mt-2 flex items-center justify-center gap-3">
           <button
-            onClick={onEdit}
+            onClick={() =>
+              setActivePrompt(activePrompt === "edit" ? null : "edit")
+            }
             className="text-xs text-text-muted underline underline-offset-2 min-h-0"
           >
             수정하기
           </button>
           <span className="text-border">|</span>
           <button
-            onClick={() => {
-              setShowDeleteConfirm(!showDeleteConfirm);
-              setDeleteError(null);
-              setDeletePassword("");
-            }}
+            onClick={() =>
+              setActivePrompt(activePrompt === "delete" ? null : "delete")
+            }
             className="text-xs text-text-muted underline underline-offset-2 min-h-0"
           >
             삭제하기
           </button>
         </div>
 
-        {showDeleteConfirm && (
-          <motion.div {...fadeIn} className="mt-4">
-            <div className="flex gap-2 max-w-xs mx-auto">
-              <input
-                type="password"
-                placeholder="비밀번호"
-                value={deletePassword}
-                onChange={(e) => setDeletePassword(e.target.value)}
-                className="flex-1 min-w-0 px-3 py-2 text-sm border border-border rounded-lg bg-bg focus:outline-none focus:border-primary"
-              />
-              <button
-                onClick={handleDelete}
-                disabled={deleting || !deletePassword}
-                className="px-4 py-2 text-sm text-red-500 border border-red-200 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50 shrink-0"
-              >
-                {deleting ? "삭제 중..." : "삭제"}
-              </button>
-            </div>
-            {deleteError && (
-              <p className="text-red-500 text-xs mt-2">{deleteError}</p>
-            )}
-          </motion.div>
+        {activePrompt === "edit" && (
+          <PasswordPrompt
+            rsvpId={data.id}
+            actionLabel="확인"
+            onVerified={(password) => onEdit(password)}
+            onCancel={() => setActivePrompt(null)}
+          />
+        )}
+
+        {activePrompt === "delete" && (
+          <PasswordPrompt
+            rsvpId={data.id}
+            actionLabel="삭제"
+            isDelete
+            onVerified={() => onDelete()}
+            onCancel={() => setActivePrompt(null)}
+          />
         )}
       </div>
     </SectionWrapper>
@@ -216,12 +274,18 @@ function RsvpSummary({
 
 function RsvpForm({
   initialValues,
+  editPassword,
   onSuccess,
+  onCancel,
 }: {
   initialValues: SavedRsvp | null;
+  editPassword: string | null;
   onSuccess: (data: SavedRsvp) => void;
+  onCancel?: () => void;
 }) {
-  const [state, formAction, isPending] = useActionState(submitRsvp, {
+  const isEditing = !!editPassword;
+  const action = isEditing ? updateRsvp : submitRsvp;
+  const [state, formAction, isPending] = useActionState(action, {
     success: false,
   });
 
@@ -272,6 +336,13 @@ function RsvpForm({
       </p>
 
       <form action={formAction} className="max-w-sm mx-auto font-sans">
+        {isEditing && (
+          <>
+            <input type="hidden" name="id" value={initialValues!.id} />
+            <input type="hidden" name="password" value={editPassword} />
+          </>
+        )}
+
         <div className="bg-bg-card border border-border rounded-xl p-5 space-y-5">
           {/* Step 1: Name */}
           <FormGroup label="이름">
@@ -297,10 +368,12 @@ function RsvpForm({
                     label="신랑측"
                     checked={side === "groom"}
                     onChange={() => {
-                      setSide("groom");
-                      setAttendance(null);
-                      setGuestCount(1);
-                      setMeal(null);
+                      if (side !== "groom") {
+                        setSide("groom");
+                        setAttendance(null);
+                        setGuestCount(1);
+                        setMeal(null);
+                      }
                     }}
                   />
                   <RadioOption
@@ -309,10 +382,12 @@ function RsvpForm({
                     label="신부측"
                     checked={side === "bride"}
                     onChange={() => {
-                      setSide("bride");
-                      setAttendance(null);
-                      setGuestCount(1);
-                      setMeal(null);
+                      if (side !== "bride") {
+                        setSide("bride");
+                        setAttendance(null);
+                        setGuestCount(1);
+                        setMeal(null);
+                      }
                     }}
                   />
                 </div>
@@ -393,7 +468,7 @@ function RsvpForm({
             </motion.div>
           )}
 
-          {/* Step 5: Message + Password */}
+          {/* Step 5: Message + Password (password only for new) */}
           {showSubmit && (
             <motion.div {...fadeIn} className="space-y-5">
               <FormGroup label="축하 메시지" hint="선택">
@@ -406,36 +481,51 @@ function RsvpForm({
                 />
               </FormGroup>
 
-              <FormGroup label="비밀번호" hint="수정·삭제 시 필요">
-                <input
-                  name="password"
-                  type="password"
-                  placeholder="비밀번호를 설정해주세요"
-                  required
-                  className="w-full px-4 py-2.5 text-sm border border-border rounded-lg bg-bg focus:outline-none focus:border-primary transition-colors"
-                />
-              </FormGroup>
+              {!isEditing && (
+                <FormGroup label="비밀번호" hint="수정·삭제 시 필요">
+                  <input
+                    name="password"
+                    type="password"
+                    placeholder="비밀번호를 설정해주세요"
+                    required
+                    className="w-full px-4 py-2.5 text-sm border border-border rounded-lg bg-bg focus:outline-none focus:border-primary transition-colors"
+                  />
+                </FormGroup>
+              )}
             </motion.div>
           )}
         </div>
 
-        {/* Submit */}
+        {/* Submit / Cancel */}
         {showSubmit && (
           <motion.div {...fadeIn}>
             {state.error && (
               <p className="text-red-500 text-xs mt-3">{state.error}</p>
             )}
-            <button
-              type="submit"
-              disabled={isPending}
-              className="w-full mt-4 py-3 text-sm bg-primary text-white rounded-full hover:bg-primary-dark transition-colors disabled:opacity-50"
-            >
-              {isPending
-                ? "전송 중..."
-                : initialValues
-                  ? "다시 전송하기"
-                  : "전송하기"}
-            </button>
+            <div className={`mt-4 ${isEditing ? "flex gap-3" : ""}`}>
+              {isEditing && (
+                <button
+                  type="button"
+                  onClick={onCancel}
+                  className="flex-1 py-3 text-sm border border-border text-text-muted rounded-full hover:bg-bg-card transition-colors"
+                >
+                  취소
+                </button>
+              )}
+              <button
+                type="submit"
+                disabled={isPending}
+                className={`py-3 text-sm bg-primary text-white rounded-full hover:bg-primary-dark transition-colors disabled:opacity-50 ${
+                  isEditing ? "flex-1" : "w-full"
+                }`}
+              >
+                {isPending
+                  ? "전송 중..."
+                  : isEditing
+                    ? "수정하기"
+                    : "전송하기"}
+              </button>
+            </div>
           </motion.div>
         )}
       </form>
@@ -446,6 +536,7 @@ function RsvpForm({
 export default function Rsvp() {
   const [savedRsvp, setSavedRsvp] = useState<SavedRsvp | null>(null);
   const [editing, setEditing] = useState(false);
+  const [editPassword, setEditPassword] = useState<string | null>(null);
   const [justSubmitted, setJustSubmitted] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -463,6 +554,7 @@ export default function Rsvp() {
     } catch {}
     setSavedRsvp(data);
     setEditing(false);
+    setEditPassword(null);
     setJustSubmitted(true);
   }, []);
 
@@ -472,6 +564,7 @@ export default function Rsvp() {
     } catch {}
     setSavedRsvp(null);
     setEditing(false);
+    setEditPassword(null);
     setJustSubmitted(false);
   }, []);
 
@@ -491,7 +584,8 @@ export default function Rsvp() {
       <RsvpSummary
         data={savedRsvp}
         justSubmitted={justSubmitted}
-        onEdit={() => {
+        onEdit={(password) => {
+          setEditPassword(password);
           setEditing(true);
           setJustSubmitted(false);
         }}
@@ -500,5 +594,15 @@ export default function Rsvp() {
     );
   }
 
-  return <RsvpForm initialValues={savedRsvp} onSuccess={handleSuccess} />;
+  return (
+    <RsvpForm
+      initialValues={savedRsvp}
+      editPassword={editPassword}
+      onSuccess={handleSuccess}
+      onCancel={() => {
+        setEditing(false);
+        setEditPassword(null);
+      }}
+    />
+  );
 }
