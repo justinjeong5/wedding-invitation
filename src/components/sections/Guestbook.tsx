@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import {
   submitGuestbook,
@@ -26,6 +26,7 @@ function GuestbookItem({
     "edit" | "delete" | null
   >(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuBtnRef = useRef<HTMLButtonElement>(null);
   const [password, setPassword] = useState("");
   const [editMessage, setEditMessage] = useState(entry.message);
   const [error, setError] = useState("");
@@ -85,6 +86,7 @@ function GuestbookItem({
           {!activeAction && (
             <div className="relative">
               <button
+                ref={menuBtnRef}
                 onClick={() => setMenuOpen(!menuOpen)}
                 className="text-text-muted/40 hover:text-text-muted text-sm min-h-0 px-1 leading-none"
               >
@@ -96,7 +98,18 @@ function GuestbookItem({
                     className="fixed inset-0 z-10"
                     onClick={() => setMenuOpen(false)}
                   />
-                  <div className="absolute right-0 top-full mt-1 z-20 bg-bg-card border border-border rounded-lg shadow-sm overflow-hidden">
+                  <div
+                    className="fixed z-20 bg-bg-card border border-border rounded-lg shadow-sm overflow-hidden"
+                    style={{
+                      top: menuBtnRef.current
+                        ? menuBtnRef.current.getBoundingClientRect().bottom + 4
+                        : 0,
+                      right: menuBtnRef.current
+                        ? window.innerWidth -
+                          menuBtnRef.current.getBoundingClientRect().right
+                        : 0,
+                    }}
+                  >
                     <button
                       onClick={() => {
                         setActiveAction("edit");
