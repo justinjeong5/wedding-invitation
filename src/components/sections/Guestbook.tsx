@@ -256,12 +256,20 @@ export default function Guestbook() {
     success: false,
   });
 
-  const loadInitial = async () => {
+  const [refreshing, setRefreshing] = useState(false);
+
+  const loadInitial = useCallback(async () => {
     const result = await getGuestbookEntries();
     setEntries(result.entries);
     setHasMore(result.hasMore);
     setLoading(false);
-  };
+  }, []);
+
+  const refresh = useCallback(async () => {
+    setRefreshing(true);
+    await loadInitial();
+    setRefreshing(false);
+  }, [loadInitial]);
 
   const loadMore = useCallback(async () => {
     if (loadingMore || !hasMore || entries.length === 0) return;
@@ -275,7 +283,15 @@ export default function Guestbook() {
 
   useEffect(() => {
     loadInitial();
-  }, []);
+  }, [loadInitial]);
+
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === "visible") refresh();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+  }, [refresh]);
 
   useEffect(() => {
     if (state.success) {
@@ -311,9 +327,32 @@ export default function Guestbook() {
 
   return (
     <SectionWrapper id="guestbook">
-      <h2 className="text-lg font-light text-primary mb-8 tracking-wider text-center">
-        방명록
-      </h2>
+      <div className="flex items-center justify-center gap-2 mb-8">
+        <h2 className="text-lg font-light text-primary tracking-wider">
+          방명록
+        </h2>
+        <button
+          onClick={refresh}
+          disabled={refreshing}
+          className="text-text-muted hover:text-primary transition-colors disabled:opacity-50"
+          style={{ minHeight: "auto" }}
+          aria-label="새로고침"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M20.015 4.356v4.992"
+            />
+          </svg>
+        </button>
+      </div>
 
       <form action={formAction} className="space-y-3 mb-6">
         <div className="flex gap-2">

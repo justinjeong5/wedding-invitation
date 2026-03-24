@@ -528,12 +528,20 @@ export default function GuestGallery() {
     if (adminParam) setIsAdmin(true);
   }, []);
 
-  const loadInitial = async () => {
+  const [refreshing, setRefreshing] = useState(false);
+
+  const loadInitial = useCallback(async () => {
     const result = await getGuestPhotos();
     setPhotos(result.photos);
     setHasMore(result.hasMore);
     setLoading(false);
-  };
+  }, []);
+
+  const refresh = useCallback(async () => {
+    setRefreshing(true);
+    await loadInitial();
+    setRefreshing(false);
+  }, [loadInitial]);
 
   const loadMore = useCallback(async () => {
     if (loadingMore || !hasMore || photos.length === 0) return;
@@ -547,7 +555,15 @@ export default function GuestGallery() {
 
   useEffect(() => {
     loadInitial();
-  }, []);
+  }, [loadInitial]);
+
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === "visible") refresh();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+  }, [refresh]);
 
   useEffect(() => {
     const sentinel = sentinelRef.current;
@@ -574,9 +590,32 @@ export default function GuestGallery() {
 
   return (
     <SectionWrapper id="guest-gallery">
-      <h2 className="text-lg font-light text-primary mb-2 tracking-wider text-center">
-        하객 갤러리
-      </h2>
+      <div className="flex items-center justify-center gap-2 mb-2">
+        <h2 className="text-lg font-light text-primary tracking-wider">
+          하객 갤러리
+        </h2>
+        <button
+          onClick={refresh}
+          disabled={refreshing}
+          className="text-text-muted hover:text-primary transition-colors disabled:opacity-50"
+          style={{ minHeight: "auto" }}
+          aria-label="새로고침"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M20.015 4.356v4.992"
+            />
+          </svg>
+        </button>
+      </div>
       <p className="text-xs text-text-muted font-light mb-6 text-center">
         여러분의 눈으로 본 우리의 하루를 나눠주세요
       </p>
