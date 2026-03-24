@@ -62,15 +62,21 @@ src/
                                     ↓
                               [Supabase]
                               ├── PostgreSQL (rsvp, guestbook, guest_photos)
-                              └── Storage (guest-gallery bucket)
+                              └── Storage (guest-photos bucket)
 ```
 
 - **정적 생성**: 대부분의 페이지는 빌드 타임에 생성 (SSG)
 - **Server Actions**: RSVP, 방명록, 하객 갤러리 mutation은 서버 액션으로 처리. API Routes 대비 보일러플레이트 최소화
-- **Supabase 이중 클라이언트**: anon key (클라이언트 읽기) + service key (서버 액션 쓰기)
 - **이미지**: 갤러리 사진은 `/public/images/` 정적 서빙, 하객 사진은 Supabase Storage
 
-### Environment Variables
+### Vercel
+
+GitHub `master` 브랜치에 push하면 자동 배포. 별도 CI/CD 설정 없음.
+
+- **Framework Preset**: Next.js (자동 감지)
+- **Build Command**: `next build`
+- **Output**: Static + Serverless Functions (Server Actions용)
+- **Environment Variables**: Vercel 대시보드 → Settings → Environment Variables에서 아래 변수 설정 필요
 
 ```
 NEXT_PUBLIC_SUPABASE_URL=
@@ -78,6 +84,75 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 SUPABASE_SECRET_KEY=
 NEXT_PUBLIC_KAKAO_JS_KEY=
 GUEST_GALLERY_ADMIN_PASSWORD=
+```
+
+`NEXT_PUBLIC_` 접두사가 있는 변수는 클라이언트 번들에 포함되므로 민감하지 않은 값만 사용. `SUPABASE_SECRET_KEY`와 `GUEST_GALLERY_ADMIN_PASSWORD`는 서버 사이드(Server Actions)에서만 접근.
+
+### Supabase
+
+#### 이중 클라이언트 패턴
+
+```
+supabase (anon key)    → 읽기 전용 (클라이언트에서 목록 조회)
+serviceClient (secret) → 쓰기/삭제 (Server Actions에서만 사용)
+```
+
+읽기에는 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (anon key)를 사용하고, 쓰기/삭제에는 `SUPABASE_SECRET_KEY` (service role key)를 사용. service key는 RLS를 우회하므로 서버 사이드에서만 `getServiceClient()`로 생성.
+
+#### Database Tables
+
+```sql
+-- RSVP (참석 여부)
+create table rsvp (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  side text not null,           -- 'groom' | 'bride'
+  attendance boolean not null,
+  guest_count integer default 1,
+  meal boolean default false,
+  message text,
+  password text not null,       -- bcrypt hash
+  created_at timestamptz default now()
+);
+
+-- 방명록
+create table guestbook (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  message text not null,
+  password text not null,       -- bcrypt hash
+  edited boolean default false,
+  created_at timestamptz default now()
+);
+
+-- 하객 사진
+create table guest_photos (
+  id uuid primary key default gen_random_uuid(),
+  storage_path text not null,   -- Storage 파일명
+  name text not null,
+  caption text,
+  password text not null,       -- bcrypt hash
+  created_at timestamptz default now()
+);
+```
+
+#### Storage
+
+- **Bucket**: `guest-photos` (public)
+- **업로드 제한**: 5MB, JPEG/PNG/WebP/HEIC만 허용
+- **파일명**: `{timestamp}-{random}.{ext}` 형식으로 충돌 방지
+- **검증**: MIME 타입 + magic bytes 이중 검증
+- **삭제**: DB 레코드 삭제 시 Storage 파일도 함께 삭제
+- **실패 롤백**: Storage 업로드 성공 후 DB insert 실패 시 Storage 파일 삭제
+
+#### 페이지네이션
+
+방명록과 하객 갤러리 모두 커서 기반 페이지네이션 사용. `created_at` 기준 내림차순으로 `PAGE_SIZE + 1`개를 조회하여 다음 페이지 존재 여부를 판단.
+
+```ts
+// PAGE_SIZE + 1로 조회 → 초과분이 있으면 hasMore = true
+const hasMore = rows.length > PAGE_SIZE;
+return { entries: rows.slice(0, PAGE_SIZE), hasMore };
 ```
 
 ## Lessons Learned
