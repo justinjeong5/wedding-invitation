@@ -13,28 +13,20 @@ import GuestGallery from "@/components/sections/GuestGallery";
 import Guestbook from "@/components/sections/Guestbook";
 import Footer from "@/components/sections/Footer";
 import AccessibilityToggle from "@/components/ui/AccessibilityToggle";
-import PhotoRevealPair from "@/components/ui/PhotoRevealPair";
-import PhotoBreak from "@/components/ui/PhotoBreak";
-import PhotoMemento from "@/components/ui/PhotoMemento";
-import { WEDDING_CONFIG } from "@/config/wedding";
 
 export default function Home() {
-  const { featured } = WEDDING_CONFIG.gallery;
-
   return (
     <main className="min-h-dvh bg-bg w-full max-w-[480px] mx-auto overflow-x-hidden" data-1p-ignore>
       <AccessibilityToggle />
       <Cover />
       <Greeting />
       <Couple />
-      <PhotoRevealPair left={featured[0]} right={featured[1]} />
       <Divider />
       <Calendar />
-      <PhotoBreak src={featured[2].src} alt={featured[2].alt} height="50vh" />
-      <Divider />
-      <Location />
       <Divider />
       <Gallery />
+      <Divider />
+      <Location />
       <Divider />
       <Rsvp />
       <Divider />
@@ -43,7 +35,6 @@ export default function Home() {
       <Account />
       <Divider />
       <Share />
-      <PhotoMemento src={featured[3].src} alt={featured[3].alt} />
       <GuestGallery />
       <Divider />
       <Guestbook />

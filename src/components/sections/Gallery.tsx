@@ -26,17 +26,16 @@ import "swiper/css/thumbs";
 
 export default function Gallery() {
   const { gallery } = WEDDING_CONFIG;
-  const allImages = [...gallery.featured, ...gallery.images];
-  const featuredCount = gallery.featured.length;
+  const allImages = gallery.images;
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
   const [heroSwiper, setHeroSwiper] = useState<SwiperType | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const openLightbox = useCallback(() => {
     if (heroSwiper) {
-      setLightboxIndex(heroSwiper.realIndex + featuredCount);
+      setLightboxIndex(heroSwiper.realIndex);
     }
-  }, [heroSwiper, featuredCount]);
+  }, [heroSwiper]);
 
   const closeLightbox = useCallback(() => {
     setLightboxIndex(null);

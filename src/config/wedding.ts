@@ -97,13 +97,7 @@ export const WEDDING_CONFIG = {
   },
 
   gallery: {
-    featured: [
-      { src: "/images/gallery/gallery-01.jpg", alt: "꽃다발과 함께" },
-      { src: "/images/gallery/gallery-02.jpg", alt: "바다에서" },
-      { src: "/images/gallery/gallery-03.jpg", alt: "노을" },
-      { src: "/images/gallery/gallery-04.jpg", alt: "꽃밭에서" },
-    ],
-    images: [5, 6, 7, 8, 9, 10, 11, 12, 13].map((n) => ({
+    images: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map((n) => ({
       src: `/images/gallery/gallery-${String(n).padStart(2, "0")}.jpg`,
       alt: `웨딩 사진 ${n}`,
     })),
