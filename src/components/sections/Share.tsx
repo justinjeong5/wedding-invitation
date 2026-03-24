@@ -62,7 +62,7 @@ export default function Share() {
         />
       </div>
       <p className="text-[11px] text-text-muted font-light mb-6">
-        QR코드를 찍어서 공유해보세요
+        옆에 계신 분에게 보여주세요
       </p>
 
       <div className="flex gap-3 justify-center max-w-xs mx-auto">
