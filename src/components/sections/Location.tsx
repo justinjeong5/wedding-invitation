@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import dynamic from "next/dynamic";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import { WEDDING_CONFIG } from "@/config/wedding";
@@ -104,12 +105,13 @@ export default function Location() {
       </div>
 
       {/* Directions */}
-      <div className="mt-10 text-left space-y-6">
+      <div className="mt-10 space-y-3">
         {/* Subway */}
-        <div>
-          <h3 className="text-xs font-medium text-primary mb-2.5 tracking-wider">
-            지하철
-          </h3>
+        <div className="bg-bg-card border border-border rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-primary text-sm">🚇</span>
+            <h3 className="text-xs font-medium text-primary tracking-wider">지하철</h3>
+          </div>
           <div className="space-y-2">
             {directions.subway.map((s) => (
               <div key={s.line} className="flex items-center gap-2 text-xs text-text-light">
@@ -121,46 +123,50 @@ export default function Location() {
         </div>
 
         {/* Bus */}
-        <div>
-          <h3 className="text-xs font-medium text-primary mb-2.5 tracking-wider">
-            버스
-          </h3>
-          <div className="space-y-1.5">
+        <div className="bg-bg-card border border-border rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-primary text-sm">🚌</span>
+            <h3 className="text-xs font-medium text-primary tracking-wider">버스</h3>
+          </div>
+          <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-xs">
             {directions.bus.map((b) => (
-              <div key={b.type} className="flex text-xs">
-                <span className="text-text-muted w-16 shrink-0">{b.type}</span>
+              <Fragment key={b.type}>
+                <span className="text-text-muted">{b.type}</span>
                 <span className="text-text-light">{b.routes}</span>
-              </div>
+              </Fragment>
             ))}
           </div>
-          <p className="text-[10px] text-text-muted/80 mt-2">
+          <p className="text-[10px] text-text-muted/80 mt-2.5">
             * 그 외 다양한 노선 이용 가능
           </p>
         </div>
 
-        {/* Car */}
-        <div>
-          <h3 className="text-xs font-medium text-primary mb-2.5 tracking-wider">
-            자가용
-          </h3>
-          <div className="space-y-1.5 text-xs">
-            <div className="flex">
-              <span className="text-text-muted w-16 shrink-0">도로명</span>
-              <span className="text-text-light">{directions.car.newAddress}</span>
+        {/* Car + Parking */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="bg-bg-card border border-border rounded-xl p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-primary text-sm">🚗</span>
+              <h3 className="text-xs font-medium text-primary tracking-wider">자가용</h3>
             </div>
-            <div className="flex">
-              <span className="text-text-muted w-16 shrink-0">지번</span>
-              <span className="text-text-light">{directions.car.oldAddress}</span>
+            <div className="space-y-1.5 text-xs">
+              <div>
+                <p className="text-text-muted text-[10px] mb-0.5">도로명</p>
+                <p className="text-text-light">{directions.car.newAddress}</p>
+              </div>
+              <div>
+                <p className="text-text-muted text-[10px] mb-0.5">지번</p>
+                <p className="text-text-light">{directions.car.oldAddress}</p>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Parking */}
-        <div>
-          <h3 className="text-xs font-medium text-primary mb-2.5 tracking-wider">
-            주차
-          </h3>
-          <p className="text-xs text-text-light">{directions.parking}</p>
+          <div className="bg-bg-card border border-border rounded-xl p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-primary text-sm">🅿️</span>
+              <h3 className="text-xs font-medium text-primary tracking-wider">주차</h3>
+            </div>
+            <p className="text-xs text-text-light">{directions.parking}</p>
+          </div>
         </div>
       </div>
     </SectionWrapper>
