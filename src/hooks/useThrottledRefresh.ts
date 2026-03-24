@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 
-const THROTTLE_MS = 5000;
+const THROTTLE_MS = 300;
 const MIN_LOADING_MS = 300;
 
 export function useThrottledRefresh(fetchFn: () => Promise<void>) {
