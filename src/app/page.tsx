@@ -27,11 +27,11 @@ export default function Home() {
       <Divider />
       <Location />
       <Divider />
+      <Rsvp />
+      <Divider />
       <Contact />
       <Divider />
       <Account />
-      <Divider />
-      <Rsvp />
       <Divider />
       <Share />
       <Divider />
