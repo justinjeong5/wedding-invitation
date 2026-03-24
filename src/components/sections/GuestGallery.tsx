@@ -102,9 +102,12 @@ function UploadForm({ onUploaded }: { onUploaded: () => void }) {
               sizes="480px"
               unoptimized
             />
-            {resizing && (
-              <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                <div className="h-5 w-5 border-2 border-white/50 border-t-white rounded-full animate-spin" />
+            {(resizing || isPending) && (
+              <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center gap-2">
+                <div className="h-6 w-6 border-2 border-white/50 border-t-white rounded-full animate-spin" />
+                <p className="text-white text-xs">
+                  {resizing ? "사진 변환 중..." : "업로드 중..."}
+                </p>
               </div>
             )}
           </div>
