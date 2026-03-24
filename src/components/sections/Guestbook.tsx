@@ -166,6 +166,7 @@ function GuestbookItem({
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleEdit()}
               className="flex-1 min-w-0 px-3 py-1.5 text-xs border border-border rounded bg-bg focus:outline-none focus:border-primary"
+              data-1p-ignore
             />
             <button
               onClick={handleEdit}
@@ -195,6 +196,7 @@ function GuestbookItem({
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleDelete()}
+              data-1p-ignore
               className="flex-1 min-w-0 px-3 py-1.5 text-xs border border-border rounded bg-bg focus:outline-none focus:border-primary"
             />
             <button
@@ -326,7 +328,7 @@ export default function Guestbook() {
         방명록
       </h2>
 
-      <form action={formAction} className="space-y-3 mb-6">
+      <form action={formAction} className="space-y-3 mb-6" data-1p-ignore>
         <div className="flex gap-2">
           <input
             name="name"

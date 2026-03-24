@@ -131,6 +131,7 @@ function PasswordPrompt({
           onChange={(e) => setPassword(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
           className="flex-1 min-w-0 px-3 py-2 text-sm border border-border rounded-lg bg-bg focus:outline-none focus:border-primary"
+          data-1p-ignore
         />
         <button
           onClick={handleSubmit}
@@ -335,7 +336,7 @@ function RsvpForm({
         언제든 수정하거나 삭제할 수 있습니다
       </p>
 
-      <form action={formAction} className="max-w-sm mx-auto">
+      <form action={formAction} className="max-w-sm mx-auto" data-1p-ignore>
         {isEditing && (
           <>
             <input type="hidden" name="id" value={initialValues!.id} />

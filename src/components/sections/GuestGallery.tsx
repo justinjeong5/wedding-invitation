@@ -114,7 +114,7 @@ function UploadForm({ onUploaded }: { onUploaded: () => void }) {
   };
 
   return (
-    <form ref={formRef} action={formAction} className="space-y-3 mb-6">
+    <form ref={formRef} action={formAction} className="space-y-3 mb-6" data-1p-ignore>
       {/* Photo picker */}
       <button
         type="button"
@@ -339,6 +339,7 @@ function PhotoCard({
                   onChange={(e) => setPassword(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleDelete()}
                   className="w-full px-2 py-1.5 text-xs border border-border rounded bg-bg focus:outline-none focus:border-primary"
+                  data-1p-ignore
                 />
                 <button
                   onClick={handleDelete}
