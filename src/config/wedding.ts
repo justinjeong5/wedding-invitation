@@ -11,15 +11,32 @@ export const WEDDING_CONFIG = {
 
   venue: {
     name: "더컨벤션 잠실",
-    hall: "3층",
+    hall: "3층 아모르홀",
+    banquet: "12층 단독 연회장",
     address: "서울 송파구 올림픽로 319 3층",
     tel: "02-418-5000",
-    transport: "2호선, 8호선 잠실역 9번출구 도보 1분",
+    directions: {
+      subway: [
+        { line: "2호선", detail: "잠실역 8번 출구 약 300m" },
+        { line: "8호선", detail: "잠실역 9번 출구 약 30m" },
+      ],
+      bus: [
+        { type: "일반", routes: "16, 32, 100, 101" },
+        { type: "간선", routes: "310, 341, 360" },
+        { type: "지선", routes: "2311, 3411" },
+        { type: "광역·직행", routes: "1000, 1100, 1700" },
+        { type: "공항", routes: "6000, 6006" },
+      ],
+      car: {
+        newAddress: "송파구 올림픽로 319",
+        oldAddress: "송파구 신천동 11-7",
+      },
+      parking: "교통회관 지상·지하 주차장 이용",
+    },
     coordinates: {
       lat: 37.5159227,
       lng: 127.1057037,
     },
-    parking: "주차 가능 (2시간 무료)", // placeholder
     naverMapUrl:
       "https://map.naver.com/v5/search/%EB%8D%94%EC%BB%A8%EB%B2%A4%EC%85%98%20%EC%9E%A0%EC%8B%A4",
     kakaoMapUrl:

@@ -73,7 +73,7 @@ function FormGroup({
       <div className="flex items-baseline gap-1.5 mb-2">
         <p className="text-xs text-text-muted text-left">{label}</p>
         {hint && (
-          <p className="text-[10px] text-text-muted/60 text-left">{hint}</p>
+          <p className="text-[10px] text-text-muted/80 text-left">{hint}</p>
         )}
       </div>
       {children}
@@ -225,7 +225,7 @@ function RsvpSummary({
           )}
         </div>
 
-        <p className="mt-4 text-[10px] text-text-muted/60 leading-relaxed">
+        <p className="mt-4 text-[10px] text-text-muted/80 leading-relaxed">
           언제든 수정하거나 삭제할 수 있습니다
         </p>
 
@@ -329,7 +329,7 @@ function RsvpForm({
       <p className="text-xs text-text-muted font-light mb-1">
         참석 여부를 알려주시면 준비에 큰 도움이 됩니다
       </p>
-      <p className="text-[10px] text-text-muted/60 font-light mb-8 leading-relaxed">
+      <p className="text-[10px] text-text-muted/80 font-light mb-8 leading-relaxed">
         대략적인 인원 파악을 위한 것이니 부담 없이 알려주세요
         <br />
         언제든 수정하거나 삭제할 수 있습니다

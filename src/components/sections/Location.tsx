@@ -9,8 +9,24 @@ const KakaoMap = dynamic(() => import("@/components/ui/KakaoMap"), {
   loading: () => <div className="w-full h-64 rounded-lg bg-gray-100 animate-pulse" />,
 });
 
+function SubwayBadge({ line }: { line: string }) {
+  const colors: Record<string, string> = {
+    "2호선": "#3CB44A",
+    "8호선": "#E84C8A",
+  };
+  return (
+    <span
+      className="inline-flex items-center justify-center text-white text-[10px] font-medium rounded-full px-1.5 py-0.5 leading-none"
+      style={{ backgroundColor: colors[line] ?? "#888", minHeight: "auto" }}
+    >
+      {line}
+    </span>
+  );
+}
+
 export default function Location() {
   const { venue } = WEDDING_CONFIG;
+  const { directions } = venue;
 
   return (
     <SectionWrapper id="location" className="text-center">
@@ -20,7 +36,9 @@ export default function Location() {
 
       <div className="mb-4">
         <p className="text-base font-normal">{venue.name}</p>
-        <p className="text-sm text-text-light font-light mt-1">{venue.hall}</p>
+        <p className="text-sm text-text-light font-light mt-1">
+          예식 {venue.hall} · 연회 {venue.banquet}
+        </p>
         <p className="text-xs text-text-muted mt-2">{venue.address}</p>
         <p className="text-xs text-text-muted mt-1">
           Tel. {venue.tel}
@@ -52,7 +70,7 @@ export default function Location() {
             bg: "#03C75A",
             icon: (
               <svg viewBox="0 0 24 24" className="w-5 h-5" fill="white">
-                <path d="M13.5 12.3V18h-3v-5.7L7 6h3.3l1.8 3.6L13.8 6H17l-3.5 6.3z" />
+                <path d="M7 6v12h3V11.4L14 18h3V6h-3v6.6L10 6H7z" />
               </svg>
             ),
           },
@@ -85,12 +103,66 @@ export default function Location() {
         ))}
       </div>
 
-      {(venue.transport || venue.parking) && (
-        <div className="text-xs text-text-muted mt-4 space-y-1">
-          {venue.transport && <p>{venue.transport}</p>}
-          {venue.parking && <p>{venue.parking}</p>}
+      {/* Directions */}
+      <div className="mt-10 text-left space-y-6">
+        {/* Subway */}
+        <div>
+          <h3 className="text-xs font-medium text-primary mb-2.5 tracking-wider">
+            지하철
+          </h3>
+          <div className="space-y-2">
+            {directions.subway.map((s) => (
+              <div key={s.line} className="flex items-center gap-2 text-xs text-text-light">
+                <SubwayBadge line={s.line} />
+                <span>{s.detail}</span>
+              </div>
+            ))}
+          </div>
         </div>
-      )}
+
+        {/* Bus */}
+        <div>
+          <h3 className="text-xs font-medium text-primary mb-2.5 tracking-wider">
+            버스
+          </h3>
+          <div className="space-y-1.5">
+            {directions.bus.map((b) => (
+              <div key={b.type} className="flex text-xs">
+                <span className="text-text-muted w-16 shrink-0">{b.type}</span>
+                <span className="text-text-light">{b.routes}</span>
+              </div>
+            ))}
+          </div>
+          <p className="text-[10px] text-text-muted/80 mt-2">
+            * 그 외 다양한 노선 이용 가능
+          </p>
+        </div>
+
+        {/* Car */}
+        <div>
+          <h3 className="text-xs font-medium text-primary mb-2.5 tracking-wider">
+            자가용
+          </h3>
+          <div className="space-y-1.5 text-xs">
+            <div className="flex">
+              <span className="text-text-muted w-16 shrink-0">도로명</span>
+              <span className="text-text-light">{directions.car.newAddress}</span>
+            </div>
+            <div className="flex">
+              <span className="text-text-muted w-16 shrink-0">지번</span>
+              <span className="text-text-light">{directions.car.oldAddress}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Parking */}
+        <div>
+          <h3 className="text-xs font-medium text-primary mb-2.5 tracking-wider">
+            주차
+          </h3>
+          <p className="text-xs text-text-light">{directions.parking}</p>
+        </div>
+      </div>
     </SectionWrapper>
   );
 }

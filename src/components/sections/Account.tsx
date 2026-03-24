@@ -37,7 +37,7 @@ function AccountList({
                   <p className="text-xs text-text-muted">
                     {account.bank}
                     {account.relation && (
-                      <span className="ml-1 text-text-muted/60">
+                      <span className="ml-1 text-text-muted/80">
                         ({account.relation})
                       </span>
                     )}
