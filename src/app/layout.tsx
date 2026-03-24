@@ -38,6 +38,24 @@ export default function RootLayout({
     <html lang="ko" className={notoSerifKR.variable}>
       {/* 여기까지 읽은 사람은 개발자겠죠? 축하해주세요 🙏 */}
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              console.log(
+                "%c💒 정경하 ♥ 전우림 %c\\n\\n" +
+                "%c여기까지 오셨다면 개발자시군요!%c\\n" +
+                "저희 결혼을 축하해주셔서 감사합니다 🙏\\n\\n" +
+                "%cbuilt with Next.js + Tailwind + ☕ + 💕%c\\n",
+                "font-size:24px;font-weight:bold;color:#8B7355;",
+                "",
+                "font-size:14px;color:#333;",
+                "font-size:13px;color:#666;",
+                "font-size:11px;color:#aaa;font-style:italic;",
+                ""
+              );
+            `,
+          }}
+        />
         <link
           rel="stylesheet"
           as="style"
