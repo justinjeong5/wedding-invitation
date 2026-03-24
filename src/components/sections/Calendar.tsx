@@ -212,6 +212,31 @@ export default function Calendar() {
         )}
       </div>
 
+      {/* Add to Calendar */}
+      <button
+        onClick={() => {
+          const start = `${date.year}${String(date.month).padStart(2, "0")}${String(date.day).padStart(2, "0")}T${String(date.hour).padStart(2, "0")}${String(date.minute).padStart(2, "0")}00`;
+          const endDate = new Date(date.year, date.month - 1, date.day, date.hour + 2, date.minute);
+          const end = `${endDate.getFullYear()}${String(endDate.getMonth() + 1).padStart(2, "0")}${String(endDate.getDate()).padStart(2, "0")}T${String(endDate.getHours()).padStart(2, "0")}${String(endDate.getMinutes()).padStart(2, "0")}00`;
+          const params = new URLSearchParams({
+            action: "TEMPLATE",
+            text: "정경하 ♥ 전우림 결혼식",
+            dates: `${start}/${end}`,
+            details: `예식 ${WEDDING_CONFIG.venue.hall}\n연회 ${WEDDING_CONFIG.venue.banquet}`,
+            location: `${WEDDING_CONFIG.venue.name}, ${WEDDING_CONFIG.venue.address}`,
+            ctz: "Asia/Seoul",
+          });
+          window.open(`https://calendar.google.com/calendar/render?${params}`, "_blank", "noopener,noreferrer");
+        }}
+        className="mb-8 inline-flex items-center gap-1.5 px-4 py-2 text-xs text-primary border border-primary/30 rounded-full hover:bg-primary/5 transition-colors"
+        style={{ minHeight: "auto" }}
+      >
+        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+        </svg>
+        내 캘린더에 추가
+      </button>
+
       {/* D-Day Countdown */}
       {!countdown.ready ? (
         <div className="h-10" />

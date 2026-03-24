@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import { WEDDING_CONFIG } from "@/config/wedding";
 import { loadKakaoSDK, shareKakao } from "@/lib/kakao";
+import { QRCodeSVG } from "qrcode.react";
 
 export default function Share() {
   const { meta } = WEDDING_CONFIG;
@@ -51,6 +52,19 @@ export default function Share() {
       <p className="text-xs text-text-muted font-light mb-8">
         소중한 분들에게 알려주세요
       </p>
+      <div className="mb-8 inline-block p-3 bg-white rounded-2xl shadow-sm border border-border">
+        <QRCodeSVG
+          value={meta.siteUrl}
+          size={140}
+          bgColor="transparent"
+          fgColor="#333333"
+          level="M"
+        />
+      </div>
+      <p className="text-[11px] text-text-muted font-light mb-6">
+        QR코드를 찍어서 공유해보세요
+      </p>
+
       <div className="flex gap-3 justify-center max-w-xs mx-auto">
         <button
           onClick={handleKakaoShare}
