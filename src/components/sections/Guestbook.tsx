@@ -12,6 +12,16 @@ import type { GuestbookEntry } from "@/types";
 
 function formatDate(dateStr: string) {
   const d = new Date(dateStr);
+  const now = new Date();
+  const diff = now.getTime() - d.getTime();
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+
+  if (minutes < 1) return "방금 전";
+  if (minutes < 60) return `${minutes}분 전`;
+  if (hours < 24) return `${hours}시간 전`;
+  if (days < 7) return `${days}일 전`;
   return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
 }
 
@@ -78,10 +88,10 @@ function GuestbookItem({
   };
 
   return (
-    <div className="bg-bg-card p-4 rounded-lg border border-border">
-      <div className="flex justify-between items-baseline mb-2">
+    <div className="bg-bg-card px-4 py-3 rounded-lg border border-border">
+      <div className="flex justify-between items-center mb-2">
         <span className="text-sm font-medium">{entry.name}</span>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <span className="text-[10px] text-text-light">
             {formatDate(entry.created_at)}
           </span>
@@ -90,7 +100,8 @@ function GuestbookItem({
               <button
                 ref={menuBtnRef}
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="text-text-muted hover:text-text text-sm min-h-0 px-1 leading-none"
+                className="text-text-muted hover:text-text text-base leading-none"
+                style={{ minHeight: "auto", padding: "2px 4px" }}
               >
                 &#8942;
               </button>
