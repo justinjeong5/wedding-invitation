@@ -41,7 +41,7 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html: `
-              setTimeout(function() {
+              setTimeout(function(){
                 console.log(
                   "%c💒 정경하 ♥ 전우림 %c\\n\\n" +
                   "%c여기까지 오셨다면 개발자시군요!%c\\n" +
@@ -54,7 +54,7 @@ export default function RootLayout({
                   "font-size:11px;color:#aaa;font-style:italic;",
                   ""
                 );
-              }, 3000);
+              }, 500);
             `,
           }}
         />
