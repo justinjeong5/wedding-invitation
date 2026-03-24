@@ -31,9 +31,9 @@ export default function Home() {
       <Calendar />
       <PhotoBreak src={featured[2].src} alt={featured[2].alt} height="50vh" />
       <Divider />
-      <Gallery />
-      <Divider />
       <Location />
+      <Divider />
+      <Gallery />
       <Divider />
       <Rsvp />
       <Divider />
