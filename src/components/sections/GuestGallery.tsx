@@ -329,6 +329,7 @@ function Lightbox({
 }) {
   const [index, setIndex] = useState(initialIndex);
   const [direction, setDirection] = useState(0);
+  const [bounce, setBounce] = useState<"left" | "right" | null>(null);
   const photo = photos[index];
   const touchStartX = useRef(0);
   const touchDeltaX = useRef(0);
@@ -337,7 +338,11 @@ function Lightbox({
   const paginate = useCallback(
     (dir: number) => {
       const next = index + dir;
-      if (next < 0 || next >= photos.length) return;
+      if (next < 0 || next >= photos.length) {
+        setBounce(dir < 0 ? "left" : "right");
+        setTimeout(() => setBounce(null), 400);
+        return;
+      }
       setDirection(dir);
       setIndex(next);
     },
@@ -423,9 +428,17 @@ function Lightbox({
             custom={direction}
             variants={slideVariants}
             initial="enter"
-            animate="center"
+            animate={
+              bounce
+                ? { x: bounce === "left" ? 30 : -30, opacity: 1 }
+                : "center"
+            }
             exit="exit"
-            transition={{ duration: 0.25, ease: "easeInOut" }}
+            transition={
+              bounce
+                ? { type: "spring", stiffness: 500, damping: 30 }
+                : { duration: 0.25, ease: "easeInOut" }
+            }
             className="absolute inset-0"
           >
             <Image
