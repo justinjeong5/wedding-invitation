@@ -8,6 +8,7 @@ import {
   updateGuestbookEntry,
   deleteGuestbookEntry,
 } from "@/actions/guestbook";
+import { useThrottledRefresh } from "@/hooks/useThrottledRefresh";
 import type { GuestbookEntry } from "@/types";
 
 function formatDate(dateStr: string) {
@@ -256,8 +257,6 @@ export default function Guestbook() {
     success: false,
   });
 
-  const [refreshing, setRefreshing] = useState(false);
-
   const loadInitial = useCallback(async () => {
     const result = await getGuestbookEntries();
     setEntries(result.entries);
@@ -265,11 +264,7 @@ export default function Guestbook() {
     setLoading(false);
   }, []);
 
-  const refresh = useCallback(async () => {
-    setRefreshing(true);
-    await loadInitial();
-    setRefreshing(false);
-  }, [loadInitial]);
+  const { refreshing, refresh } = useThrottledRefresh(loadInitial);
 
   const loadMore = useCallback(async () => {
     if (loadingMore || !hasMore || entries.length === 0) return;

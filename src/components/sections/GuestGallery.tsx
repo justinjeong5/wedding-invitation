@@ -16,6 +16,7 @@ import {
   deleteGuestPhoto,
 } from "@/actions/guest-gallery";
 import { resizeImage } from "@/lib/image-resize";
+import { useThrottledRefresh } from "@/hooks/useThrottledRefresh";
 import type { GuestPhoto } from "@/types";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -528,8 +529,6 @@ export default function GuestGallery() {
     if (adminParam) setIsAdmin(true);
   }, []);
 
-  const [refreshing, setRefreshing] = useState(false);
-
   const loadInitial = useCallback(async () => {
     const result = await getGuestPhotos();
     setPhotos(result.photos);
@@ -537,11 +536,7 @@ export default function GuestGallery() {
     setLoading(false);
   }, []);
 
-  const refresh = useCallback(async () => {
-    setRefreshing(true);
-    await loadInitial();
-    setRefreshing(false);
-  }, [loadInitial]);
+  const { refreshing, refresh } = useThrottledRefresh(loadInitial);
 
   const loadMore = useCallback(async () => {
     if (loadingMore || !hasMore || photos.length === 0) return;
