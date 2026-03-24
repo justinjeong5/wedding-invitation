@@ -8,6 +8,7 @@ import Location from "@/components/sections/Location";
 import Contact from "@/components/sections/Contact";
 import Account from "@/components/sections/Account";
 import Rsvp from "@/components/sections/Rsvp";
+import Share from "@/components/sections/Share";
 import Guestbook from "@/components/sections/Guestbook";
 import Footer from "@/components/sections/Footer";
 import AccessibilityToggle from "@/components/ui/AccessibilityToggle";
@@ -31,6 +32,8 @@ export default function Home() {
       <Account />
       <Divider />
       <Rsvp />
+      <Divider />
+      <Share />
       <Divider />
       <Guestbook />
       <Footer />

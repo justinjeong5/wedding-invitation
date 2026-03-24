@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useActionState, useCallback, useEffect, useRef, useState } from "react";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import {
   submitGuestbook,
@@ -17,10 +17,12 @@ function formatDate(dateStr: string) {
 
 function GuestbookItem({
   entry,
-  onChanged,
+  onUpdated,
+  onDeleted,
 }: {
   entry: GuestbookEntry;
-  onChanged: () => void;
+  onUpdated: (id: string, newMessage: string) => void;
+  onDeleted: (id: string) => void;
 }) {
   const [activeAction, setActiveAction] = useState<
     "edit" | "delete" | null
@@ -50,7 +52,7 @@ function GuestbookItem({
     setError("");
     const result = await deleteGuestbookEntry(entry.id, password);
     if (result.success) {
-      onChanged();
+      onDeleted(entry.id);
     } else {
       setError(result.error ?? "삭제 실패");
     }
@@ -67,7 +69,7 @@ function GuestbookItem({
       editMessage
     );
     if (result.success) {
-      onChanged();
+      onUpdated(entry.id, editMessage.trim());
       reset();
     } else {
       setError(result.error ?? "수정 실패");
@@ -236,25 +238,65 @@ function GuestbookSkeleton() {
 export default function Guestbook() {
   const [entries, setEntries] = useState<GuestbookEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement>(null);
   const [state, formAction, isPending] = useActionState(submitGuestbook, {
     success: false,
   });
 
-  const loadEntries = async () => {
-    const data = await getGuestbookEntries();
-    setEntries(data);
+  const loadInitial = async () => {
+    const result = await getGuestbookEntries();
+    setEntries(result.entries);
+    setHasMore(result.hasMore);
     setLoading(false);
   };
 
+  const loadMore = useCallback(async () => {
+    if (loadingMore || !hasMore || entries.length === 0) return;
+    setLoadingMore(true);
+    const lastEntry = entries[entries.length - 1];
+    const result = await getGuestbookEntries(lastEntry.created_at);
+    setEntries((prev) => [...prev, ...result.entries]);
+    setHasMore(result.hasMore);
+    setLoadingMore(false);
+  }, [loadingMore, hasMore, entries]);
+
   useEffect(() => {
-    loadEntries();
+    loadInitial();
   }, []);
 
   useEffect(() => {
     if (state.success) {
-      loadEntries();
+      loadInitial();
     }
   }, [state]);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) loadMore();
+      },
+      { rootMargin: "200px" }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [loadMore]);
+
+  const handleUpdated = (id: string, newMessage: string) => {
+    setEntries((prev) =>
+      prev.map((e) =>
+        e.id === id ? { ...e, message: newMessage, edited: true } : e
+      )
+    );
+  };
+
+  const handleDeleted = (id: string) => {
+    setEntries((prev) => prev.filter((e) => e.id !== id));
+  };
 
   return (
     <SectionWrapper id="guestbook">
@@ -298,7 +340,7 @@ export default function Guestbook() {
         </button>
       </form>
 
-      <div className="space-y-3 max-h-80 overflow-y-auto">
+      <div className="space-y-3">
         {loading ? (
           <GuestbookSkeleton />
         ) : entries.length === 0 ? (
@@ -306,13 +348,22 @@ export default function Guestbook() {
             첫 번째 축하 메시지를 남겨주세요
           </p>
         ) : (
-          entries.map((entry) => (
-            <GuestbookItem
-              key={entry.id}
-              entry={entry}
-              onChanged={loadEntries}
-            />
-          ))
+          <>
+            {entries.map((entry) => (
+              <GuestbookItem
+                key={entry.id}
+                entry={entry}
+                onUpdated={handleUpdated}
+                onDeleted={handleDeleted}
+              />
+            ))}
+            <div ref={sentinelRef} className="h-1" />
+            {loadingMore && (
+              <div className="flex justify-center py-4">
+                <div className="h-5 w-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+              </div>
+            )}
+          </>
         )}
       </div>
     </SectionWrapper>

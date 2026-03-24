@@ -37,15 +37,29 @@ export async function submitGuestbook(
   return { success: true };
 }
 
-export async function getGuestbookEntries(): Promise<GuestbookEntry[]> {
-  const { data, error } = await supabase
+const PAGE_SIZE = 10;
+
+export async function getGuestbookEntries(
+  cursor?: string
+): Promise<{ entries: GuestbookEntry[]; hasMore: boolean }> {
+  let query = supabase
     .from("guestbook")
     .select("id, name, message, edited, created_at")
     .order("created_at", { ascending: false })
-    .limit(50);
+    .limit(PAGE_SIZE + 1);
 
-  if (error) return [];
-  return data ?? [];
+  if (cursor) {
+    query = query.lt("created_at", cursor);
+  }
+
+  const { data, error } = await query;
+
+  if (error) return { entries: [], hasMore: false };
+
+  const rows = data ?? [];
+  const hasMore = rows.length > PAGE_SIZE;
+
+  return { entries: rows.slice(0, PAGE_SIZE), hasMore };
 }
 
 export async function updateGuestbookEntry(
