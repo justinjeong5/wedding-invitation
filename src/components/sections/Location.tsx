@@ -21,8 +21,8 @@ export default function Location() {
       <div className="mb-4">
         <p className="text-base font-normal">{venue.name}</p>
         <p className="text-sm text-text-light font-light mt-1">{venue.hall}</p>
-        <p className="text-xs text-text-muted font-sans mt-2">{venue.address}</p>
-        <p className="text-xs text-text-muted font-sans mt-1">
+        <p className="text-xs text-text-muted mt-2">{venue.address}</p>
+        <p className="text-xs text-text-muted mt-1">
           Tel. {venue.tel}
         </p>
       </div>
@@ -34,7 +34,7 @@ export default function Location() {
       />
 
       {/* Navigation Buttons */}
-      <div className="flex gap-2 mt-4 justify-center font-sans">
+      <div className="flex gap-2 mt-4 justify-center">
         <a
           href={venue.kakaoMapUrl}
           target="_blank"
@@ -62,7 +62,7 @@ export default function Location() {
       </div>
 
       {venue.parking && (
-        <p className="text-xs text-text-muted font-sans mt-4">{venue.parking}</p>
+        <p className="text-xs text-text-muted mt-4">{venue.parking}</p>
       )}
     </SectionWrapper>
   );

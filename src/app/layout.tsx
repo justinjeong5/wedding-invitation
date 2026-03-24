@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Noto_Serif_KR, Noto_Sans_KR } from "next/font/google";
+import { Noto_Serif_KR } from "next/font/google";
 import { WEDDING_CONFIG } from "@/config/wedding";
 import "./globals.css";
 
@@ -7,13 +7,6 @@ const notoSerifKR = Noto_Serif_KR({
   variable: "--font-serif",
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "600", "700"],
-  display: "swap",
-});
-
-const notoSansKR = Noto_Sans_KR({
-  variable: "--font-sans",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "700"],
   display: "swap",
 });
 
@@ -42,7 +35,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={`${notoSerifKR.variable} ${notoSansKR.variable}`}>
+    <html lang="ko" className={notoSerifKR.variable}>
+      <head>
+        <link
+          rel="stylesheet"
+          as="style"
+          crossOrigin="anonymous"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+        />
+      </head>
       <body>{children}</body>
     </html>
   );

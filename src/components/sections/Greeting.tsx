@@ -9,7 +9,7 @@ export default function Greeting() {
       <h2 className="text-lg font-light text-primary mb-8 tracking-wider">
         {greeting.title}
       </h2>
-      <p className="text-sm leading-8 text-text-light whitespace-pre-line font-light">
+      <p className="text-sm leading-8 text-text-light whitespace-pre-line font-serif font-light">
         {greeting.message}
       </p>
     </SectionWrapper>

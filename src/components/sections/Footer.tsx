@@ -5,7 +5,7 @@ export default function Footer() {
 
   return (
     <footer className="py-12 px-5 text-center">
-      <p className="text-xs text-text-muted font-sans">
+      <p className="text-xs text-text-muted">
         {groom.name} & {bride.name}
       </p>
     </footer>

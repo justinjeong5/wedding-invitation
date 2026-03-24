@@ -6,7 +6,7 @@ export default function Couple() {
 
   return (
     <SectionWrapper id="couple" className="text-center">
-      <div className="flex items-center justify-center gap-6 text-sm font-light">
+      <div className="flex items-center justify-center gap-6 text-sm font-serif font-light">
         <div className="flex-1 text-right">
           <p className="text-text-muted text-xs mb-1">
             {groom.father.name} · {groom.mother.name}

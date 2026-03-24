@@ -189,7 +189,7 @@ function RsvpSummary({
         </p>
       )}
 
-      <div className="max-w-sm mx-auto font-sans">
+      <div className="max-w-sm mx-auto">
         <div className="bg-bg-card border border-border rounded-xl p-5">
           <p className="text-base font-medium mb-3">{data.name}</p>
 
@@ -335,7 +335,7 @@ function RsvpForm({
         언제든 수정하거나 삭제할 수 있습니다
       </p>
 
-      <form action={formAction} className="max-w-sm mx-auto font-sans">
+      <form action={formAction} className="max-w-sm mx-auto">
         {isEditing && (
           <>
             <input type="hidden" name="id" value={initialValues!.id} />

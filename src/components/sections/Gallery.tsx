@@ -104,7 +104,7 @@ export default function Gallery() {
             </button>
 
             {/* Counter */}
-            <div className="absolute top-5 left-1/2 -translate-x-1/2 text-white/60 text-sm font-sans z-50">
+            <div className="absolute top-5 left-1/2 -translate-x-1/2 text-white/60 text-sm z-50">
               {selectedIndex + 1} / {gallery.images.length}
             </div>
 

@@ -12,7 +12,7 @@
   --color-border: #E8E2DA;
   --color-accent: #D4A574;
   --font-serif: "Noto Serif KR", serif;
-  --font-sans: "Noto Sans KR", sans-serif;
+  --font-sans: "Pretendard Variable", Pretendard, sans-serif;
 }
 
 html {
@@ -23,7 +23,7 @@ html {
 body {
   background: var(--color-bg);
   color: var(--color-text);
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -78,6 +78,10 @@ html.large-mode .leading-8 {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+h2 {
+  font-family: var(--font-serif);
 }
 
 /* 최소 터치 타겟 */

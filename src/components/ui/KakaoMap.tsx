@@ -68,7 +68,7 @@ export default function KakaoMap({ lat, lng, name }: KakaoMapProps) {
       />
       {!loaded && (
         <div className="absolute inset-0 bg-border/20 animate-pulse flex items-center justify-center">
-          <span className="text-sm text-text-muted font-sans">지도를 불러오는 중...</span>
+          <span className="text-sm text-text-muted">지도를 불러오는 중...</span>
         </div>
       )}
     </div>

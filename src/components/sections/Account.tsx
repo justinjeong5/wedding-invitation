@@ -19,7 +19,7 @@ function AccountList({
     <div className="flex-1">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full py-3 text-sm border border-primary/30 rounded-lg text-primary hover:bg-primary/5 transition-colors font-sans"
+        className="w-full py-3 text-sm border border-primary/30 rounded-lg text-primary hover:bg-primary/5 transition-colors"
       >
         {side} 계좌번호
         <span className="ml-2 text-xs">{isOpen ? "▲" : "▼"}</span>
@@ -34,7 +34,7 @@ function AccountList({
             >
               <div className="flex items-center justify-between">
                 <div className="text-left">
-                  <p className="text-xs text-text-muted font-sans">
+                  <p className="text-xs text-text-muted">
                     {account.bank}
                     {account.relation && (
                       <span className="ml-1 text-text-muted/60">
@@ -42,10 +42,10 @@ function AccountList({
                       </span>
                     )}
                   </p>
-                  <p className="text-sm font-sans mt-0.5">
+                  <p className="text-sm mt-0.5">
                     {account.number}
                   </p>
-                  <p className="text-xs text-text-light font-sans mt-0.5">
+                  <p className="text-xs text-text-light mt-0.5">
                     {account.holder}
                   </p>
                 </div>

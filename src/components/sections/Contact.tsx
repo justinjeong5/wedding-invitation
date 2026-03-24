@@ -55,7 +55,7 @@ export default function Contact() {
         연락처
       </h2>
 
-      <div className="flex flex-col gap-8 font-sans min-[360px]:flex-row min-[360px]:gap-6">
+      <div className="flex flex-col gap-8 min-[360px]:flex-row min-[360px]:gap-6">
         <ContactCard
           role="신랑측"
           name={groom.name}

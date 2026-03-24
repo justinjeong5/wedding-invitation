@@ -79,10 +79,10 @@ function GuestbookItem({
 
   return (
     <div className="bg-bg-card p-4 rounded-lg border border-border">
-      <div className="flex justify-between items-start mb-2">
+      <div className="flex justify-between items-baseline mb-2">
         <span className="text-sm font-medium">{entry.name}</span>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-text-muted">
+          <span className="text-[10px] text-text-light">
             {formatDate(entry.created_at)}
           </span>
           {!activeAction && (
@@ -90,7 +90,7 @@ function GuestbookItem({
               <button
                 ref={menuBtnRef}
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="text-text-muted/40 hover:text-text-muted text-sm min-h-0 px-1 leading-none"
+                className="text-text-muted hover:text-text text-sm min-h-0 px-1 leading-none"
               >
                 &#8942;
               </button>
@@ -205,7 +205,7 @@ function GuestbookItem({
         <p className="text-sm text-text-light whitespace-pre-line">
           {entry.message}
           {entry.edited && (
-            <span className="text-[10px] text-text-muted/40 ml-1">(편집됨)</span>
+            <span className="text-[10px] text-text-muted ml-1">(편집됨)</span>
           )}
         </p>
       )}
@@ -304,7 +304,7 @@ export default function Guestbook() {
         방명록
       </h2>
 
-      <form action={formAction} className="space-y-3 font-sans mb-6">
+      <form action={formAction} className="space-y-3 mb-6">
         <div className="flex gap-2">
           <input
             name="name"

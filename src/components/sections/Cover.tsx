@@ -14,7 +14,7 @@ export default function Cover() {
 
       <div className="relative z-20 text-center text-white">
         <motion.p
-          className="text-sm tracking-[0.3em] mb-6 font-sans font-light"
+          className="text-sm tracking-[0.3em] mb-6 font-light"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
@@ -23,7 +23,7 @@ export default function Cover() {
         </motion.p>
 
         <motion.h1
-          className="text-3xl font-light tracking-wide mb-2"
+          className="text-3xl font-serif font-light tracking-wide mb-2"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
@@ -34,7 +34,7 @@ export default function Cover() {
         </motion.h1>
 
         <motion.p
-          className="text-sm font-sans font-light tracking-wider mt-6 opacity-90"
+          className="text-sm font-light tracking-wider mt-6 opacity-90"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.9 }}

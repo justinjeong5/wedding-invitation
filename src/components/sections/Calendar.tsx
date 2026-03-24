@@ -40,6 +40,7 @@ export default function Calendar() {
   const [selected, setSelected] = useState<{ y: number; m: number; d: number } | null>(null);
 
   const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
 
   const calendarDays = generateCalendarDays(viewYear, viewMonth);
 
@@ -65,11 +66,13 @@ export default function Calendar() {
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
   };
   const handleTouchEnd = (e: React.TouchEvent) => {
-    const diff = touchStartX.current - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 50) {
-      navigate(diff > 0 ? 1 : -1);
+    const diffX = touchStartX.current - e.changedTouches[0].clientX;
+    const diffY = touchStartY.current - e.changedTouches[0].clientY;
+    if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
+      navigate(diffX > 0 ? 1 : -1);
     }
   };
 
@@ -100,7 +103,7 @@ export default function Calendar() {
         예식 일시
       </h2>
 
-      <p className="text-sm text-text-light font-light mb-6">
+      <p className="text-sm text-text-light font-serif font-light mb-6">
         {date.display}
       </p>
 
@@ -142,7 +145,7 @@ export default function Calendar() {
           {DAY_LABELS.map((label, i) => (
             <div
               key={label}
-              className={`text-xs font-sans py-1 ${
+              className={`text-xspy-1 ${
                 i === 0 ? "text-red-400" : i === 6 ? "text-blue-400" : "text-text-muted"
               }`}
             >
@@ -165,7 +168,7 @@ export default function Calendar() {
               <button
                 key={i}
                 onClick={() => handleDayClick(day)}
-                className={`text-sm font-sans py-1.5 rounded-full transition-colors min-h-0 ${
+                className={`text-smpy-1.5 rounded-full transition-colors min-h-0 ${
                   isWedding
                     ? "bg-primary text-white font-medium"
                     : isSel

@@ -52,13 +52,13 @@ export default function Share() {
         <button
           onClick={handleKakaoShare}
           disabled={!kakaoReady}
-          className="flex-1 max-w-[160px] py-3 text-sm bg-[#FEE500] text-[#191919] rounded-lg font-sans font-medium hover:brightness-95 transition disabled:opacity-50"
+          className="flex-1 max-w-[160px] py-3 text-sm bg-[#FEE500] text-[#191919] rounded-lg font-medium hover:brightness-95 transition disabled:opacity-50"
         >
           카카오톡 공유
         </button>
         <button
           onClick={handleCopyLink}
-          className="flex-1 max-w-[160px] py-3 text-sm border border-border text-text-light rounded-lg font-sans hover:bg-bg-card transition"
+          className="flex-1 max-w-[160px] py-3 text-sm border border-border text-text-light rounded-lg hover:bg-bg-card transition"
         >
           {linkCopied ? "복사 완료!" : "링크 복사"}
         </button>
