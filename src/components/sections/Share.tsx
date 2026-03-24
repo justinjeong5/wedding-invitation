@@ -55,7 +55,7 @@ export default function Share() {
         <button
           onClick={handleKakaoShare}
           disabled={!kakaoReady}
-          className="flex-1 flex items-center justify-center gap-2 py-3 text-sm border border-primary/30 text-primary rounded-xl hover:bg-primary/5 transition disabled:opacity-50"
+          className="flex-1 flex items-center justify-center gap-2 py-3 text-sm bg-[#FEE500] text-[#3C1E1E] rounded-xl hover:bg-[#FDD835] transition disabled:opacity-50 font-medium"
         >
           <svg viewBox="0 0 24 24" className="w-4.5 h-4.5" fill="currentColor">
             <path d="M12 3C6.48 3 2 6.54 2 10.86c0 2.8 1.86 5.27 4.66 6.67l-.9 3.34c-.08.28.24.52.49.36l3.96-2.64c.58.08 1.18.13 1.79.13 5.52 0 10-3.54 10-7.86S17.52 3 12 3z" />
@@ -64,10 +64,10 @@ export default function Share() {
         </button>
         <button
           onClick={handleCopyLink}
-          className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm rounded-xl transition ${
+          className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm rounded-xl transition font-medium ${
             linkCopied
-              ? "bg-primary/10 text-primary border border-primary/40 font-medium"
-              : "border border-primary/30 text-primary hover:bg-primary/5"
+              ? "bg-primary text-white"
+              : "bg-primary/10 text-primary hover:bg-primary/20"
           }`}
         >
           <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}>

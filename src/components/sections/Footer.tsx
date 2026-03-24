@@ -32,7 +32,7 @@ export default function Footer() {
 
       <button
         onClick={scrollToTop}
-        className="mt-8 text-[10px] text-text-muted/60 hover:text-text-muted transition-colors tracking-wider"
+        className="mt-8 px-5 py-2.5 text-xs text-primary border border-primary/30 rounded-full hover:bg-primary/5 transition-colors tracking-wider"
         style={{ minHeight: "auto" }}
       >
         &#x25B2; 처음으로
