@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 declare global {
   interface Window {
@@ -26,6 +26,7 @@ interface KakaoMapProps {
 
 export default function KakaoMap({ lat, lng, name }: KakaoMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     const kakaoAppKey = process.env.NEXT_PUBLIC_KAKAO_APP_KEY;
@@ -49,6 +50,7 @@ export default function KakaoMap({ lat, lng, name }: KakaoMapProps) {
 
         map.setDraggable(false);
         map.setZoomable(false);
+        setLoaded(true);
       });
     };
 
@@ -58,10 +60,17 @@ export default function KakaoMap({ lat, lng, name }: KakaoMapProps) {
   }, [lat, lng, name]);
 
   return (
-    <div
-      ref={mapRef}
-      className="w-full h-64 rounded-lg bg-gray-100"
-      aria-label={`${name} 지도`}
-    />
+    <div className="relative w-full h-64 rounded-lg overflow-hidden">
+      <div
+        ref={mapRef}
+        className="w-full h-full"
+        aria-label={`${name} 지도`}
+      />
+      {!loaded && (
+        <div className="absolute inset-0 bg-border/20 animate-pulse flex items-center justify-center">
+          <span className="text-sm text-text-muted font-sans">지도를 불러오는 중...</span>
+        </div>
+      )}
+    </div>
   );
 }

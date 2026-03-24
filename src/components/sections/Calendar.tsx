@@ -74,7 +74,16 @@ export default function Calendar() {
       </div>
 
       {/* D-Day Countdown */}
-      {countdown.ready && !countdown.isExpired && (
+      {!countdown.ready ? (
+        <div className="flex justify-center gap-4 font-sans">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="text-center">
+              <div className="h-8 w-12 mx-auto bg-border/50 rounded animate-pulse" />
+              <div className="h-3 w-8 mx-auto mt-1 bg-border/30 rounded animate-pulse" />
+            </div>
+          ))}
+        </div>
+      ) : !countdown.isExpired ? (
         <div className="flex justify-center gap-4 font-sans">
           {[
             { value: countdown.days, label: "Days" },
@@ -92,7 +101,7 @@ export default function Calendar() {
             </div>
           ))}
         </div>
-      )}
+      ) : null}
     </SectionWrapper>
   );
 }

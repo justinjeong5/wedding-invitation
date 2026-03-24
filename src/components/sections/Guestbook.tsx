@@ -78,8 +78,28 @@ function GuestbookItem({
   );
 }
 
+function GuestbookSkeleton() {
+  return (
+    <div className="space-y-3">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div key={i} className="bg-bg-card p-4 rounded-lg border border-border animate-pulse">
+          <div className="flex justify-between mb-2">
+            <div className="h-4 w-16 bg-border/50 rounded" />
+            <div className="h-3 w-20 bg-border/30 rounded" />
+          </div>
+          <div className="space-y-1.5">
+            <div className="h-3.5 w-full bg-border/40 rounded" />
+            <div className="h-3.5 w-2/3 bg-border/30 rounded" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function Guestbook() {
   const [entries, setEntries] = useState<GuestbookEntry[]>([]);
+  const [loading, setLoading] = useState(true);
   const [state, formAction, isPending] = useActionState(submitGuestbook, {
     success: false,
   });
@@ -87,6 +107,7 @@ export default function Guestbook() {
   const loadEntries = async () => {
     const data = await getGuestbookEntries();
     setEntries(data);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -142,7 +163,9 @@ export default function Guestbook() {
       </form>
 
       <div className="space-y-3 max-h-80 overflow-y-auto">
-        {entries.length === 0 ? (
+        {loading ? (
+          <GuestbookSkeleton />
+        ) : entries.length === 0 ? (
           <p className="text-center text-sm text-text-muted py-8">
             첫 번째 축하 메시지를 남겨주세요
           </p>

@@ -46,7 +46,7 @@ export default function Gallery() {
             {gallery.images.map((image, index) => (
               <SwiperSlide key={index}>
                 <div
-                  className="relative aspect-[3/4] cursor-pointer"
+                  className="relative aspect-[3/4] cursor-pointer bg-border/30"
                   onClick={() => setSelectedIndex(index)}
                 >
                   <Image
@@ -55,6 +55,7 @@ export default function Gallery() {
                     fill
                     className="object-cover"
                     sizes="(max-width: 512px) 100vw, 400px"
+                    loading={index === 0 ? "eager" : "lazy"}
                   />
                 </div>
               </SwiperSlide>
@@ -67,7 +68,7 @@ export default function Gallery() {
           {gallery.images.map((image, index) => (
             <div
               key={index}
-              className="relative aspect-square cursor-pointer rounded overflow-hidden"
+              className="relative aspect-square cursor-pointer rounded overflow-hidden bg-border/30"
               onClick={() => setSelectedIndex(index)}
             >
               <Image
@@ -76,6 +77,7 @@ export default function Gallery() {
                 fill
                 className="object-cover hover:scale-105 transition-transform duration-300"
                 sizes="80px"
+                loading="lazy"
               />
             </div>
           ))}
