@@ -1,6 +1,5 @@
 "use client";
 
-import { Fragment } from "react";
 import dynamic from "next/dynamic";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import { WEDDING_CONFIG } from "@/config/wedding";
@@ -10,20 +9,29 @@ const KakaoMap = dynamic(() => import("@/components/ui/KakaoMap"), {
   loading: () => <div className="w-full h-64 rounded-lg bg-gray-100 animate-pulse" />,
 });
 
-function SubwayBadge({ line }: { line: string }) {
-  const colors: Record<string, string> = {
-    "2호선": "#3CB44A",
-    "8호선": "#E84C8A",
-  };
+function TransportBadge({ label, color, textColor = "white" }: { label: string; color: string; textColor?: string }) {
   return (
     <span
-      className="inline-flex items-center justify-center text-white text-[10px] font-medium rounded-full px-1.5 py-0.5 leading-none"
-      style={{ backgroundColor: colors[line] ?? "#888", minHeight: "auto" }}
+      className="inline-flex items-center justify-center text-xs font-medium rounded-full px-2 py-0.5 leading-none shrink-0 whitespace-nowrap"
+      style={{ backgroundColor: color, color: textColor, minHeight: "auto", minWidth: "3.5rem" }}
     >
-      {line}
+      {label}
     </span>
   );
 }
+
+const subwayColors: Record<string, string> = {
+  "2호선": "#3CB44A",
+  "8호선": "#E84C8A",
+};
+
+const busColors: Record<string, string> = {
+  "일반": "#FFCC00",
+  "간선": "#3461A5",
+  "지선": "#5BB025",
+  "광역·직행": "#E00A0E",
+  "공항": "#5C4BA5",
+};
 
 export default function Location() {
   const { venue } = WEDDING_CONFIG;
@@ -105,67 +113,56 @@ export default function Location() {
       </div>
 
       {/* Directions */}
-      <div className="mt-10 space-y-3">
-        {/* Subway */}
-        <div className="bg-bg-card border border-border rounded-xl p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-primary text-sm">🚇</span>
-            <h3 className="text-xs font-medium text-primary tracking-wider">지하철</h3>
-          </div>
-          <div className="space-y-2">
-            {directions.subway.map((s) => (
-              <div key={s.line} className="flex items-center gap-2 text-xs text-text-light">
-                <SubwayBadge line={s.line} />
-                <span>{s.detail}</span>
-              </div>
-            ))}
-          </div>
+      <div className="mt-12 text-center">
+        <div className="mb-6">
+          <p className="font-serif text-base text-text-light tracking-[0.15em] font-light">교통 안내</p>
+          <div className="mt-2.5 mx-auto w-12 h-px bg-primary/40" />
         </div>
 
-        {/* Bus */}
-        <div className="bg-bg-card border border-border rounded-xl p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-primary text-sm">🚌</span>
-            <h3 className="text-xs font-medium text-primary tracking-wider">버스</h3>
-          </div>
-          <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-xs">
-            {directions.bus.map((b) => (
-              <Fragment key={b.type}>
-                <span className="text-text-muted">{b.type}</span>
-                <span className="text-text-light">{b.routes}</span>
-              </Fragment>
-            ))}
-          </div>
-          <p className="text-[10px] text-text-muted/80 mt-2.5">
-            * 그 외 다양한 노선 이용 가능
-          </p>
-        </div>
-
-        {/* Car + Parking */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="bg-bg-card border border-border rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-primary text-sm">🚗</span>
-              <h3 className="text-xs font-medium text-primary tracking-wider">자가용</h3>
-            </div>
-            <div className="space-y-1.5 text-xs">
-              <div>
-                <p className="text-text-muted text-[10px] mb-0.5">도로명</p>
-                <p className="text-text-light">{directions.car.newAddress}</p>
-              </div>
-              <div>
-                <p className="text-text-muted text-[10px] mb-0.5">지번</p>
-                <p className="text-text-light">{directions.car.oldAddress}</p>
-              </div>
+        <div className="border border-border rounded-2xl overflow-hidden divide-y divide-border bg-bg-card text-left">
+          {/* Subway */}
+          <div className="px-5 py-4">
+            <p className="text-xs text-primary font-semibold tracking-[0.12em] mb-3">지하철</p>
+            <div className="space-y-1.5">
+              {directions.subway.map((s) => (
+                <div key={s.line} className="flex items-center gap-2 text-xs text-text-light">
+                  <TransportBadge label={s.line} color={subwayColors[s.line] ?? "#888"} />
+                  <span>{s.detail}</span>
+                </div>
+              ))}
             </div>
           </div>
 
-          <div className="bg-bg-card border border-border rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-primary text-sm">🅿️</span>
-              <h3 className="text-xs font-medium text-primary tracking-wider">주차</h3>
+          {/* Bus */}
+          <div className="px-5 py-4">
+            <p className="text-xs text-primary font-semibold tracking-[0.12em] mb-3">버스</p>
+            <div className="space-y-1.5">
+              {directions.bus.map((b) => (
+                <div key={b.type} className="flex items-center gap-2 text-xs">
+                  <TransportBadge label={b.type} color={busColors[b.type] ?? "#888"} textColor={b.type === "일반" ? "#333" : "white"} />
+                  <span className="text-text-light">{b.routes}</span>
+                </div>
+              ))}
             </div>
-            <p className="text-xs text-text-light">{directions.parking}</p>
+          </div>
+
+          {/* Car + Parking */}
+          <div className="px-5 py-4">
+            <p className="text-xs text-primary font-semibold tracking-[0.12em] mb-3">자가용 · 주차</p>
+            <div className="space-y-2">
+              <div className="flex gap-3 text-xs">
+                <span className="text-text-muted w-10 shrink-0">도로명</span>
+                <span className="text-text-light">{directions.car.newAddress}</span>
+              </div>
+              <div className="flex gap-3 text-xs">
+                <span className="text-text-muted w-10 shrink-0">지번</span>
+                <span className="text-text-light">{directions.car.oldAddress}</span>
+              </div>
+              <div className="flex gap-3 text-xs">
+                <span className="text-text-muted w-10 shrink-0">주차</span>
+                <span className="text-text-light">{directions.parking}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
