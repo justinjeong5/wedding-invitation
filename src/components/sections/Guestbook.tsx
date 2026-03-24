@@ -25,13 +25,19 @@ function GuestbookItem({
   const [activeAction, setActiveAction] = useState<
     "edit" | "delete" | null
   >(null);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [password, setPassword] = useState("");
   const [editMessage, setEditMessage] = useState(entry.message);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    setEditMessage(entry.message);
+  }, [entry.message]);
+
   const reset = () => {
     setActiveAction(null);
+    setMenuOpen(false);
     setPassword("");
     setEditMessage(entry.message);
     setError("");
@@ -75,24 +81,43 @@ function GuestbookItem({
         <div className="flex items-center gap-2">
           <span className="text-[10px] text-text-muted">
             {formatDate(entry.created_at)}
-            {entry.edited && (
-              <span className="text-text-muted/50 ml-1">(편집됨)</span>
-            )}
           </span>
           {!activeAction && (
-            <div className="flex items-center gap-1">
+            <div className="relative">
               <button
-                onClick={() => setActiveAction("edit")}
-                className="text-text-muted/50 text-[10px] hover:text-text-muted min-h-0 px-0.5"
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="text-text-muted/40 hover:text-text-muted text-sm min-h-0 px-1 leading-none"
               >
-                수정
+                &#8942;
               </button>
-              <button
-                onClick={() => setActiveAction("delete")}
-                className="text-text-muted/50 text-xs hover:text-text-muted min-h-0 px-0.5"
-              >
-                &times;
-              </button>
+              {menuOpen && (
+                <>
+                  <div
+                    className="fixed inset-0 z-10"
+                    onClick={() => setMenuOpen(false)}
+                  />
+                  <div className="absolute right-0 top-full mt-1 z-20 bg-bg-card border border-border rounded-lg shadow-sm overflow-hidden">
+                    <button
+                      onClick={() => {
+                        setActiveAction("edit");
+                        setMenuOpen(false);
+                      }}
+                      className="block w-full text-left px-4 py-2 text-xs text-text-light hover:bg-bg transition-colors min-h-0 whitespace-nowrap"
+                    >
+                      수정
+                    </button>
+                    <button
+                      onClick={() => {
+                        setActiveAction("delete");
+                        setMenuOpen(false);
+                      }}
+                      className="block w-full text-left px-4 py-2 text-xs text-red-500 hover:bg-bg transition-colors min-h-0 whitespace-nowrap"
+                    >
+                      삭제
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>
@@ -117,7 +142,7 @@ function GuestbookItem({
             />
             <button
               onClick={handleEdit}
-              disabled={loading || !password || !editMessage.trim()}
+              disabled={loading || !password || !editMessage.trim() || editMessage.trim() === entry.message}
               className="px-3 py-1.5 text-xs text-primary border border-primary/30 rounded hover:bg-primary/5 transition-colors disabled:opacity-50 shrink-0"
             >
               {loading ? "수정 중..." : "수정"}
@@ -164,6 +189,9 @@ function GuestbookItem({
       ) : (
         <p className="text-sm text-text-light whitespace-pre-line">
           {entry.message}
+          {entry.edited && (
+            <span className="text-[10px] text-text-muted/40 ml-1">(편집됨)</span>
+          )}
         </p>
       )}
     </div>
