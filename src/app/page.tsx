@@ -10,10 +10,12 @@ import Account from "@/components/sections/Account";
 import Rsvp from "@/components/sections/Rsvp";
 import Guestbook from "@/components/sections/Guestbook";
 import Footer from "@/components/sections/Footer";
+import AccessibilityToggle from "@/components/ui/AccessibilityToggle";
 
 export default function Home() {
   return (
     <main className="min-h-dvh bg-bg">
+      <AccessibilityToggle />
       <Cover />
       <Greeting />
       <Couple />

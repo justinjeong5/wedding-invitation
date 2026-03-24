@@ -75,8 +75,9 @@ export const WEDDING_CONFIG = {
   },
 
   gallery: {
-    images: Array.from({ length: 6 }, (_, i) => ({
-      src: `/images/gallery/gallery-${String(i + 1).padStart(2, "0")}.jpg`,
+    // 실제 사진으로 교체 시: .svg → .jpg (또는 .webp)로 확장자만 변경
+    images: Array.from({ length: 12 }, (_, i) => ({
+      src: `/images/gallery/gallery-${String(i + 1).padStart(2, "0")}.svg`,
       alt: `웨딩 사진 ${i + 1}`,
     })),
   },

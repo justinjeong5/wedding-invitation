@@ -15,14 +15,75 @@
   --font-sans: "Noto Sans KR", sans-serif;
 }
 
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
 body {
   background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-serif);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  word-break: keep-all;
 }
 
 * {
   -webkit-tap-highlight-color: transparent;
+}
+
+/* 어르신 모드 — 글자, 버튼, 간격 확대 */
+html.large-mode {
+  font-size: 20px;
+}
+
+html.large-mode button,
+html.large-mode a,
+html.large-mode input,
+html.large-mode select,
+html.large-mode textarea {
+  min-height: 52px;
+  font-size: 1rem;
+}
+
+html.large-mode .text-xs {
+  font-size: 0.85rem;
+}
+
+html.large-mode .text-sm {
+  font-size: 1rem;
+}
+
+html.large-mode .text-\[10px\] {
+  font-size: 0.8rem;
+}
+
+html.large-mode .leading-8 {
+  line-height: 2.5rem;
+}
+
+/* 모션 감소 선호 (오래된 기기 / 접근성) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* 최소 터치 타겟 */
+button, a, input, select, textarea {
+  min-height: 44px;
+}
+
+/* Swiper pagination 커스텀 */
+.swiper-pagination-bullet {
+  background: var(--color-primary) !important;
+  opacity: 0.3 !important;
+}
+.swiper-pagination-bullet-active {
+  opacity: 1 !important;
 }

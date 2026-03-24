@@ -10,7 +10,7 @@ export default function Cover() {
     <section className="relative h-dvh flex flex-col items-center justify-center overflow-hidden bg-primary-dark">
       {/* Background image placeholder */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/40 z-10" />
-      <div className="absolute inset-0 bg-[url('/images/cover.jpg')] bg-cover bg-center" />
+      <div className="absolute inset-0 bg-[url('/images/cover.svg')] bg-cover bg-center" />
 
       <div className="relative z-20 text-center text-white">
         <motion.p
