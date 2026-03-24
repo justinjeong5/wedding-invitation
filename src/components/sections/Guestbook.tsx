@@ -367,26 +367,27 @@ export default function Guestbook() {
           <button
             onClick={refresh}
             disabled={refreshing || cooldown > 0}
-            className="w-8 h-8 flex items-center justify-center rounded-full border border-border text-text-muted hover:border-primary/30 hover:text-primary transition-colors disabled:opacity-40"
+            className="relative w-8 h-8 flex items-center justify-center rounded-full border border-border text-text-muted hover:border-primary/30 hover:text-primary transition-colors disabled:opacity-40"
             style={{ minHeight: "auto" }}
             aria-label="새로고침"
           >
-            {cooldown > 0 ? (
-              <span className="text-[10px] tabular-nums">{cooldown}</span>
-            ) : (
-              <svg
-                viewBox="0 0 24 24"
-                className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`}
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M20.015 4.356v4.992"
-                />
-              </svg>
+            <svg
+              viewBox="0 0 24 24"
+              className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M20.015 4.356v4.992"
+              />
+            </svg>
+            {cooldown > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 flex items-center justify-center rounded-full bg-primary text-white text-[9px] leading-none tabular-nums">
+                {cooldown}
+              </span>
             )}
           </button>
         </div>
