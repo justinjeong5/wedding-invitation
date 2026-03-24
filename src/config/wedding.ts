@@ -97,17 +97,14 @@ export const WEDDING_CONFIG = {
   },
 
   gallery: {
-    // 실제 사진으로 교체 시: .svg → .jpg (또는 .webp)로 확장자만 변경
-    // featured: 섹션 사이에 배치되는 사진 (PhotoRevealPair, PhotoBreak)
     featured: [
-      { src: "/images/gallery/gallery-01.svg", alt: "웨딩 사진 1" },
-      { src: "/images/gallery/gallery-02.svg", alt: "웨딩 사진 2" },
-      { src: "/images/gallery/gallery-07.svg", alt: "웨딩 사진 7" },
-      { src: "/images/gallery/gallery-10.svg", alt: "웨딩 사진 10" },
+      { src: "/images/gallery/gallery-01.jpg", alt: "꽃다발과 함께" },
+      { src: "/images/gallery/gallery-02.jpg", alt: "바다에서" },
+      { src: "/images/gallery/gallery-03.jpg", alt: "노을" },
+      { src: "/images/gallery/gallery-04.jpg", alt: "꽃밭에서" },
     ],
-    // images: Gallery 섹션에 표시되는 나머지 사진
-    images: [3, 4, 5, 6, 8, 9, 11, 12].map((n) => ({
-      src: `/images/gallery/gallery-${String(n).padStart(2, "0")}.svg`,
+    images: [5, 6, 7, 8, 9, 10, 11, 12, 13].map((n) => ({
+      src: `/images/gallery/gallery-${String(n).padStart(2, "0")}.jpg`,
       alt: `웨딩 사진 ${n}`,
     })),
   },

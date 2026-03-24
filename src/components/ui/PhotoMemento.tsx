@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 
 interface PhotoMementoProps {
@@ -15,16 +16,16 @@ export default function PhotoMemento({
   caption = "K · W  2026",
 }: PhotoMementoProps) {
   const prefersReduced = useReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <div className="w-full px-4 py-10">
+    <div ref={ref} className="w-full px-4 py-10">
       <motion.div
         className="relative w-full aspect-[4/5] overflow-hidden"
-        initial={{
-          clipPath: prefersReduced ? "inset(0 0% 0 0)" : "inset(0 100% 0 0)",
+        animate={{
+          clipPath: isInView || prefersReduced ? "inset(0 0% 0 0)" : "inset(0 100% 0 0)",
         }}
-        whileInView={{ clipPath: "inset(0 0% 0 0)" }}
-        viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
       >
         <Image

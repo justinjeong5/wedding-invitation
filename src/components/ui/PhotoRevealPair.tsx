@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 
 interface Photo {
@@ -16,49 +17,25 @@ export default function PhotoRevealPair({
   right: Photo;
 }) {
   const prefersReduced = useReducedMotion();
-
-  const container = {
-    hidden: {},
-    visible: {
-      transition: { staggerChildren: 0.15 },
-    },
-  };
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-60px" });
 
   const leftItem = {
-    hidden: {
-      opacity: 0,
-      x: prefersReduced ? 0 : -24,
-      y: prefersReduced ? 0 : 16,
-    },
-    visible: {
-      opacity: 1,
-      x: 0,
-      y: 0,
-      transition: { duration: 0.7, ease: "easeOut" as const },
-    },
+    hidden: { opacity: 0, x: prefersReduced ? 0 : -24, y: prefersReduced ? 0 : 16 },
+    visible: { opacity: 1, x: 0, y: 0, transition: { duration: 0.7, ease: "easeOut" as const } },
   };
 
   const rightItem = {
-    hidden: {
-      opacity: 0,
-      x: prefersReduced ? 0 : 24,
-      y: prefersReduced ? 0 : 32,
-    },
-    visible: {
-      opacity: 1,
-      x: 0,
-      y: 0,
-      transition: { duration: 0.7, ease: "easeOut" as const },
-    },
+    hidden: { opacity: 0, x: prefersReduced ? 0 : 24, y: prefersReduced ? 0 : 32 },
+    visible: { opacity: 1, x: 0, y: 0, transition: { duration: 0.7, ease: "easeOut" as const } },
   };
 
   return (
     <motion.div
+      ref={ref}
       className="relative w-full py-10 px-5"
-      variants={container}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-60px" }}
+      animate={isInView ? "visible" : "hidden"}
+      transition={{ staggerChildren: 0.15 }}
     >
       <motion.div
         className="relative w-[58%] aspect-[3/4] rounded-2xl overflow-hidden shadow-lg"
