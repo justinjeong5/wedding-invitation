@@ -19,6 +19,8 @@ export const metadata: Metadata = {
     description: WEDDING_CONFIG.meta.description,
     images: [WEDDING_CONFIG.meta.ogImage],
     type: "website",
+    url: WEDDING_CONFIG.meta.siteUrl,
+    siteName: WEDDING_CONFIG.meta.title,
   },
 };
 
