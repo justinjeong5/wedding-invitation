@@ -36,6 +36,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={notoSerifKR.variable}>
+      {/* 여기까지 읽은 사람은 개발자겠죠? 축하해주세요 🙏 */}
       <head>
         <link
           rel="stylesheet"
