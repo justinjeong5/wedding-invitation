@@ -1,10 +1,22 @@
 "use server";
 
-import { supabase } from "@/lib/supabase";
+import { supabase, getServiceClient } from "@/lib/supabase";
+import bcrypt from "bcryptjs";
+
+interface RsvpData {
+  id: string;
+  name: string;
+  side: string;
+  attendance: boolean;
+  guest_count: number;
+  meal: boolean;
+  message: string | null;
+}
 
 interface RsvpFormState {
   success: boolean;
   error?: string;
+  data?: RsvpData;
 }
 
 export async function submitRsvp(
@@ -17,22 +29,70 @@ export async function submitRsvp(
   const guestCount = parseInt(formData.get("guest_count") as string, 10) || 1;
   const meal = formData.get("meal") === "true";
   const message = (formData.get("message") as string) || null;
+  const password = formData.get("password") as string;
 
-  if (!name || !side) {
-    return { success: false, error: "이름과 소속을 입력해주세요." };
+  if (!name || !side || !password) {
+    return { success: false, error: "이름, 소속, 비밀번호를 입력해주세요." };
   }
 
-  const { error } = await supabase.from("rsvp").insert({
-    name,
-    side,
-    attendance,
-    guest_count: attendance ? guestCount : 0,
-    meal: attendance ? meal : false,
-    message,
-  });
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const { data, error } = await supabase
+    .from("rsvp")
+    .insert({
+      name,
+      side,
+      attendance,
+      guest_count: attendance ? guestCount : 0,
+      meal: attendance ? meal : false,
+      message,
+      password: hashedPassword,
+    })
+    .select("id")
+    .single();
 
   if (error) {
     return { success: false, error: "전송에 실패했습니다. 다시 시도해주세요." };
+  }
+
+  return {
+    success: true,
+    data: {
+      id: data.id,
+      name,
+      side,
+      attendance,
+      guest_count: attendance ? guestCount : 0,
+      meal: attendance ? meal : false,
+      message,
+    },
+  };
+}
+
+export async function deleteRsvp(
+  id: string,
+  password: string
+): Promise<RsvpFormState> {
+  const serviceClient = getServiceClient();
+
+  const { data } = await serviceClient
+    .from("rsvp")
+    .select("password")
+    .eq("id", id)
+    .single();
+
+  if (!data) {
+    return { success: false, error: "참석 정보를 찾을 수 없습니다." };
+  }
+
+  const isMatch = await bcrypt.compare(password, data.password);
+  if (!isMatch) {
+    return { success: false, error: "비밀번호가 일치하지 않습니다." };
+  }
+
+  const { error } = await serviceClient.from("rsvp").delete().eq("id", id);
+  if (error) {
+    return { success: false, error: "삭제에 실패했습니다." };
   }
 
   return { success: true };

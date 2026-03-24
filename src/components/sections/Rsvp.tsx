@@ -1,139 +1,504 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, useEffect, useCallback } from "react";
+import { motion } from "framer-motion";
 import SectionWrapper from "@/components/ui/SectionWrapper";
-import { submitRsvp } from "@/actions/rsvp";
+import { submitRsvp, deleteRsvp } from "@/actions/rsvp";
 
-export default function Rsvp() {
-  const [state, formAction, isPending] = useActionState(submitRsvp, {
-    success: false,
-  });
-  const [attendance, setAttendance] = useState(true);
+const STORAGE_KEY = "wedding_rsvp";
 
-  if (state.success) {
-    return (
-      <SectionWrapper id="rsvp" className="text-center">
-        <h2 className="text-lg font-light text-primary mb-4 tracking-wider">
-          참석 여부
-        </h2>
-        <div className="py-8">
-          <p className="text-primary text-2xl mb-2">&#10003;</p>
-          <p className="text-sm text-text-light">감사합니다. 전달되었습니다.</p>
-        </div>
-      </SectionWrapper>
-    );
-  }
+const fadeIn = {
+  initial: { opacity: 0, y: 8 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.3, ease: "easeOut" as const },
+};
+
+interface SavedRsvp {
+  id: string;
+  name: string;
+  side: string;
+  attendance: boolean;
+  guest_count: number;
+  meal: boolean;
+  message: string | null;
+  submitted_at: string;
+}
+
+function RadioOption({
+  name,
+  value,
+  label,
+  checked,
+  onChange,
+}: {
+  name: string;
+  value: string;
+  label: string;
+  checked: boolean;
+  onChange: () => void;
+}) {
+  return (
+    <label className="flex-1">
+      <input
+        type="radio"
+        name={name}
+        value={value}
+        checked={checked}
+        onChange={onChange}
+        className="sr-only peer"
+      />
+      <div className="py-2.5 text-sm border border-border rounded-full cursor-pointer text-text-muted transition-all peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary peer-checked:font-medium text-center">
+        {label}
+      </div>
+    </label>
+  );
+}
+
+function FormGroup({
+  label,
+  children,
+  hint,
+}: {
+  label: string;
+  children: React.ReactNode;
+  hint?: string;
+}) {
+  return (
+    <div>
+      <div className="flex items-baseline gap-1.5 mb-2">
+        <p className="text-xs text-text-muted text-left">{label}</p>
+        {hint && (
+          <p className="text-[10px] text-text-muted/60 text-left">{hint}</p>
+        )}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function RsvpSummary({
+  data,
+  justSubmitted,
+  onEdit,
+  onDelete,
+}: {
+  data: SavedRsvp;
+  justSubmitted: boolean;
+  onEdit: () => void;
+  onDelete: () => void;
+}) {
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const handleDelete = async () => {
+    if (!deletePassword) return;
+    setDeleting(true);
+    setDeleteError(null);
+
+    const result = await deleteRsvp(data.id, deletePassword);
+
+    if (result.success) {
+      onDelete();
+    } else {
+      setDeleteError(result.error ?? "삭제에 실패했습니다.");
+    }
+    setDeleting(false);
+  };
 
   return (
     <SectionWrapper id="rsvp" className="text-center">
       <h2 className="text-lg font-light text-primary mb-2 tracking-wider">
         참석 여부
       </h2>
-      <p className="text-xs text-text-muted font-light mb-8">
+
+      {justSubmitted ? (
+        <div className="pt-3 pb-5">
+          <p className="text-primary text-2xl mb-1">&#10003;</p>
+          <p className="text-sm text-text-light">
+            감사합니다. 전달되었습니다.
+          </p>
+        </div>
+      ) : (
+        <p className="text-xs text-text-muted font-light mb-6">
+          이미 참석 여부를 전달해주셨습니다
+        </p>
+      )}
+
+      <div className="max-w-sm mx-auto font-sans">
+        <div className="bg-bg-card border border-border rounded-xl p-5">
+          <p className="text-base font-medium mb-3">{data.name}</p>
+
+          <div className="flex flex-wrap items-center justify-center gap-2 text-xs">
+            <span className="px-3 py-1 rounded-full bg-primary/5 text-primary border border-primary/15">
+              {data.side === "groom" ? "신랑측" : "신부측"}
+            </span>
+            <span
+              className={`px-3 py-1 rounded-full border ${
+                data.attendance
+                  ? "bg-primary/5 text-primary border-primary/15"
+                  : "bg-text-muted/5 text-text-muted border-border"
+              }`}
+            >
+              {data.attendance ? "참석" : "불참"}
+            </span>
+            {data.attendance && (
+              <>
+                <span className="px-3 py-1 rounded-full bg-primary/5 text-primary border border-primary/15">
+                  {data.guest_count}명
+                </span>
+                <span className="px-3 py-1 rounded-full bg-primary/5 text-primary border border-primary/15">
+                  식사 {data.meal ? "함" : "안 함"}
+                </span>
+              </>
+            )}
+          </div>
+
+          {data.message && (
+            <p className="mt-4 pt-3 border-t border-border text-sm text-text-light leading-relaxed">
+              &ldquo;{data.message}&rdquo;
+            </p>
+          )}
+        </div>
+
+        <p className="mt-4 text-[10px] text-text-muted/60 leading-relaxed">
+          언제든 수정하거나 삭제할 수 있습니다
+        </p>
+
+        <div className="mt-2 flex items-center justify-center gap-3">
+          <button
+            onClick={onEdit}
+            className="text-xs text-text-muted underline underline-offset-2 min-h-0"
+          >
+            수정하기
+          </button>
+          <span className="text-border">|</span>
+          <button
+            onClick={() => {
+              setShowDeleteConfirm(!showDeleteConfirm);
+              setDeleteError(null);
+              setDeletePassword("");
+            }}
+            className="text-xs text-text-muted underline underline-offset-2 min-h-0"
+          >
+            삭제하기
+          </button>
+        </div>
+
+        {showDeleteConfirm && (
+          <motion.div {...fadeIn} className="mt-4">
+            <div className="flex gap-2 max-w-xs mx-auto">
+              <input
+                type="password"
+                placeholder="비밀번호"
+                value={deletePassword}
+                onChange={(e) => setDeletePassword(e.target.value)}
+                className="flex-1 min-w-0 px-3 py-2 text-sm border border-border rounded-lg bg-bg focus:outline-none focus:border-primary"
+              />
+              <button
+                onClick={handleDelete}
+                disabled={deleting || !deletePassword}
+                className="px-4 py-2 text-sm text-red-500 border border-red-200 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50 shrink-0"
+              >
+                {deleting ? "삭제 중..." : "삭제"}
+              </button>
+            </div>
+            {deleteError && (
+              <p className="text-red-500 text-xs mt-2">{deleteError}</p>
+            )}
+          </motion.div>
+        )}
+      </div>
+    </SectionWrapper>
+  );
+}
+
+function RsvpForm({
+  initialValues,
+  onSuccess,
+}: {
+  initialValues: SavedRsvp | null;
+  onSuccess: (data: SavedRsvp) => void;
+}) {
+  const [state, formAction, isPending] = useActionState(submitRsvp, {
+    success: false,
+  });
+
+  const [name, setName] = useState(initialValues?.name ?? "");
+  const [side, setSide] = useState<string | null>(
+    initialValues?.side ?? null
+  );
+  const [attendance, setAttendance] = useState<boolean | null>(
+    initialValues ? initialValues.attendance : null
+  );
+  const [guestCount, setGuestCount] = useState(
+    initialValues?.guest_count ?? 1
+  );
+  const [meal, setMeal] = useState<boolean | null>(
+    initialValues ? initialValues.meal : null
+  );
+
+  // Progressive disclosure
+  const showSide = name.trim().length > 0;
+  const showAttendance = showSide && side !== null;
+  const showGuestDetails = showAttendance && attendance === true;
+  const showSubmit =
+    showAttendance &&
+    attendance !== null &&
+    (attendance === false || meal !== null);
+
+  useEffect(() => {
+    if (state.success && state.data) {
+      onSuccess({
+        ...state.data,
+        submitted_at: new Date().toISOString(),
+      });
+    }
+  }, [state.success, state.data, onSuccess]);
+
+  return (
+    <SectionWrapper id="rsvp" className="text-center">
+      <h2 className="text-lg font-light text-primary mb-2 tracking-wider">
+        참석 여부
+      </h2>
+      <p className="text-xs text-text-muted font-light mb-1">
         참석 여부를 알려주시면 준비에 큰 도움이 됩니다
       </p>
+      <p className="text-[10px] text-text-muted/60 font-light mb-8 leading-relaxed">
+        대략적인 인원 파악을 위한 것이니 부담 없이 알려주세요
+        <br />
+        언제든 수정하거나 삭제할 수 있습니다
+      </p>
 
-      <form action={formAction} className="space-y-4 font-sans max-w-sm mx-auto">
-        <input
-          name="name"
-          type="text"
-          placeholder="이름"
-          required
-          className="w-full px-4 py-3 text-sm border border-border rounded-lg bg-bg-card focus:outline-none focus:border-primary"
-        />
+      <form action={formAction} className="max-w-sm mx-auto font-sans">
+        <div className="bg-bg-card border border-border rounded-xl p-5 space-y-5">
+          {/* Step 1: Name */}
+          <FormGroup label="이름">
+            <input
+              name="name"
+              type="text"
+              placeholder="성함을 입력해주세요"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-4 py-2.5 text-sm border border-border rounded-lg bg-bg focus:outline-none focus:border-primary transition-colors"
+            />
+          </FormGroup>
 
-        <div className="flex gap-3">
-          <label className="flex-1">
-            <input type="radio" name="side" value="groom" required className="sr-only peer" />
-            <div className="py-3 text-sm border border-border rounded-lg cursor-pointer peer-checked:border-primary peer-checked:text-primary text-center">
-              신랑측
-            </div>
-          </label>
-          <label className="flex-1">
-            <input type="radio" name="side" value="bride" className="sr-only peer" />
-            <div className="py-3 text-sm border border-border rounded-lg cursor-pointer peer-checked:border-primary peer-checked:text-primary text-center">
-              신부측
-            </div>
-          </label>
+          {/* Step 2: Side */}
+          {showSide && (
+            <motion.div {...fadeIn}>
+              <FormGroup label="소속">
+                <div className="flex gap-2.5">
+                  <RadioOption
+                    name="side"
+                    value="groom"
+                    label="신랑측"
+                    checked={side === "groom"}
+                    onChange={() => {
+                      setSide("groom");
+                      setAttendance(null);
+                      setGuestCount(1);
+                      setMeal(null);
+                    }}
+                  />
+                  <RadioOption
+                    name="side"
+                    value="bride"
+                    label="신부측"
+                    checked={side === "bride"}
+                    onChange={() => {
+                      setSide("bride");
+                      setAttendance(null);
+                      setGuestCount(1);
+                      setMeal(null);
+                    }}
+                  />
+                </div>
+              </FormGroup>
+            </motion.div>
+          )}
+
+          {/* Step 3: Attendance */}
+          {showAttendance && (
+            <motion.div {...fadeIn}>
+              <FormGroup label="참석 여부">
+                <div className="flex gap-2.5">
+                  <RadioOption
+                    name="attendance"
+                    value="true"
+                    label="참석합니다"
+                    checked={attendance === true}
+                    onChange={() => setAttendance(true)}
+                  />
+                  <RadioOption
+                    name="attendance"
+                    value="false"
+                    label="불참합니다"
+                    checked={attendance === false}
+                    onChange={() => {
+                      setAttendance(false);
+                      setMeal(null);
+                    }}
+                  />
+                </div>
+              </FormGroup>
+            </motion.div>
+          )}
+
+          {/* Step 4: Guest details */}
+          {showGuestDetails && (
+            <motion.div {...fadeIn}>
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <FormGroup label="참석 인원">
+                    <select
+                      name="guest_count"
+                      value={guestCount}
+                      onChange={(e) =>
+                        setGuestCount(Number(e.target.value))
+                      }
+                      className="w-full px-4 py-2.5 text-sm border border-border rounded-lg bg-bg focus:outline-none focus:border-primary transition-colors"
+                    >
+                      {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+                        <option key={n} value={n}>
+                          {n}명
+                        </option>
+                      ))}
+                    </select>
+                  </FormGroup>
+                </div>
+                <div className="flex-1">
+                  <FormGroup label="식사 여부">
+                    <div className="flex gap-2">
+                      <RadioOption
+                        name="meal"
+                        value="true"
+                        label="함"
+                        checked={meal === true}
+                        onChange={() => setMeal(true)}
+                      />
+                      <RadioOption
+                        name="meal"
+                        value="false"
+                        label="안 함"
+                        checked={meal === false}
+                        onChange={() => setMeal(false)}
+                      />
+                    </div>
+                  </FormGroup>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Step 5: Message + Password */}
+          {showSubmit && (
+            <motion.div {...fadeIn} className="space-y-5">
+              <FormGroup label="축하 메시지" hint="선택">
+                <textarea
+                  name="message"
+                  placeholder="축하의 말씀을 남겨주세요"
+                  rows={2}
+                  defaultValue={initialValues?.message ?? ""}
+                  className="w-full px-4 py-2.5 text-sm border border-border rounded-lg bg-bg focus:outline-none focus:border-primary resize-none transition-colors"
+                />
+              </FormGroup>
+
+              <FormGroup label="비밀번호" hint="수정·삭제 시 필요">
+                <input
+                  name="password"
+                  type="password"
+                  placeholder="비밀번호를 설정해주세요"
+                  required
+                  className="w-full px-4 py-2.5 text-sm border border-border rounded-lg bg-bg focus:outline-none focus:border-primary transition-colors"
+                />
+              </FormGroup>
+            </motion.div>
+          )}
         </div>
 
-        <div className="flex gap-3">
-          <label className="flex-1">
-            <input
-              type="radio"
-              name="attendance"
-              value="true"
-              defaultChecked
-              onChange={() => setAttendance(true)}
-              className="sr-only peer"
-            />
-            <div className="py-3 text-sm border border-border rounded-lg cursor-pointer peer-checked:border-primary peer-checked:text-primary text-center">
-              참석
-            </div>
-          </label>
-          <label className="flex-1">
-            <input
-              type="radio"
-              name="attendance"
-              value="false"
-              onChange={() => setAttendance(false)}
-              className="sr-only peer"
-            />
-            <div className="py-3 text-sm border border-border rounded-lg cursor-pointer peer-checked:border-primary peer-checked:text-primary text-center">
-              불참
-            </div>
-          </label>
-        </div>
-
-        {attendance && (
-          <>
-            <select
-              name="guest_count"
-              className="w-full px-4 py-3 text-sm border border-border rounded-lg bg-bg-card focus:outline-none focus:border-primary"
+        {/* Submit */}
+        {showSubmit && (
+          <motion.div {...fadeIn}>
+            {state.error && (
+              <p className="text-red-500 text-xs mt-3">{state.error}</p>
+            )}
+            <button
+              type="submit"
+              disabled={isPending}
+              className="w-full mt-4 py-3 text-sm bg-primary text-white rounded-full hover:bg-primary-dark transition-colors disabled:opacity-50"
             >
-              {[1, 2, 3, 4, 5].map((n) => (
-                <option key={n} value={n}>
-                  총 {n}명
-                </option>
-              ))}
-            </select>
-
-            <div className="flex gap-3">
-              <label className="flex-1">
-                <input type="radio" name="meal" value="true" defaultChecked className="sr-only peer" />
-                <div className="py-3 text-sm border border-border rounded-lg cursor-pointer peer-checked:border-primary peer-checked:text-primary text-center">
-                  식사 함
-                </div>
-              </label>
-              <label className="flex-1">
-                <input type="radio" name="meal" value="false" className="sr-only peer" />
-                <div className="py-3 text-sm border border-border rounded-lg cursor-pointer peer-checked:border-primary peer-checked:text-primary text-center">
-                  식사 안 함
-                </div>
-              </label>
-            </div>
-          </>
+              {isPending
+                ? "전송 중..."
+                : initialValues
+                  ? "다시 전송하기"
+                  : "전송하기"}
+            </button>
+          </motion.div>
         )}
-
-        <textarea
-          name="message"
-          placeholder="축하 메시지 (선택)"
-          rows={2}
-          className="w-full px-4 py-3 text-sm border border-border rounded-lg bg-bg-card focus:outline-none focus:border-primary resize-none"
-        />
-
-        {state.error && (
-          <p className="text-red-500 text-xs">{state.error}</p>
-        )}
-
-        <button
-          type="submit"
-          disabled={isPending}
-          className="w-full py-3 text-sm bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50"
-        >
-          {isPending ? "전송 중..." : "전송하기"}
-        </button>
       </form>
     </SectionWrapper>
   );
+}
+
+export default function Rsvp() {
+  const [savedRsvp, setSavedRsvp] = useState<SavedRsvp | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [justSubmitted, setJustSubmitted] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) setSavedRsvp(JSON.parse(saved));
+    } catch {}
+    setMounted(true);
+  }, []);
+
+  const handleSuccess = useCallback((data: SavedRsvp) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch {}
+    setSavedRsvp(data);
+    setEditing(false);
+    setJustSubmitted(true);
+  }, []);
+
+  const handleDelete = useCallback(() => {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {}
+    setSavedRsvp(null);
+    setEditing(false);
+    setJustSubmitted(false);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <SectionWrapper id="rsvp" className="text-center">
+        <h2 className="text-lg font-light text-primary mb-2 tracking-wider">
+          참석 여부
+        </h2>
+        <div className="h-64" />
+      </SectionWrapper>
+    );
+  }
+
+  if (savedRsvp && !editing) {
+    return (
+      <RsvpSummary
+        data={savedRsvp}
+        justSubmitted={justSubmitted}
+        onEdit={() => {
+          setEditing(true);
+          setJustSubmitted(false);
+        }}
+        onDelete={handleDelete}
+      />
+    );
+  }
+
+  return <RsvpForm initialValues={savedRsvp} onSuccess={handleSuccess} />;
 }
