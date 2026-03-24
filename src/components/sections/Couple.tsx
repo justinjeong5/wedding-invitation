@@ -6,23 +6,29 @@ export default function Couple() {
 
   return (
     <SectionWrapper id="couple" className="text-center">
-      <div className="flex items-center justify-center gap-6 text-sm font-serif font-light">
+      <div className="flex items-center justify-center gap-6 font-serif">
+        {/* Groom */}
         <div className="flex-1 text-right">
-          <p className="text-text-muted text-xs mb-1">
+          <p className="text-xs text-text-muted mb-2">
             {groom.father.name} · {groom.mother.name}
             <span className="text-text-muted/80 ml-1">의 아들</span>
           </p>
-          <p className="text-lg font-normal text-text">{groom.name}</p>
+          <p className="text-xl font-normal text-text tracking-wide">{groom.name}</p>
         </div>
 
-        <div className="text-primary text-2xl font-light select-none">&amp;</div>
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-px h-6 bg-primary/30" />
+          <span className="text-primary text-lg font-light select-none">&amp;</span>
+          <div className="w-px h-6 bg-primary/30" />
+        </div>
 
+        {/* Bride */}
         <div className="flex-1 text-left">
-          <p className="text-text-muted text-xs mb-1">
+          <p className="text-xs text-text-muted mb-2">
             {bride.father.name} · {bride.mother.name}
             <span className="text-text-muted/80 ml-1">의 딸</span>
           </p>
-          <p className="text-lg font-normal text-text">{bride.name}</p>
+          <p className="text-xl font-normal text-text tracking-wide">{bride.name}</p>
         </div>
       </div>
     </SectionWrapper>

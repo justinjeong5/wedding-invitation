@@ -92,7 +92,7 @@ function GuestbookItem({
       <div className="flex justify-between items-center mb-2">
         <span className="text-sm font-medium">{entry.name}</span>
         <div className="flex items-center gap-1.5">
-          <span className="text-[10px] text-text-light">
+          <span className="text-xs text-text-light">
             {formatDate(entry.created_at)}
           </span>
           {!activeAction && (
@@ -180,7 +180,7 @@ function GuestbookItem({
               취소
             </button>
           </div>
-          {error && <p className="text-red-500 text-[10px]">{error}</p>}
+          {error && <p className="text-red-500 text-xs">{error}</p>}
         </div>
       ) : activeAction === "delete" ? (
         <div className="mt-2 space-y-2">
@@ -210,13 +210,13 @@ function GuestbookItem({
               취소
             </button>
           </div>
-          {error && <p className="text-red-500 text-[10px]">{error}</p>}
+          {error && <p className="text-red-500 text-xs">{error}</p>}
         </div>
       ) : (
         <p className="text-sm text-text-light whitespace-pre-line">
           {entry.message}
           {entry.edited && (
-            <span className="text-[10px] text-text-muted ml-1">(편집됨)</span>
+            <span className="text-xs text-text-muted ml-1">(편집됨)</span>
           )}
         </p>
       )}

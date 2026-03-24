@@ -145,7 +145,7 @@ export default function Calendar() {
           {DAY_LABELS.map((label, i) => (
             <div
               key={label}
-              className={`text-xspy-1 ${
+              className={`text-xs py-1 ${
                 i === 0 ? "text-red-400" : i === 6 ? "text-blue-400" : "text-text-muted"
               }`}
             >
@@ -168,7 +168,7 @@ export default function Calendar() {
               <button
                 key={i}
                 onClick={() => handleDayClick(day)}
-                className={`text-smpy-1.5 rounded-full transition-colors min-h-0 ${
+                className={`text-sm py-1.5 rounded-full transition-colors min-h-0 ${
                   isWedding
                     ? "bg-primary text-white font-medium"
                     : isSel

@@ -10,38 +10,38 @@ interface ContactCardProps {
 
 function ContactCard({ role, name, tel, parents }: ContactCardProps) {
   return (
-    <div className="flex-1">
-      <p className="text-sm text-text-muted mb-3 font-medium">{role}</p>
-      <div className="flex flex-col items-center gap-2 mb-4">
-        <span className="text-base font-normal">{name}</span>
-        <div className="flex gap-2">
-          <a
-            href={`tel:${tel}`}
-            className="inline-flex items-center justify-center text-primary text-sm border border-primary/30 rounded-full px-4 py-2"
-          >
-            전화
-          </a>
-          <a
-            href={`sms:${tel}`}
-            className="inline-flex items-center justify-center text-primary text-sm border border-primary/30 rounded-full px-4 py-2"
-          >
-            문자
-          </a>
-        </div>
+    <div className="px-5 py-5 text-center">
+      <p className="text-xs text-primary font-semibold tracking-[0.12em] mb-3">{role}</p>
+      <p className="text-lg font-medium mb-3">{name}</p>
+      <div className="flex gap-2 justify-center mb-4">
+        <a
+          href={`tel:${tel}`}
+          className="inline-flex items-center justify-center text-primary text-sm border border-primary/30 rounded-full px-5 py-2"
+        >
+          전화
+        </a>
+        <a
+          href={`sms:${tel}`}
+          className="inline-flex items-center justify-center text-primary text-sm border border-primary/30 rounded-full px-5 py-2"
+        >
+          문자
+        </a>
       </div>
-      {parents.map((parent) => (
-        <div key={parent.name} className="flex items-center justify-center gap-3 mb-2.5">
-          <span className="text-sm text-text-light">
-            {parent.relation} {parent.name}
-          </span>
-          <a
-            href={`tel:${parent.tel}`}
-            className="inline-flex items-center justify-center text-primary/70 text-xs border border-primary/20 rounded-full px-3 py-1.5"
-          >
-            전화
-          </a>
-        </div>
-      ))}
+      <div className="space-y-2">
+        {parents.map((parent) => (
+          <div key={parent.name} className="flex items-center justify-center gap-3">
+            <span className="text-sm text-text-light">
+              {parent.relation} {parent.name}
+            </span>
+            <a
+              href={`tel:${parent.tel}`}
+              className="inline-flex items-center justify-center text-primary/70 text-xs border border-primary/20 rounded-full px-3 py-1.5"
+            >
+              전화
+            </a>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -55,7 +55,7 @@ export default function Contact() {
         연락처
       </h2>
 
-      <div className="flex flex-col gap-8 min-[360px]:flex-row min-[360px]:gap-6">
+      <div className="border border-border rounded-2xl overflow-hidden divide-y divide-border bg-bg-card">
         <ContactCard
           role="신랑측"
           name={groom.name}
@@ -65,8 +65,6 @@ export default function Contact() {
             { ...groom.mother, tel: groom.motherTel },
           ]}
         />
-        <div className="hidden min-[360px]:block w-px bg-border" />
-        <div className="block min-[360px]:hidden h-px bg-border" />
         <ContactCard
           role="신부측"
           name={bride.name}

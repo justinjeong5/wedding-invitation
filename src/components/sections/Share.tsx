@@ -45,22 +45,36 @@ export default function Share() {
 
   return (
     <SectionWrapper id="share" className="text-center">
-      <h2 className="text-lg font-light text-primary mb-8 tracking-wider">
+      <h2 className="text-lg font-light text-primary mb-2 tracking-wider">
         공유하기
       </h2>
-      <div className="flex gap-3 justify-center">
+      <p className="text-xs text-text-muted font-light mb-8">
+        소중한 분들에게 알려주세요
+      </p>
+      <div className="flex gap-3 justify-center max-w-xs mx-auto">
         <button
           onClick={handleKakaoShare}
           disabled={!kakaoReady}
-          className="flex-1 max-w-[160px] py-3 text-sm bg-[#FEE500] text-[#191919] rounded-lg font-medium hover:brightness-95 transition disabled:opacity-50"
+          className="flex-1 flex items-center justify-center gap-2 py-3 text-sm border border-primary/30 text-primary rounded-xl hover:bg-primary/5 transition disabled:opacity-50"
         >
-          카카오톡 공유
+          <svg viewBox="0 0 24 24" className="w-4.5 h-4.5" fill="currentColor">
+            <path d="M12 3C6.48 3 2 6.54 2 10.86c0 2.8 1.86 5.27 4.66 6.67l-.9 3.34c-.08.28.24.52.49.36l3.96-2.64c.58.08 1.18.13 1.79.13 5.52 0 10-3.54 10-7.86S17.52 3 12 3z" />
+          </svg>
+          카카오톡
         </button>
         <button
           onClick={handleCopyLink}
-          className="flex-1 max-w-[160px] py-3 text-sm border border-border text-text-light rounded-lg hover:bg-bg-card transition"
+          className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm rounded-xl transition ${
+            linkCopied
+              ? "bg-primary/10 text-primary border border-primary/40 font-medium"
+              : "border border-primary/30 text-primary hover:bg-primary/5"
+          }`}
         >
-          {linkCopied ? "복사 완료!" : "링크 복사"}
+          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10.172 13.828a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.102 1.101" />
+          </svg>
+          {linkCopied ? "복사 완료" : "링크 복사"}
         </button>
       </div>
     </SectionWrapper>
