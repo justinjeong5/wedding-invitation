@@ -26,15 +26,17 @@ import "swiper/css/thumbs";
 
 export default function Gallery() {
   const { gallery } = WEDDING_CONFIG;
+  const allImages = [...gallery.featured, ...gallery.images];
+  const featuredCount = gallery.featured.length;
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
   const [heroSwiper, setHeroSwiper] = useState<SwiperType | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const openLightbox = useCallback(() => {
     if (heroSwiper) {
-      setLightboxIndex(heroSwiper.realIndex);
+      setLightboxIndex(heroSwiper.realIndex + featuredCount);
     }
-  }, [heroSwiper]);
+  }, [heroSwiper, featuredCount]);
 
   const closeLightbox = useCallback(() => {
     setLightboxIndex(null);
@@ -151,7 +153,7 @@ export default function Gallery() {
             {/* Header */}
             <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between px-4 pt-3 pb-10 bg-gradient-to-b from-black/50 to-transparent">
               <span className="text-white/70 text-sm">
-                {lightboxIndex + 1} / {gallery.images.length}
+                {lightboxIndex + 1} / {allImages.length}
               </span>
               <button
                 onClick={closeLightbox}
@@ -185,7 +187,7 @@ export default function Gallery() {
               className="w-full h-full"
               onSlideChange={(swiper) => setLightboxIndex(swiper.realIndex)}
             >
-              {gallery.images.map((image, index) => (
+              {allImages.map((image, index) => (
                 <SwiperSlide key={index}>
                   <div className="swiper-zoom-container">
                     <Image
