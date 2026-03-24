@@ -312,6 +312,12 @@ function PhotoCard({
 }
 
 /* ─── Lightbox ─── */
+const slideVariants = {
+  enter: (dir: number) => ({ x: dir > 0 ? "100%" : "-100%", opacity: 0.5 }),
+  center: { x: 0, opacity: 1 },
+  exit: (dir: number) => ({ x: dir > 0 ? "-100%" : "100%", opacity: 0.5 }),
+};
+
 function Lightbox({
   photos,
   initialIndex,
@@ -322,32 +328,46 @@ function Lightbox({
   onClose: () => void;
 }) {
   const [index, setIndex] = useState(initialIndex);
+  const [direction, setDirection] = useState(0);
   const photo = photos[index];
   const touchStartX = useRef(0);
+  const touchDeltaX = useRef(0);
+  const dragRef = useRef<HTMLDivElement>(null);
+
+  const paginate = useCallback(
+    (dir: number) => {
+      const next = index + dir;
+      if (next < 0 || next >= photos.length) return;
+      setDirection(dir);
+      setIndex(next);
+    },
+    [index, photos.length]
+  );
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
-      if (e.key === "ArrowLeft") setIndex((i) => Math.max(0, i - 1));
-      if (e.key === "ArrowRight")
-        setIndex((i) => Math.min(photos.length - 1, i + 1));
+      if (e.key === "ArrowLeft") paginate(-1);
+      if (e.key === "ArrowRight") paginate(1);
     };
     window.addEventListener("keydown", handleKey);
     return () => {
       document.body.style.overflow = "";
       window.removeEventListener("keydown", handleKey);
     };
-  }, [onClose, photos.length]);
+  }, [onClose, paginate]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
+    touchDeltaX.current = 0;
   };
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    const diff = touchStartX.current - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) setIndex((i) => Math.min(photos.length - 1, i + 1));
-      else setIndex((i) => Math.max(0, i - 1));
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchDeltaX.current = e.touches[0].clientX - touchStartX.current;
+  };
+  const handleTouchEnd = () => {
+    if (Math.abs(touchDeltaX.current) > 50) {
+      paginate(touchDeltaX.current > 0 ? -1 : 1);
     }
   };
 
@@ -388,22 +408,37 @@ function Lightbox({
         </button>
       </div>
 
-      {/* Image */}
+      {/* Image with swipe animation */}
       <div
-        className="flex-1 relative"
+        ref={dragRef}
+        className="flex-1 relative overflow-hidden"
         onClick={(e) => e.stopPropagation()}
         onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <Image
-          src={getImageUrl(photo.storage_path)}
-          alt={photo.caption || `${photo.name}님의 사진`}
-          fill
-          className="object-contain"
-          sizes="100vw"
-          priority
-          unoptimized
-        />
+        <AnimatePresence initial={false} custom={direction} mode="popLayout">
+          <motion.div
+            key={index}
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className="absolute inset-0"
+          >
+            <Image
+              src={getImageUrl(photo.storage_path)}
+              alt={photo.caption || `${photo.name}님의 사진`}
+              fill
+              className="object-contain"
+              sizes="100vw"
+              priority
+              unoptimized
+            />
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* Caption */}
