@@ -722,6 +722,13 @@ export default function GuestGallery() {
         </>
       )}
 
+      {/* Notice */}
+      <p className="text-[10px] text-text-muted/60 text-center mt-6 leading-relaxed">
+        모두가 함께 보는 공간입니다. 결혼식과 관련된 사진을 올려주세요.
+        <br />
+        부적절한 이미지는 별도의 고지 없이 삭제될 수 있습니다.
+      </p>
+
       {/* Lightbox */}
       <AnimatePresence>
         {lightboxIndex !== null && (
