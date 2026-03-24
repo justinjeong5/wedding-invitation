@@ -242,7 +242,7 @@ function PhotoCard({
         />
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/50 to-transparent p-2 pt-6">
           <p className="text-white text-[11px] font-medium truncate">
-            {photo.name}
+            {photo.caption || photo.name}
           </p>
         </div>
       </button>
