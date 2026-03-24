@@ -94,12 +94,11 @@ export default function Location() {
             ),
           },
         ].map(({ href, label, bg, icon }) => (
-          <a
+          <button
             key={label}
-            href={href}
-            target="_blank"
-            rel="noopener noreferrer"
+            onClick={() => window.open(href, "_blank", "noopener,noreferrer")}
             className="flex flex-col items-center gap-1.5"
+            style={{ minHeight: "auto" }}
           >
             <div
               className="w-11 h-11 rounded-full flex items-center justify-center shadow-sm"
@@ -108,7 +107,7 @@ export default function Location() {
               {icon}
             </div>
             <span className="text-[11px] text-text-light">{label}</span>
-          </a>
+          </button>
         ))}
       </div>
 
