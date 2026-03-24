@@ -22,14 +22,15 @@ export function loadKakaoSDK(): Promise<void> {
 
     const script = document.createElement("script");
     script.src = "https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js";
-    script.integrity = "sha384-DKYJZ8NLiK8MN4/C5P2dtSmLQ4KwPaoqAfyA/DfmEc1VDxu4yyC7wy6K1Hs90nk";
-    script.crossOrigin = "anonymous";
     script.async = true;
     script.onload = () => {
       initKakao();
       resolve();
     };
-    script.onerror = reject;
+    script.onerror = () => {
+      console.error("Kakao SDK 로드 실패");
+      reject();
+    };
     document.head.appendChild(script);
   });
 }
@@ -53,7 +54,10 @@ export function shareKakao({
   imageUrl: string;
   webUrl: string;
 }) {
-  if (!window.Kakao?.isInitialized()) return;
+  if (!window.Kakao?.isInitialized()) {
+    alert("카카오톡 공유 기능을 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
+    return;
+  }
 
   window.Kakao.Share.sendDefault({
     objectType: "feed",

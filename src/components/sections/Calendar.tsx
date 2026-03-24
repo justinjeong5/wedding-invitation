@@ -74,7 +74,7 @@ export default function Calendar() {
       </div>
 
       {/* D-Day Countdown */}
-      {!countdown.isExpired && (
+      {countdown.ready && !countdown.isExpired && (
         <div className="flex justify-center gap-4 font-sans">
           {[
             { value: countdown.days, label: "Days" },
