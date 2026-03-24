@@ -39,9 +39,12 @@ export async function uploadGuestPhoto(
   const ext = file.name.split(".").pop()?.toLowerCase() || "webp";
   const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
-  const { error: uploadError } = await supabase.storage
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const serviceClient = getServiceClient();
+
+  const { error: uploadError } = await serviceClient.storage
     .from("guest-photos")
-    .upload(fileName, file, {
+    .upload(fileName, buffer, {
       contentType: file.type,
       cacheControl: "31536000",
     });
@@ -52,7 +55,7 @@ export async function uploadGuestPhoto(
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const { error: dbError } = await supabase.from("guest_photos").insert({
+  const { error: dbError } = await serviceClient.from("guest_photos").insert({
     storage_path: fileName,
     name,
     caption,
@@ -60,7 +63,7 @@ export async function uploadGuestPhoto(
   });
 
   if (dbError) {
-    await supabase.storage.from("guest-photos").remove([fileName]);
+    await serviceClient.storage.from("guest-photos").remove([fileName]);
     return { success: false, error: "저장에 실패했습니다." };
   }
 
