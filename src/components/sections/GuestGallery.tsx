@@ -669,7 +669,7 @@ export default function GuestGallery() {
           <button
             onClick={refresh}
             disabled={refreshing || cooldown > 0}
-            className="relative w-7 h-7 flex items-center justify-center text-text-muted hover:text-primary transition-colors disabled:opacity-40"
+            className="w-8 h-8 flex items-center justify-center rounded-full border border-border text-text-muted hover:border-primary/30 hover:text-primary transition-colors disabled:opacity-40"
             style={{ minHeight: "auto" }}
             aria-label="새로고침"
           >
