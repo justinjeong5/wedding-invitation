@@ -11,6 +11,27 @@ interface FormState {
 
 const ADMIN_PASSWORD = process.env.GUEST_GALLERY_ADMIN_PASSWORD ?? "";
 
+const ALLOWED_MIME = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/heic",
+  "image/heif",
+]);
+
+const MAGIC_BYTES: [string, number[]][] = [
+  ["image/jpeg", [0xff, 0xd8, 0xff]],
+  ["image/png", [0x89, 0x50, 0x4e, 0x47]],
+  ["image/webp", [0x52, 0x49, 0x46, 0x46]], // RIFF
+];
+
+function verifyMagicBytes(buffer: Buffer, mime: string): boolean {
+  const entry = MAGIC_BYTES.find(([m]) => m === mime);
+  if (!entry) return true; // HEIC 등은 magic bytes 검증 생략
+  const [, expected] = entry;
+  return expected.every((byte, i) => buffer[i] === byte);
+}
+
 export async function uploadGuestPhoto(
   _prevState: FormState,
   formData: FormData
@@ -28,18 +49,22 @@ export async function uploadGuestPhoto(
     return { success: false, error: "캡션은 50자 이내로 입력해주세요." };
   }
 
-  if (!file.type.startsWith("image/")) {
-    return { success: false, error: "이미지 파일만 업로드할 수 있습니다." };
+  if (!ALLOWED_MIME.has(file.type)) {
+    return { success: false, error: "JPG, PNG, WebP, HEIC 형식만 업로드할 수 있습니다." };
   }
 
   if (file.size > 5 * 1024 * 1024) {
     return { success: false, error: "파일 크기는 5MB 이하여야 합니다." };
   }
 
+  const buffer = Buffer.from(await file.arrayBuffer());
+
+  if (!verifyMagicBytes(buffer, file.type)) {
+    return { success: false, error: "올바른 이미지 파일이 아닙니다." };
+  }
+
   const ext = file.name.split(".").pop()?.toLowerCase() || "webp";
   const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-
-  const buffer = Buffer.from(await file.arrayBuffer());
   const serviceClient = getServiceClient();
 
   const { error: uploadError } = await serviceClient.storage

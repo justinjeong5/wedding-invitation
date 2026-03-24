@@ -1,6 +1,25 @@
 const MAX_DIMENSION = 1920;
 const MAX_SIZE_BYTES = 1 * 1024 * 1024; // 1MB
+const MAX_INPUT_SIZE = 10 * 1024 * 1024; // 10MB (원본 제한)
 const INITIAL_QUALITY = 0.85;
+
+const ALLOWED_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/heic",
+  "image/heif",
+]);
+
+export function validateImage(file: File): string | null {
+  if (!ALLOWED_TYPES.has(file.type)) {
+    return "JPG, PNG, WebP, HEIC 형식만 업로드할 수 있습니다.";
+  }
+  if (file.size > MAX_INPUT_SIZE) {
+    return "파일 크기는 10MB 이하여야 합니다.";
+  }
+  return null;
+}
 
 function loadImage(file: File): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {

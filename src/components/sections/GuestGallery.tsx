@@ -15,7 +15,7 @@ import {
   getGuestPhotos,
   deleteGuestPhoto,
 } from "@/actions/guest-gallery";
-import { resizeImage } from "@/lib/image-resize";
+import { validateImage, resizeImage } from "@/lib/image-resize";
 import { useThrottledRefresh } from "@/hooks/useThrottledRefresh";
 import type { GuestPhoto } from "@/types";
 
@@ -70,10 +70,22 @@ function UploadForm({ onUploaded }: { onUploaded: () => void }) {
     success: false,
   });
 
+  const [fileError, setFileError] = useState<string | null>(null);
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    const error = validateImage(file);
+    if (error) {
+      setFileError(error);
+      setPreview(null);
+      resizedFileRef.current = null;
+      e.target.value = "";
+      return;
+    }
+
+    setFileError(null);
     setPreview(URL.createObjectURL(file));
     setResizing(true);
     try {
@@ -140,10 +152,13 @@ function UploadForm({ onUploaded }: { onUploaded: () => void }) {
         ref={fileRef}
         type="file"
         name="image"
-        accept="image/*"
+        accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
         className="hidden"
         onChange={handleFileChange}
       />
+      {fileError && (
+        <p className="text-red-500 text-xs">{fileError}</p>
+      )}
 
       {/* Name + Password */}
       <div className="flex gap-2">

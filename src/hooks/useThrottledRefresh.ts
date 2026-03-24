@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 
 const THROTTLE_MS = 5000;
+const MIN_LOADING_MS = 300;
 
 export function useThrottledRefresh(fetchFn: () => Promise<void>) {
   const [refreshing, setRefreshing] = useState(false);
@@ -12,8 +13,12 @@ export function useThrottledRefresh(fetchFn: () => Promise<void>) {
     lastCalledAt.current = now;
 
     setRefreshing(true);
-    await fetchFn();
+    const [result] = await Promise.all([
+      fetchFn(),
+      new Promise((r) => setTimeout(r, MIN_LOADING_MS)),
+    ]);
     setRefreshing(false);
+    return result;
   }, [fetchFn]);
 
   return { refreshing, refresh };
