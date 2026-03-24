@@ -264,7 +264,7 @@ export default function Guestbook() {
     setLoading(false);
   }, []);
 
-  const { refreshing, cooldown, refresh } = useThrottledRefresh(loadInitial);
+  const { refreshing, cooldown, refresh, silentRefresh } = useThrottledRefresh(loadInitial);
 
   const loadMore = useCallback(async () => {
     if (loadingMore || !hasMore || entries.length === 0) return;
@@ -282,11 +282,11 @@ export default function Guestbook() {
 
   useEffect(() => {
     const onVisible = () => {
-      if (document.visibilityState === "visible") refresh();
+      if (document.visibilityState === "visible") silentRefresh();
     };
     document.addEventListener("visibilitychange", onVisible);
     return () => document.removeEventListener("visibilitychange", onVisible);
-  }, [refresh]);
+  }, [silentRefresh]);
 
   useEffect(() => {
     if (state.success) {
@@ -367,23 +367,27 @@ export default function Guestbook() {
           <button
             onClick={refresh}
             disabled={refreshing || cooldown > 0}
-            className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] text-text-muted border border-border rounded-full hover:border-primary/30 hover:text-primary transition-colors disabled:opacity-50"
+            className="relative w-7 h-7 flex items-center justify-center text-text-muted hover:text-primary transition-colors disabled:opacity-40"
             style={{ minHeight: "auto" }}
+            aria-label="새로고침"
           >
-            <svg
-              viewBox="0 0 24 24"
-              className={`w-3 h-3 ${refreshing ? "animate-spin" : ""}`}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M20.015 4.356v4.992"
-              />
-            </svg>
-            {cooldown > 0 ? `${cooldown}초` : "새로고침"}
+            {cooldown > 0 ? (
+              <span className="text-[10px] tabular-nums">{cooldown}</span>
+            ) : (
+              <svg
+                viewBox="0 0 24 24"
+                className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M20.015 4.356v4.992"
+                />
+              </svg>
+            )}
           </button>
         </div>
       )}

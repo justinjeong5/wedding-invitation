@@ -29,6 +29,7 @@ export function useThrottledRefresh(fetchFn: () => Promise<void>) {
     };
   }, []);
 
+  // 버튼용: 쿨다운 + 최소 로딩 적용
   const refresh = useCallback(async () => {
     const now = Date.now();
     if (now - lastCalledAt.current < THROTTLE_MS) return;
@@ -43,5 +44,10 @@ export function useThrottledRefresh(fetchFn: () => Promise<void>) {
     startCooldown();
   }, [fetchFn, startCooldown]);
 
-  return { refreshing, cooldown, refresh };
+  // visibility용: 쿨다운 없이 조용히 새로고침
+  const silentRefresh = useCallback(async () => {
+    await fetchFn();
+  }, [fetchFn]);
+
+  return { refreshing, cooldown, refresh, silentRefresh };
 }
