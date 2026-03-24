@@ -1,6 +1,6 @@
 const MAX_DIMENSION = 1920;
 const MAX_SIZE_BYTES = 1 * 1024 * 1024; // 1MB
-const MAX_INPUT_SIZE = 10 * 1024 * 1024; // 10MB (원본 제한)
+const MAX_INPUT_SIZE = 30 * 1024 * 1024; // 30MB (원본 제한, 리사이즈 후 1MB 이하로 변환)
 const INITIAL_QUALITY = 0.85;
 
 const ALLOWED_TYPES = new Set([
@@ -16,7 +16,7 @@ export function validateImage(file: File): string | null {
     return "JPG, PNG, WebP, HEIC 형식만 업로드할 수 있습니다.";
   }
   if (file.size > MAX_INPUT_SIZE) {
-    return "파일 크기는 10MB 이하여야 합니다.";
+    return "파일 크기는 30MB 이하여야 합니다.";
   }
   return null;
 }
