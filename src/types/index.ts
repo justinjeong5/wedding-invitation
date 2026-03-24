@@ -28,3 +28,11 @@ export interface GalleryImage {
   src: string;
   alt: string;
 }
+
+export interface GuestPhoto {
+  id: string;
+  storage_path: string;
+  name: string;
+  caption: string | null;
+  created_at: string;
+}

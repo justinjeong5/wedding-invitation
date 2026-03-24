@@ -9,6 +9,7 @@ import Contact from "@/components/sections/Contact";
 import Account from "@/components/sections/Account";
 import Rsvp from "@/components/sections/Rsvp";
 import Share from "@/components/sections/Share";
+import GuestGallery from "@/components/sections/GuestGallery";
 import Guestbook from "@/components/sections/Guestbook";
 import Footer from "@/components/sections/Footer";
 import AccessibilityToggle from "@/components/ui/AccessibilityToggle";
@@ -43,6 +44,8 @@ export default function Home() {
       <Divider />
       <Share />
       <PhotoMemento src={featured[3].src} alt={featured[3].alt} />
+      <GuestGallery />
+      <Divider />
       <Guestbook />
       <Footer />
     </main>
