@@ -160,8 +160,15 @@ export default function Location() {
               </div>
               <div className="flex gap-3 text-xs">
                 <span className="text-text-muted w-10 shrink-0">주차</span>
-                <span className="text-text-light">{directions.parking}</span>
+                <span className="text-text-light">{directions.parking.main}</span>
               </div>
+              <div className="flex gap-3 text-xs">
+                <span className="text-text-muted w-10 shrink-0" />
+                <span className="text-text-muted">{directions.parking.overflow}</span>
+              </div>
+              <p className="text-[10px] text-text-muted/80 mt-1">
+                * {directions.parking.tip}
+              </p>
             </div>
           </div>
         </div>

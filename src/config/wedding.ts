@@ -31,16 +31,20 @@ export const WEDDING_CONFIG = {
         newAddress: "송파구 올림픽로 319",
         oldAddress: "송파구 신천동 11-7",
       },
-      parking: "교통회관 지상·지하 주차장 이용",
+      parking: {
+        main: "본관 주차장 (하객 2시간 무료)",
+        overflow: "만차 시 잠실역 공영주차장 이용",
+        tip: "주차장이 혼잡할 수 있으니 대중교통을 권장합니다",
+      },
     },
     coordinates: {
-      lat: 37.5159227,
-      lng: 127.1057037,
+      lat: 37.5157192,
+      lng: 127.1057895,
     },
     naverMapUrl:
       "https://map.naver.com/v5/search/%EB%8D%94%EC%BB%A8%EB%B2%A4%EC%85%98%20%EC%9E%A0%EC%8B%A4",
     kakaoMapUrl:
-      "https://map.kakao.com/link/to/더컨벤션 잠실,37.5159227,127.1057037",
+      "https://map.kakao.com/link/to/더컨벤션 잠실,37.5157192,127.1057895",
     tmapUrl:
       "https://tmap.life/b9c1e2a0",
   },
