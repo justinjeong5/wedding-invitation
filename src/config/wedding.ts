@@ -103,9 +103,10 @@ export const WEDDING_CONFIG = {
       { src: "/images/gallery/gallery-01.svg", alt: "웨딩 사진 1" },
       { src: "/images/gallery/gallery-02.svg", alt: "웨딩 사진 2" },
       { src: "/images/gallery/gallery-07.svg", alt: "웨딩 사진 7" },
+      { src: "/images/gallery/gallery-10.svg", alt: "웨딩 사진 10" },
     ],
     // images: Gallery 섹션에 표시되는 나머지 사진
-    images: [3, 4, 5, 6, 8, 9, 10, 11, 12].map((n) => ({
+    images: [3, 4, 5, 6, 8, 9, 11, 12].map((n) => ({
       src: `/images/gallery/gallery-${String(n).padStart(2, "0")}.svg`,
       alt: `웨딩 사진 ${n}`,
     })),

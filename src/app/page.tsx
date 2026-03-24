@@ -14,6 +14,7 @@ import Footer from "@/components/sections/Footer";
 import AccessibilityToggle from "@/components/ui/AccessibilityToggle";
 import PhotoRevealPair from "@/components/ui/PhotoRevealPair";
 import PhotoBreak from "@/components/ui/PhotoBreak";
+import PhotoMemento from "@/components/ui/PhotoMemento";
 import { WEDDING_CONFIG } from "@/config/wedding";
 
 export default function Home() {
@@ -41,7 +42,7 @@ export default function Home() {
       <Account />
       <Divider />
       <Share />
-      <Divider />
+      <PhotoMemento src={featured[3].src} alt={featured[3].alt} />
       <Guestbook />
       <Footer />
     </main>
