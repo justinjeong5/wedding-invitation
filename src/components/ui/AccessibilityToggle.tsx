@@ -27,12 +27,13 @@ export default function AccessibilityToggle() {
   return (
     <button
       onClick={toggle}
-      className="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-white shadow-lg border border-border flex items-center justify-center text-primary active:scale-95 transition-transform"
+      className="fixed bottom-6 right-6 z-40 w-10 h-10 rounded-full bg-white shadow-lg border border-border flex items-center justify-center text-primary active:scale-95 transition-transform"
+      style={{ minHeight: "auto" }}
       aria-label={large ? "글자 작게" : "글자 크게"}
       title={large ? "글자 작게" : "글자 크게"}
     >
-      <span className="font-sans font-bold text-sm leading-none">
-        {large ? "가" : "가+"}
+      <span className="font-bold leading-none" style={{ fontSize: large ? 15 : 12, minHeight: "auto" }}>
+        {large ? "가−" : "가+"}
       </span>
     </button>
   );

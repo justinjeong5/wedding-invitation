@@ -11,20 +11,21 @@ export const WEDDING_CONFIG = {
 
   venue: {
     name: "더컨벤션 잠실",
-    hall: "그랜드볼룸 3층", // placeholder
-    address: "서울특별시 송파구 올림픽로 300", // placeholder
-    tel: "02-000-0000", // placeholder
+    hall: "3층",
+    address: "서울 송파구 올림픽로 319 3층",
+    tel: "02-418-5000",
+    transport: "2호선, 8호선 잠실역 9번출구 도보 1분",
     coordinates: {
-      lat: 37.514575,
-      lng: 127.100867,
+      lat: 37.5141,
+      lng: 127.1025,
     },
     parking: "주차 가능 (2시간 무료)", // placeholder
     naverMapUrl:
-      "https://map.naver.com/v5/search/%EB%8D%94%EC%BB%A8%EB%B2%A4%EC%85%98%20%EC%9E%A0%EC%8B%A4", // placeholder
+      "https://map.naver.com/v5/search/%EB%8D%94%EC%BB%A8%EB%B2%A4%EC%85%98%20%EC%9E%A0%EC%8B%A4",
     kakaoMapUrl:
-      "https://map.kakao.com/link/to/더컨벤션 잠실,37.514575,127.100867",
+      "https://map.kakao.com/link/to/더컨벤션 잠실,37.5141,127.1025",
     tmapUrl:
-      "https://apis.openapi.sk.com/tmap/app/routes?appKey=TMAP_KEY&name=더컨벤션잠실&lon=127.100867&lat=37.514575", // placeholder
+      "https://tmap.life/b9c1e2a0",
   },
 
   groom: {
