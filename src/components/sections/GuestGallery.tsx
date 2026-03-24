@@ -194,6 +194,9 @@ function UploadForm({ onUploaded }: { onUploaded: () => void }) {
           className="w-24 px-3 py-2.5 text-sm border border-border rounded-lg bg-bg-card focus:outline-none focus:border-primary"
         />
       </div>
+      <p className="text-[10px] text-text-muted/60 -mt-1">
+        비밀번호는 사진 삭제 시 본인 확인에 사용됩니다.
+      </p>
 
       {/* Caption */}
       <div className="relative">
@@ -240,6 +243,7 @@ function PhotoCard({
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const menuBtnRef = useRef<HTMLButtonElement>(null);
 
   const handleDelete = async () => {
     if (!isAdmin && !password) return;
@@ -280,19 +284,18 @@ function PhotoCard({
         </div>
       </button>
 
-      {/* Delete button (admin or user) */}
-      {(isAdmin || true) && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setShowDelete(!showDelete);
-          }}
-          className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/40 text-white/80 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-          style={{ minHeight: "auto" }}
-        >
-          &#8942;
-        </button>
-      )}
+      {/* Delete button */}
+      <button
+        ref={menuBtnRef}
+        onClick={(e) => {
+          e.stopPropagation();
+          setShowDelete(!showDelete);
+        }}
+        className="absolute top-1.5 right-1.5 w-7 h-7 rounded-full bg-black/50 text-white text-sm flex items-center justify-center"
+        style={{ minHeight: "auto" }}
+      >
+        &#8942;
+      </button>
 
       {showDelete && (
         <>
@@ -304,7 +307,20 @@ function PhotoCard({
               setPassword("");
             }}
           />
-          <div className="absolute top-8 right-1 z-20 bg-bg-card border border-border rounded-lg shadow-lg p-3 w-44">
+          <div
+            className="fixed z-20 bg-bg-card border border-border rounded-lg shadow-lg p-3 w-44"
+            style={{
+              top: menuBtnRef.current
+                ? menuBtnRef.current.getBoundingClientRect().bottom + 4
+                : 0,
+              left: menuBtnRef.current
+                ? Math.min(
+                    Math.max(8, menuBtnRef.current.getBoundingClientRect().left - 140),
+                    window.innerWidth - 184
+                  )
+                : 0,
+            }}
+          >
             {isAdmin ? (
               <button
                 onClick={handleDelete}
@@ -675,7 +691,7 @@ export default function GuestGallery() {
           >
             <svg
               viewBox="0 0 24 24"
-              className={`w-4 h-4 ${refreshing ? "animate-spin" : ""} ${cooldown > 0 ? "opacity-40" : ""} transition-opacity`}
+              className={`w-5 h-5 ${refreshing ? "animate-spin" : ""} ${cooldown > 0 ? "opacity-40" : ""} transition-opacity`}
               fill="none"
               stroke="currentColor"
               strokeWidth={2}
@@ -687,7 +703,7 @@ export default function GuestGallery() {
               />
             </svg>
             {cooldown > 0 && (
-              <span className="absolute inset-0 flex items-center justify-center text-[11px] tabular-nums text-text-muted">
+              <span className="absolute inset-0 flex items-center justify-center text-[10px] tabular-nums text-text-muted">
                 {cooldown}
               </span>
             )}

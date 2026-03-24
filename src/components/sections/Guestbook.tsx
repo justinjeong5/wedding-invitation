@@ -373,7 +373,7 @@ export default function Guestbook() {
           >
             <svg
               viewBox="0 0 24 24"
-              className={`w-4 h-4 ${refreshing ? "animate-spin" : ""} ${cooldown > 0 ? "opacity-40" : ""} transition-opacity`}
+              className={`w-5 h-5 ${refreshing ? "animate-spin" : ""} ${cooldown > 0 ? "opacity-40" : ""} transition-opacity`}
               fill="none"
               stroke="currentColor"
               strokeWidth={2}
@@ -385,7 +385,7 @@ export default function Guestbook() {
               />
             </svg>
             {cooldown > 0 && (
-              <span className="absolute inset-0 flex items-center justify-center text-[11px] tabular-nums text-text-muted">
+              <span className="absolute inset-0 flex items-center justify-center text-[10px] tabular-nums text-text-muted">
                 {cooldown}
               </span>
             )}
