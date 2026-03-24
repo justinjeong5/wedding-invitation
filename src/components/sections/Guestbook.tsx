@@ -327,32 +327,9 @@ export default function Guestbook() {
 
   return (
     <SectionWrapper id="guestbook">
-      <div className="flex items-center justify-center gap-2 mb-8">
-        <h2 className="text-lg font-light text-primary tracking-wider">
-          방명록
-        </h2>
-        <button
-          onClick={refresh}
-          disabled={refreshing}
-          className="text-text-muted hover:text-primary transition-colors disabled:opacity-50"
-          style={{ minHeight: "auto" }}
-          aria-label="새로고침"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M20.015 4.356v4.992"
-            />
-          </svg>
-        </button>
-      </div>
+      <h2 className="text-lg font-light text-primary mb-8 tracking-wider text-center">
+        방명록
+      </h2>
 
       <form action={formAction} className="space-y-3 mb-6">
         <div className="flex gap-2">
@@ -389,6 +366,32 @@ export default function Guestbook() {
           {isPending ? "작성 중..." : "남기기"}
         </button>
       </form>
+
+      {!loading && entries.length > 0 && (
+        <div className="flex justify-end mb-2">
+          <button
+            onClick={refresh}
+            disabled={refreshing}
+            className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] text-text-muted border border-border rounded-full hover:border-primary/30 hover:text-primary transition-colors disabled:opacity-50"
+            style={{ minHeight: "auto" }}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              className={`w-3 h-3 ${refreshing ? "animate-spin" : ""}`}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M20.015 4.356v4.992"
+              />
+            </svg>
+            새로고침
+          </button>
+        </div>
+      )}
 
       <div className="space-y-3">
         {loading ? (
