@@ -16,14 +16,14 @@ export const WEDDING_CONFIG = {
     tel: "02-418-5000",
     transport: "2호선, 8호선 잠실역 9번출구 도보 1분",
     coordinates: {
-      lat: 37.5141,
-      lng: 127.1025,
+      lat: 37.5159227,
+      lng: 127.1057037,
     },
     parking: "주차 가능 (2시간 무료)", // placeholder
     naverMapUrl:
       "https://map.naver.com/v5/search/%EB%8D%94%EC%BB%A8%EB%B2%A4%EC%85%98%20%EC%9E%A0%EC%8B%A4",
     kakaoMapUrl:
-      "https://map.kakao.com/link/to/더컨벤션 잠실,37.5141,127.1025",
+      "https://map.kakao.com/link/to/더컨벤션 잠실,37.5159227,127.1057037",
     tmapUrl:
       "https://tmap.life/b9c1e2a0",
   },
