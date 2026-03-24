@@ -1,31 +1,65 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import type { Swiper as SwiperType } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
+import {
+  Autoplay,
+  Pagination,
+  EffectFade,
+  Zoom,
+  FreeMode,
+  Thumbs,
+  Keyboard,
+} from "swiper/modules";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import { WEDDING_CONFIG } from "@/config/wedding";
 
 import "swiper/css";
+import "swiper/css/effect-fade";
 import "swiper/css/pagination";
+import "swiper/css/zoom";
+import "swiper/css/free-mode";
+import "swiper/css/thumbs";
 
 export default function Gallery() {
   const { gallery } = WEDDING_CONFIG;
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
+  const [heroSwiper, setHeroSwiper] = useState<SwiperType | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  const goPrev = useCallback(() => {
-    setSelectedIndex((prev) =>
-      prev !== null ? (prev - 1 + gallery.images.length) % gallery.images.length : null
-    );
-  }, [gallery.images.length]);
+  const openLightbox = useCallback(() => {
+    if (heroSwiper) {
+      setLightboxIndex(heroSwiper.realIndex);
+    }
+  }, [heroSwiper]);
 
-  const goNext = useCallback(() => {
-    setSelectedIndex((prev) =>
-      prev !== null ? (prev + 1) % gallery.images.length : null
-    );
-  }, [gallery.images.length]);
+  const closeLightbox = useCallback(() => {
+    setLightboxIndex(null);
+  }, []);
+
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeLightbox();
+    };
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [lightboxIndex, closeLightbox]);
+
+  // Prevent body scroll when lightbox is open
+  useEffect(() => {
+    if (lightboxIndex !== null) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [lightboxIndex]);
 
   return (
     <>
@@ -34,20 +68,28 @@ export default function Gallery() {
           갤러리
         </h2>
 
-        {/* Swiper carousel */}
-        <div className="mb-6">
+        {/* Hero Carousel */}
+        <div className="mb-5">
           <Swiper
-            modules={[Autoplay, Pagination]}
-            autoplay={{ delay: 3500, disableOnInteraction: false }}
+            modules={[Autoplay, Pagination, EffectFade, Thumbs]}
+            effect="fade"
+            autoplay={{ delay: 4500, disableOnInteraction: false }}
             pagination={{ clickable: true }}
+            thumbs={{
+              swiper:
+                thumbsSwiper && !thumbsSwiper.destroyed
+                  ? thumbsSwiper
+                  : null,
+            }}
+            onSwiper={setHeroSwiper}
             loop
-            className="rounded-lg overflow-hidden"
+            className="rounded-2xl overflow-hidden"
           >
             {gallery.images.map((image, index) => (
               <SwiperSlide key={index}>
                 <div
                   className="relative aspect-[3/4] cursor-pointer bg-border/30"
-                  onClick={() => setSelectedIndex(index)}
+                  onClick={openLightbox}
                 >
                   <Image
                     src={image.src}
@@ -63,94 +105,101 @@ export default function Gallery() {
           </Swiper>
         </div>
 
-        {/* Thumbnail grid */}
-        <div className="grid grid-cols-3 gap-1.5 min-[360px]:grid-cols-4">
+        {/* Thumbnail Strip */}
+        <Swiper
+          modules={[FreeMode, Thumbs]}
+          onSwiper={setThumbsSwiper}
+          slidesPerView="auto"
+          spaceBetween={6}
+          freeMode
+          watchSlidesProgress
+          className="gallery-thumbs"
+        >
           {gallery.images.map((image, index) => (
-            <div
+            <SwiperSlide
               key={index}
-              className="relative aspect-square cursor-pointer rounded overflow-hidden bg-border/30"
-              onClick={() => setSelectedIndex(index)}
+              className="!w-16 !h-16"
+              style={{ width: "4rem", height: "4rem" }}
             >
-              <Image
-                src={image.src}
-                alt={image.alt}
-                fill
-                className="object-cover hover:scale-105 transition-transform duration-300"
-                sizes="80px"
-                loading="lazy"
-              />
-            </div>
+              <div
+                className="relative w-full h-full rounded overflow-hidden cursor-pointer bg-border/30"
+              >
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  className="object-cover"
+                  sizes="80px"
+                  loading="lazy"
+                />
+              </div>
+            </SwiperSlide>
           ))}
-        </div>
+        </Swiper>
       </SectionWrapper>
 
-      {/* Lightbox */}
+      {/* Fullscreen Lightbox */}
       <AnimatePresence>
-        {selectedIndex !== null && (
+        {lightboxIndex !== null && (
           <motion.div
-            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSelectedIndex(null)}
+            className="fixed inset-0 z-50 bg-black"
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.96 }}
+            transition={{ duration: 0.25 }}
           >
-            {/* Close */}
-            <button
-              className="absolute top-4 right-4 text-white/70 text-4xl z-50 p-3 min-h-0"
-              onClick={() => setSelectedIndex(null)}
-              aria-label="닫기"
-            >
-              &times;
-            </button>
-
-            {/* Counter */}
-            <div className="absolute top-5 left-1/2 -translate-x-1/2 text-white/60 text-sm z-50">
-              {selectedIndex + 1} / {gallery.images.length}
+            {/* Header */}
+            <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between px-4 pt-3 pb-10 bg-gradient-to-b from-black/50 to-transparent">
+              <span className="text-white/70 text-sm">
+                {lightboxIndex + 1} / {gallery.images.length}
+              </span>
+              <button
+                onClick={closeLightbox}
+                className="text-white/80 hover:text-white p-2.5 -m-1"
+                aria-label="닫기"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
             </div>
 
-            {/* Prev */}
-            <button
-              className="absolute left-2 top-1/2 -translate-y-1/2 text-white/60 text-4xl p-3 z-50 min-h-0"
-              onClick={(e) => {
-                e.stopPropagation();
-                goPrev();
-              }}
-              aria-label="이전 사진"
+            {/* Swiper with Zoom */}
+            <Swiper
+              modules={[Zoom, Keyboard]}
+              zoom={{ maxRatio: 3 }}
+              keyboard={{ enabled: true }}
+              initialSlide={lightboxIndex}
+              slidesPerView={1}
+              loop
+              className="w-full h-full"
+              onSlideChange={(swiper) => setLightboxIndex(swiper.realIndex)}
             >
-              &#8249;
-            </button>
-
-            {/* Image */}
-            <motion.div
-              key={selectedIndex}
-              className="relative w-full h-full max-w-lg max-h-[80vh] mx-12"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.2 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Image
-                src={gallery.images[selectedIndex].src}
-                alt={gallery.images[selectedIndex].alt}
-                fill
-                className="object-contain"
-                sizes="100vw"
-                priority
-              />
-            </motion.div>
-
-            {/* Next */}
-            <button
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-white/60 text-4xl p-3 z-50 min-h-0"
-              onClick={(e) => {
-                e.stopPropagation();
-                goNext();
-              }}
-              aria-label="다음 사진"
-            >
-              &#8250;
-            </button>
+              {gallery.images.map((image, index) => (
+                <SwiperSlide key={index}>
+                  <div className="swiper-zoom-container">
+                    <Image
+                      src={image.src}
+                      alt={image.alt}
+                      fill
+                      className="object-contain"
+                      sizes="100vw"
+                      priority={index === lightboxIndex}
+                    />
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
           </motion.div>
         )}
       </AnimatePresence>
