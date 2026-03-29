@@ -9,6 +9,8 @@ import {
   verifyRsvpPassword,
   deleteRsvp,
 } from "@/actions/rsvp";
+import { useCountdown } from "@/hooks/useCountdown";
+import { WEDDING_CONFIG } from "@/config/wedding";
 
 const STORAGE_KEY = "wedding_rsvp";
 
@@ -27,6 +29,33 @@ interface SavedRsvp {
   meal: boolean;
   message: string | null;
   submitted_at: string;
+}
+
+const weddingDate = new Date(
+  WEDDING_CONFIG.date.year,
+  WEDDING_CONFIG.date.month - 1,
+  WEDDING_CONFIG.date.day,
+  WEDDING_CONFIG.date.hour,
+  WEDDING_CONFIG.date.minute
+);
+
+function TimeReminder() {
+  const { totalDays, ready, isExpired } = useCountdown(weddingDate);
+
+  if (!ready || isExpired || totalDays > 30) return null;
+
+  const message =
+    totalDays > 13
+      ? "결혼식이 한 달 앞으로 다가왔습니다"
+      : totalDays > 6
+        ? "결혼식이 2주도 채 남지 않았습니다"
+        : "결혼식이 일주일 앞으로 다가왔습니다";
+
+  return (
+    <p className="text-[10px] text-text-muted/60 font-light -mt-6 mb-8">
+      {message}
+    </p>
+  );
 }
 
 function RadioOption({
@@ -181,7 +210,12 @@ function RsvpSummary({
         <div className="pt-3 pb-5">
           <p className="text-primary text-2xl mb-1">&#10003;</p>
           <p className="text-sm text-text-light">
-            감사합니다. 전달되었습니다.
+            감사합니다.
+            <br />
+            <span className="text-primary">{WEDDING_CONFIG.groom.name}</span>
+            {" & "}
+            <span className="text-primary">{WEDDING_CONFIG.bride.name}</span>
+            에게 전달되었습니다.
           </p>
         </div>
       ) : (
@@ -335,6 +369,7 @@ function RsvpForm({
         <br />
         언제든 수정하거나 삭제할 수 있습니다
       </p>
+      <TimeReminder />
 
       <form action={formAction} className="max-w-sm mx-auto" data-1p-ignore>
         {isEditing && (
