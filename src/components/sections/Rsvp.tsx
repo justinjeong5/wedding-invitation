@@ -220,7 +220,8 @@ function RsvpSummary({
         </div>
       ) : (
         <p className="text-xs text-text-muted font-light mb-6">
-          이미 참석 여부를 전달해주셨습니다
+          이미 {WEDDING_CONFIG.groom.name} & {WEDDING_CONFIG.bride.name}에게
+          마음을 전해주셨습니다
         </p>
       )}
 
