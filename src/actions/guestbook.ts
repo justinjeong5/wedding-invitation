@@ -24,10 +24,13 @@ export async function submitGuestbook(
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
+  const visitor_id = (formData.get("visitor_id") as string) || null;
+
   const { error } = await supabase.from("guestbook").insert({
     name,
     message,
     password: hashedPassword,
+    visitor_id,
   });
 
   if (error) {

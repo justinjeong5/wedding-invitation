@@ -13,10 +13,12 @@ import GuestGallery from "@/components/sections/GuestGallery";
 import Guestbook from "@/components/sections/Guestbook";
 import Footer from "@/components/sections/Footer";
 import AccessibilityToggle from "@/components/ui/AccessibilityToggle";
+import VisitTracker from "@/components/VisitTracker";
 
 export default function Home() {
   return (
     <main className="min-h-dvh bg-bg w-full max-w-[480px] mx-auto overflow-x-hidden" data-1p-ignore>
+      <VisitTracker />
       <AccessibilityToggle />
       <Cover />
       <Greeting />

@@ -9,6 +9,7 @@ import {
   deleteGuestbookEntry,
 } from "@/actions/guestbook";
 import { useThrottledRefresh } from "@/hooks/useThrottledRefresh";
+import { useVisitorId } from "@/components/VisitTracker";
 import type { GuestbookEntry } from "@/types";
 
 function formatDate(dateStr: string) {
@@ -250,6 +251,7 @@ function GuestbookSkeleton() {
 }
 
 export default function Guestbook() {
+  const visitorId = useVisitorId();
   const [entries, setEntries] = useState<GuestbookEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
@@ -329,6 +331,7 @@ export default function Guestbook() {
       </h2>
 
       <form action={formAction} className="space-y-3 mb-6" data-1p-ignore>
+        <input type="hidden" name="visitor_id" value={visitorId} />
         <div className="flex gap-2">
           <input
             name="name"

@@ -17,6 +17,7 @@ import {
 } from "@/actions/guest-gallery";
 import { validateImage, validateAspectRatio, resizeImage } from "@/lib/image-resize";
 import { useThrottledRefresh } from "@/hooks/useThrottledRefresh";
+import { useVisitorId } from "@/components/VisitTracker";
 import type { GuestPhoto } from "@/types";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -43,6 +44,7 @@ function formatDate(dateStr: string) {
 
 /* ─── Upload Form ─── */
 function UploadForm({ onUploaded }: { onUploaded: () => void }) {
+  const visitorId = useVisitorId();
   const [preview, setPreview] = useState<string | null>(null);
   const [resizing, setResizing] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -115,6 +117,7 @@ function UploadForm({ onUploaded }: { onUploaded: () => void }) {
 
   return (
     <form ref={formRef} action={formAction} className="space-y-3 mb-6" data-1p-ignore>
+      <input type="hidden" name="visitor_id" value={visitorId} />
       {/* Photo picker */}
       <button
         type="button"

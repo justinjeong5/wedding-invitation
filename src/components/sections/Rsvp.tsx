@@ -11,6 +11,7 @@ import {
 } from "@/actions/rsvp";
 import { useCountdown } from "@/hooks/useCountdown";
 import { WEDDING_CONFIG } from "@/config/wedding";
+import { useVisitorId } from "@/components/VisitTracker";
 
 const STORAGE_KEY = "wedding_rsvp";
 
@@ -319,6 +320,7 @@ function RsvpForm({
   onSuccess: (data: SavedRsvp) => void;
   onCancel?: () => void;
 }) {
+  const visitorId = useVisitorId();
   const isEditing = !!editPassword;
   const action = isEditing ? updateRsvp : submitRsvp;
   const [state, formAction, isPending] = useActionState(action, {
@@ -373,6 +375,7 @@ function RsvpForm({
       <TimeReminder />
 
       <form action={formAction} className="max-w-sm mx-auto" data-1p-ignore>
+        <input type="hidden" name="visitor_id" value={visitorId} />
         {isEditing && (
           <>
             <input type="hidden" name="id" value={initialValues!.id} />

@@ -38,6 +38,8 @@ export async function submitRsvp(
   const hashedPassword = await bcrypt.hash(password, 10);
   const id = crypto.randomUUID();
 
+  const visitor_id = (formData.get("visitor_id") as string) || null;
+
   const { error } = await supabase.from("rsvp").insert({
     id,
     name,
@@ -47,6 +49,7 @@ export async function submitRsvp(
     meal: attendance ? meal : false,
     message,
     password: hashedPassword,
+    visitor_id,
   });
 
   if (error) {

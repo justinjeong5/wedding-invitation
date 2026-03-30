@@ -80,11 +80,14 @@ export async function uploadGuestPhoto(
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
+  const visitor_id = (formData.get("visitor_id") as string) || null;
+
   const { error: dbError } = await serviceClient.from("guest_photos").insert({
     storage_path: fileName,
     name,
     caption,
     password: hashedPassword,
+    visitor_id,
   });
 
   if (dbError) {
