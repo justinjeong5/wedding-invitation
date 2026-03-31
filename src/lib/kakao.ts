@@ -11,9 +11,12 @@ declare global {
 }
 
 let initialized = false;
+let sdkPromise: Promise<void> | null = null;
 
 export function loadKakaoSDK(): Promise<void> {
-  return new Promise((resolve, reject) => {
+  if (sdkPromise) return sdkPromise;
+
+  sdkPromise = new Promise((resolve, reject) => {
     if (typeof window === "undefined") return reject();
     if (window.Kakao) {
       initKakao();
@@ -29,10 +32,13 @@ export function loadKakaoSDK(): Promise<void> {
     };
     script.onerror = () => {
       console.error("Kakao SDK 로드 실패");
+      sdkPromise = null;
       reject();
     };
     document.head.appendChild(script);
   });
+
+  return sdkPromise;
 }
 
 function initKakao() {
