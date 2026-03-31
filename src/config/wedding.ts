@@ -97,10 +97,28 @@ export const WEDDING_CONFIG = {
   },
 
   gallery: {
-    images: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map((n) => ({
-      src: `/images/gallery/gallery-${String(n).padStart(2, "0")}.jpg`,
-      alt: `웨딩 사진 ${n}`,
-    })),
+    images: [
+      { src: "/images/gallery/gallery-01.jpg", alt: "웨딩 사진 1", width: 1920, height: 1440 },
+      { src: "/images/gallery/gallery-02.jpg", alt: "웨딩 사진 2", width: 1440, height: 1920 },
+      { src: "/images/gallery/gallery-03.jpg", alt: "웨딩 사진 3", width: 1920, height: 1440 },
+      { src: "/images/gallery/gallery-04.jpg", alt: "웨딩 사진 4", width: 1920, height: 1440 },
+      { src: "/images/gallery/gallery-05.jpg", alt: "웨딩 사진 5", width: 1440, height: 1920 },
+      { src: "/images/gallery/gallery-06.jpg", alt: "웨딩 사진 6", width: 1920, height: 1440 },
+      { src: "/images/gallery/gallery-07.jpg", alt: "웨딩 사진 7", width: 1920, height: 1440 },
+      { src: "/images/gallery/gallery-08.jpg", alt: "웨딩 사진 8", width: 1920, height: 1440 },
+      { src: "/images/gallery/gallery-09.jpg", alt: "웨딩 사진 9", width: 1920, height: 1440 },
+      { src: "/images/gallery/gallery-10.jpg", alt: "웨딩 사진 10", width: 1920, height: 1440 },
+      { src: "/images/gallery/gallery-11.jpg", alt: "웨딩 사진 11", width: 1920, height: 1440 },
+      { src: "/images/gallery/gallery-12.jpg", alt: "웨딩 사진 12", width: 1920, height: 1440 },
+      { src: "/images/gallery/gallery-13.jpg", alt: "웨딩 사진 13", width: 1920, height: 1440 },
+    ],
+    layout: [
+      [0],
+      [2, 3, 5],
+      { landscape: [6, 7, 8, 9], portrait: 1 },
+      [10, 11, 12],
+      [4],
+    ],
   },
 
   meta: {

@@ -32,6 +32,8 @@ export interface Account {
 export interface GalleryImage {
   src: string;
   alt: string;
+  width: number;
+  height: number;
 }
 
 export interface GuestPhoto {

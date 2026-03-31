@@ -89,23 +89,3 @@ button, a, input, select, textarea {
   min-height: 44px;
 }
 
-/* Swiper pagination 커스텀 */
-.swiper-pagination-bullet {
-  background: var(--color-primary) !important;
-  opacity: 0.3 !important;
-}
-.swiper-pagination-bullet-active {
-  opacity: 1 !important;
-}
-
-/* Gallery 썸네일 스트립 */
-.gallery-thumbs .swiper-slide {
-  opacity: 0.5;
-  transition: opacity 0.2s;
-}
-.gallery-thumbs .swiper-slide-thumb-active {
-  opacity: 1;
-}
-.gallery-thumbs .swiper-slide-thumb-active > div {
-  box-shadow: 0 0 0 2px var(--color-primary);
-}
