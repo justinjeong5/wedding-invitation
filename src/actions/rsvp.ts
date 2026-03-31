@@ -1,7 +1,8 @@
 "use server";
 
 import { supabase, getServiceClient } from "@/lib/supabase";
-import bcrypt from "bcryptjs";
+import { hashPassword, verifyPassword } from "@/lib/auth";
+import type { FormState } from "@/types";
 
 interface RsvpData {
   id: string;
@@ -13,11 +14,11 @@ interface RsvpData {
   message: string | null;
 }
 
-interface RsvpFormState {
-  success: boolean;
-  error?: string;
+interface RsvpFormState extends FormState {
   data?: RsvpData;
 }
+
+const NOT_FOUND = "참석 정보를 찾을 수 없습니다.";
 
 export async function submitRsvp(
   _prevState: RsvpFormState,
@@ -35,7 +36,7 @@ export async function submitRsvp(
     return { success: false, error: "이름, 소속, 비밀번호를 입력해주세요." };
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await hashPassword(password);
   const id = crypto.randomUUID();
 
   const visitor_id = (formData.get("visitor_id") as string) || null;
@@ -73,25 +74,8 @@ export async function submitRsvp(
 export async function verifyRsvpPassword(
   id: string,
   password: string
-): Promise<{ success: boolean; error?: string }> {
-  const serviceClient = getServiceClient();
-
-  const { data } = await serviceClient
-    .from("rsvp")
-    .select("password")
-    .eq("id", id)
-    .single();
-
-  if (!data) {
-    return { success: false, error: "참석 정보를 찾을 수 없습니다." };
-  }
-
-  const isMatch = await bcrypt.compare(password, data.password);
-  if (!isMatch) {
-    return { success: false, error: "비밀번호가 일치하지 않습니다." };
-  }
-
-  return { success: true };
+): Promise<FormState> {
+  return verifyPassword("rsvp", id, password, NOT_FOUND);
 }
 
 export async function updateRsvp(
@@ -111,23 +95,10 @@ export async function updateRsvp(
     return { success: false, error: "필수 항목이 누락되었습니다." };
   }
 
+  const verify = await verifyPassword("rsvp", id, password, NOT_FOUND);
+  if (!verify.success) return verify;
+
   const serviceClient = getServiceClient();
-
-  const { data: existing } = await serviceClient
-    .from("rsvp")
-    .select("password")
-    .eq("id", id)
-    .single();
-
-  if (!existing) {
-    return { success: false, error: "참석 정보를 찾을 수 없습니다." };
-  }
-
-  const isMatch = await bcrypt.compare(password, existing.password);
-  if (!isMatch) {
-    return { success: false, error: "비밀번호가 일치하지 않습니다." };
-  }
-
   const { error } = await serviceClient
     .from("rsvp")
     .update({
@@ -162,23 +133,10 @@ export async function deleteRsvp(
   id: string,
   password: string
 ): Promise<RsvpFormState> {
+  const verify = await verifyPassword("rsvp", id, password, NOT_FOUND);
+  if (!verify.success) return verify;
+
   const serviceClient = getServiceClient();
-
-  const { data } = await serviceClient
-    .from("rsvp")
-    .select("password")
-    .eq("id", id)
-    .single();
-
-  if (!data) {
-    return { success: false, error: "참석 정보를 찾을 수 없습니다." };
-  }
-
-  const isMatch = await bcrypt.compare(password, data.password);
-  if (!isMatch) {
-    return { success: false, error: "비밀번호가 일치하지 않습니다." };
-  }
-
   const { error } = await serviceClient.from("rsvp").delete().eq("id", id);
   if (error) {
     return { success: false, error: "삭제에 실패했습니다." };

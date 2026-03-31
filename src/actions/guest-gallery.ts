@@ -2,12 +2,8 @@
 
 import { supabase, getServiceClient } from "@/lib/supabase";
 import bcrypt from "bcryptjs";
-import type { GuestPhoto } from "@/types";
-
-interface FormState {
-  success: boolean;
-  error?: string;
-}
+import { hashPassword } from "@/lib/auth";
+import type { FormState, GuestPhoto } from "@/types";
 
 const ADMIN_PASSWORD = process.env.GUEST_GALLERY_ADMIN_PASSWORD ?? "";
 
@@ -78,7 +74,7 @@ export async function uploadGuestPhoto(
     return { success: false, error: "사진 업로드에 실패했습니다." };
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await hashPassword(password);
 
   const visitor_id = (formData.get("visitor_id") as string) || null;
 

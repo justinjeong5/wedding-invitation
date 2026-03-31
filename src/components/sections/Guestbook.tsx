@@ -10,22 +10,8 @@ import {
 } from "@/actions/guestbook";
 import { useThrottledRefresh } from "@/hooks/useThrottledRefresh";
 import { useVisitorId } from "@/components/VisitTracker";
+import { formatRelativeDate } from "@/lib/format";
 import type { GuestbookEntry } from "@/types";
-
-function formatDate(dateStr: string) {
-  const d = new Date(dateStr);
-  const now = new Date();
-  const diff = now.getTime() - d.getTime();
-  const minutes = Math.floor(diff / 60000);
-  const hours = Math.floor(diff / 3600000);
-  const days = Math.floor(diff / 86400000);
-
-  if (minutes < 1) return "방금 전";
-  if (minutes < 60) return `${minutes}분 전`;
-  if (hours < 24) return `${hours}시간 전`;
-  if (days < 7) return `${days}일 전`;
-  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
-}
 
 function GuestbookItem({
   entry,
@@ -95,7 +81,7 @@ function GuestbookItem({
         <span className="text-sm font-medium">{entry.name}</span>
         <div className="flex items-center gap-1.5">
           <span className="text-xs text-text-light">
-            {formatDate(entry.created_at)}
+            {formatRelativeDate(entry.created_at)}
           </span>
           {!activeAction && (
             <div className="relative">

@@ -1,3 +1,8 @@
+export interface FormState {
+  success: boolean;
+  error?: string;
+}
+
 export interface GuestbookEntry {
   id: string;
   name: string;

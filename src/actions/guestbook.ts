@@ -1,19 +1,15 @@
 "use server";
 
-import { supabase } from "@/lib/supabase";
-import { getServiceClient } from "@/lib/supabase";
-import bcrypt from "bcryptjs";
-import type { GuestbookEntry } from "@/types";
+import { supabase, getServiceClient } from "@/lib/supabase";
+import { hashPassword, verifyPassword } from "@/lib/auth";
+import type { FormState, GuestbookEntry } from "@/types";
 
-interface GuestbookFormState {
-  success: boolean;
-  error?: string;
-}
+const NOT_FOUND = "메시지를 찾을 수 없습니다.";
 
 export async function submitGuestbook(
-  _prevState: GuestbookFormState,
+  _prevState: FormState,
   formData: FormData
-): Promise<GuestbookFormState> {
+): Promise<FormState> {
   const name = formData.get("name") as string;
   const message = formData.get("message") as string;
   const password = formData.get("password") as string;
@@ -22,7 +18,7 @@ export async function submitGuestbook(
     return { success: false, error: "모든 항목을 입력해주세요." };
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await hashPassword(password);
 
   const visitor_id = (formData.get("visitor_id") as string) || null;
 
@@ -69,28 +65,15 @@ export async function updateGuestbookEntry(
   id: string,
   password: string,
   newMessage: string
-): Promise<GuestbookFormState> {
+): Promise<FormState> {
   if (!newMessage.trim()) {
     return { success: false, error: "메시지를 입력해주세요." };
   }
 
+  const verify = await verifyPassword("guestbook", id, password, NOT_FOUND);
+  if (!verify.success) return verify;
+
   const serviceClient = getServiceClient();
-
-  const { data } = await serviceClient
-    .from("guestbook")
-    .select("password")
-    .eq("id", id)
-    .single();
-
-  if (!data) {
-    return { success: false, error: "메시지를 찾을 수 없습니다." };
-  }
-
-  const isMatch = await bcrypt.compare(password, data.password);
-  if (!isMatch) {
-    return { success: false, error: "비밀번호가 일치하지 않습니다." };
-  }
-
   const { error } = await serviceClient
     .from("guestbook")
     .update({ message: newMessage.trim(), edited: true })
@@ -106,24 +89,11 @@ export async function updateGuestbookEntry(
 export async function deleteGuestbookEntry(
   id: string,
   password: string
-): Promise<GuestbookFormState> {
+): Promise<FormState> {
+  const verify = await verifyPassword("guestbook", id, password, NOT_FOUND);
+  if (!verify.success) return verify;
+
   const serviceClient = getServiceClient();
-
-  const { data } = await serviceClient
-    .from("guestbook")
-    .select("password")
-    .eq("id", id)
-    .single();
-
-  if (!data) {
-    return { success: false, error: "메시지를 찾을 수 없습니다." };
-  }
-
-  const isMatch = await bcrypt.compare(password, data.password);
-  if (!isMatch) {
-    return { success: false, error: "비밀번호가 일치하지 않습니다." };
-  }
-
   const { error } = await serviceClient.from("guestbook").delete().eq("id", id);
   if (error) {
     return { success: false, error: "삭제에 실패했습니다." };
