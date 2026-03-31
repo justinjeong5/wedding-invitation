@@ -192,6 +192,7 @@ function UploadForm({ onUploaded }: { onUploaded: () => void }) {
         <input
           name="password"
           type="password"
+          autoComplete="off"
           placeholder="비밀번호"
           required
           className="w-24 px-3 py-2.5 text-sm border border-border rounded-lg bg-bg-card focus:outline-none focus:border-primary"
@@ -337,6 +338,7 @@ function PhotoCard({
               <div className="space-y-2">
                 <input
                   type="password"
+                  autoComplete="off"
                   placeholder="비밀번호"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}

@@ -156,6 +156,7 @@ function PasswordPrompt({
       <div className="flex gap-2 max-w-xs mx-auto">
         <input
           type="password"
+          autoComplete="off"
           placeholder="비밀번호"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -526,6 +527,7 @@ function RsvpForm({
                   <input
                     name="password"
                     type="password"
+                    autoComplete="off"
                     placeholder="비밀번호를 설정해주세요"
                     required
                     className="w-full px-4 py-2.5 text-sm border border-border rounded-lg bg-bg focus:outline-none focus:border-primary transition-colors"
