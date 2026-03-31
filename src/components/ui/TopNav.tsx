@@ -2,14 +2,18 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { WEDDING_CONFIG } from "@/config/wedding";
 
 const NAV_ITEMS = [
   { id: "greeting", label: "인사말" },
-  { id: "calendar", label: "일시" },
+  { id: "calendar", label: "예식 일시" },
   { id: "gallery", label: "갤러리" },
   { id: "location", label: "오시는 길" },
-  { id: "rsvp", label: "참석여부" },
-  { id: "account", label: "마음 전하기" },
+  { id: "rsvp", label: "참석 여부" },
+  { id: "contact", label: "연락처" },
+  { id: "account", label: "마음 전하실 곳" },
+  { id: "share", label: "공유하기" },
+  { id: "guest-gallery", label: "하객 갤러리" },
   { id: "guestbook", label: "방명록" },
 ];
 
@@ -76,13 +80,13 @@ export default function TopNav() {
               >
                 <div className="absolute inset-0 bg-black/30" onClick={() => setOpen(false)} />
                 <motion.div
-                  className="relative w-full max-w-[480px] mt-11 bg-white/95 backdrop-blur-md border-b border-border/60"
+                  className="relative w-full max-w-[480px] mt-11 h-[calc(100dvh-2.75rem)] bg-white/95 backdrop-blur-md flex flex-col"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <ul className="py-2">
+                  <ul className="py-2 flex-1">
                     {NAV_ITEMS.map(({ id, label }) => (
                       <li key={id}>
                         <button
@@ -95,6 +99,17 @@ export default function TopNav() {
                       </li>
                     ))}
                   </ul>
+                  <div className="px-6 py-6 border-t border-border/40 text-center">
+                    <p className="text-xs text-text-muted/80 font-serif">
+                      {WEDDING_CONFIG.groom.name} & {WEDDING_CONFIG.bride.name}
+                    </p>
+                    <p className="text-[10px] text-text-muted/60 tracking-wider mt-1">
+                      {WEDDING_CONFIG.date.display}
+                    </p>
+                    <p className="text-[10px] text-text-muted/60 mt-0.5">
+                      {WEDDING_CONFIG.venue.name} {WEDDING_CONFIG.venue.hall}
+                    </p>
+                  </div>
                 </motion.div>
               </motion.div>
             )}
