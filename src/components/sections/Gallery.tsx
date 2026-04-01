@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Zoom, Keyboard } from "swiper/modules";
 import Image from "next/image";
@@ -33,38 +33,33 @@ function isCompositeRow(
 
 export default function Gallery() {
   const { images, layout } = WEDDING_CONFIG.gallery;
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const closedAt = useRef(0);
+  const [isOpen, setIsOpen] = useState(false);
+  const [slideIndex, setSlideIndex] = useState(0);
 
   const openLightbox = useCallback((idx: number) => {
-    if (Date.now() - closedAt.current < 400) return;
-    setLightboxIndex(idx);
+    setSlideIndex(idx);
+    setIsOpen(true);
   }, []);
 
   const closeLightbox = useCallback(() => {
-    closedAt.current = Date.now();
-    setLightboxIndex(null);
+    setIsOpen(false);
   }, []);
 
   useEffect(() => {
-    if (lightboxIndex === null) return;
+    if (!isOpen) return;
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") closeLightbox();
     };
     document.addEventListener("keydown", handleKey);
     return () => document.removeEventListener("keydown", handleKey);
-  }, [lightboxIndex, closeLightbox]);
+  }, [isOpen, closeLightbox]);
 
   useEffect(() => {
-    if (lightboxIndex !== null) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = isOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [lightboxIndex]);
+  }, [isOpen]);
 
   const eagerSet = new Set<number>(
     layout
@@ -157,7 +152,7 @@ export default function Gallery() {
       </SectionWrapper>
 
       <AnimatePresence>
-        {lightboxIndex !== null && (
+        {isOpen && (
           <motion.div
             className="fixed inset-0 z-50 bg-black"
             initial={{ opacity: 0, scale: 0.96 }}
@@ -168,7 +163,7 @@ export default function Gallery() {
           >
             <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between px-4 pt-3 pb-10 bg-gradient-to-b from-black/50 to-transparent">
               <span className="text-white/70 text-sm">
-                {lightboxIndex + 1} / {images.length}
+                {slideIndex + 1} / {images.length}
               </span>
               <button
                 onClick={(e) => { e.stopPropagation(); closeLightbox(); }}
@@ -196,11 +191,11 @@ export default function Gallery() {
                 modules={[Zoom, Keyboard]}
                 zoom={{ maxRatio: 3 }}
                 keyboard={{ enabled: true }}
-                initialSlide={lightboxIndex}
+                initialSlide={slideIndex}
                 slidesPerView={1}
                 loop
                 className="w-full h-full"
-                onSlideChange={(swiper) => setLightboxIndex(swiper.realIndex)}
+                onSlideChange={(swiper) => setSlideIndex(swiper.realIndex)}
               >
                 {images.map((image, index) => (
                   <SwiperSlide key={index}>
@@ -211,7 +206,7 @@ export default function Gallery() {
                         fill
                         className="object-contain"
                         sizes="100vw"
-                        priority={index === lightboxIndex}
+                        priority={index === slideIndex}
                       />
                     </div>
                   </SwiperSlide>
