@@ -395,6 +395,10 @@ export default function Guestbook() {
           </>
         )}
       </div>
+
+      <p className="text-[10px] text-text-muted/60 text-center mt-6 leading-relaxed">
+        모두가 함께 보는 공간이며, 부적절한 내용은 별도의 고지 없이 삭제될 수 있습니다.
+      </p>
     </SectionWrapper>
   );
 }
