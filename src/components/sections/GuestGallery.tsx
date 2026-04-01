@@ -10,13 +10,14 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import SectionWrapper from "@/components/ui/SectionWrapper";
+import RefreshButton from "@/components/ui/RefreshButton";
 import {
   uploadGuestPhoto,
   getGuestPhotos,
   deleteGuestPhoto,
 } from "@/actions/guest-gallery";
 import { validateImage, validateAspectRatio, resizeImage } from "@/lib/image-resize";
-import { useThrottledRefresh } from "@/hooks/useThrottledRefresh";
+import { usePaginatedData } from "@/hooks/usePaginatedData";
 import { useVisitorId } from "@/components/VisitTracker";
 import { formatRelativeDate } from "@/lib/format";
 import type { GuestPhoto } from "@/types";
@@ -46,6 +47,7 @@ function UploadForm({ onUploaded }: { onUploaded: () => void }) {
     }
     const result = await uploadGuestPhoto(_prevState, formData);
     if (result.success) {
+      if (preview) URL.revokeObjectURL(preview);
       formRef.current?.reset();
       setPreview(null);
       resizedFileRef.current = null;
@@ -88,6 +90,7 @@ function UploadForm({ onUploaded }: { onUploaded: () => void }) {
       const ratioError = validateAspectRatio(img.naturalWidth, img.naturalHeight);
       if (ratioError) {
         setFileError(ratioError);
+        URL.revokeObjectURL(previewUrl);
         setPreview(null);
         resizedFileRef.current = null;
         e.target.value = "";
@@ -163,7 +166,7 @@ function UploadForm({ onUploaded }: { onUploaded: () => void }) {
         onChange={handleFileChange}
       />
       {fileError && (
-        <p className="text-red-500 text-xs">{fileError}</p>
+        <p className="text-red-500 text-xs" role="alert">{fileError}</p>
       )}
 
       {/* Name + Password */}
@@ -203,7 +206,7 @@ function UploadForm({ onUploaded }: { onUploaded: () => void }) {
       </div>
 
       {state.error && (
-        <p className="text-red-500 text-xs">{state.error}</p>
+        <p className="text-red-500 text-xs" role="alert">{state.error}</p>
       )}
 
       <button
@@ -221,11 +224,13 @@ function UploadForm({ onUploaded }: { onUploaded: () => void }) {
 function PhotoCard({
   photo,
   isAdmin,
+  adminPassword,
   onDelete,
   onClick,
 }: {
   photo: GuestPhoto;
   isAdmin: boolean;
+  adminPassword?: string;
   onDelete: (id: string) => void;
   onClick: () => void;
 }) {
@@ -239,11 +244,8 @@ function PhotoCard({
     if (!isAdmin && !password) return;
     setLoading(true);
     setError("");
-    const result = await deleteGuestPhoto(
-      photo.id,
-      password,
-      isAdmin
-    );
+    const pw = isAdmin ? (adminPassword ?? "") : password;
+    const result = await deleteGuestPhoto(photo.id, pw, isAdmin);
     if (result.success) {
       onDelete(photo.id);
     } else {
@@ -283,6 +285,8 @@ function PhotoCard({
         }}
         className="absolute top-1.5 right-1.5 w-7 h-7 rounded-full bg-black/50 text-white text-sm flex items-center justify-center"
         style={{ minHeight: "auto" }}
+        aria-label="사진 메뉴"
+        type="button"
       >
         &#8942;
       </button>
@@ -343,7 +347,7 @@ function PhotoCard({
               </div>
             )}
             {error && (
-              <p className="text-red-500 text-[10px] mt-1">{error}</p>
+              <p className="text-red-500 text-[10px] mt-1" role="alert">{error}</p>
             )}
           </div>
         </>
@@ -437,6 +441,8 @@ function Lightbox({
           onClick={onClose}
           className="w-8 h-8 flex items-center justify-center"
           style={{ minHeight: "auto" }}
+          aria-label="닫기"
+          type="button"
         >
           <svg
             viewBox="0 0 24 24"
@@ -553,70 +559,48 @@ function EmptyState() {
 
 /* ─── Main Component ─── */
 export default function GuestGallery() {
-  const [photos, setPhotos] = useState<GuestPhoto[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [hasMore, setHasMore] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const sentinelRef = useRef<HTMLDivElement>(null);
 
-  // Admin mode: ?admin=password in URL
+  // Admin mode: ?admin=<password> in URL + 10 footer clicks
   const [isAdmin, setIsAdmin] = useState(false);
+  const adminPasswordRef = useRef("");
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const adminParam = params.get("admin");
-    if (adminParam) setIsAdmin(true);
-  }, []);
-
-  const loadInitial = useCallback(async () => {
-    const result = await getGuestPhotos();
-    setPhotos(result.photos);
-    setHasMore(result.hasMore);
-    setLoading(false);
-  }, []);
-
-  const { refreshing, cooldown, refresh, silentRefresh } = useThrottledRefresh(loadInitial);
-
-  const loadMore = useCallback(async () => {
-    if (loadingMore || !hasMore || photos.length === 0) return;
-    setLoadingMore(true);
-    const lastPhoto = photos[photos.length - 1];
-    const result = await getGuestPhotos(lastPhoto.created_at);
-    setPhotos((prev) => [...prev, ...result.photos]);
-    setHasMore(result.hasMore);
-    setLoadingMore(false);
-  }, [loadingMore, hasMore, photos]);
-
-  useEffect(() => {
-    loadInitial();
-  }, [loadInitial]);
-
-  useEffect(() => {
-    const onVisible = () => {
-      if (document.visibilityState === "visible") silentRefresh();
+    const handleAdmin = (e: Event) => {
+      const { password } = (e as CustomEvent).detail;
+      adminPasswordRef.current = password;
+      setIsAdmin(true);
     };
-    document.addEventListener("visibilitychange", onVisible);
-    return () => document.removeEventListener("visibilitychange", onVisible);
-  }, [silentRefresh]);
+    window.addEventListener("admin-activated", handleAdmin);
+    return () => window.removeEventListener("admin-activated", handleAdmin);
+  }, []);
 
-  useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
+  const fetchPhotos = useCallback(
+    async (cursor?: string) => {
+      const result = await getGuestPhotos(cursor);
+      return { items: result.photos, hasMore: result.hasMore };
+    },
+    []
+  );
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) loadMore();
-      },
-      { rootMargin: "200px" }
-    );
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [loadMore]);
+  const {
+    items: photos,
+    setItems: setPhotos,
+    loading,
+    loadingMore,
+    refreshing,
+    cooldown,
+    refresh,
+    reload,
+    sentinelRef,
+  } = usePaginatedData<GuestPhoto>({
+    fetchFn: fetchPhotos,
+    getCursor: (photo) => photo.created_at,
+  });
 
   const handleUploaded = () => {
     setFormOpen(false);
-    loadInitial();
+    reload();
   };
 
   const handleDeleted = (id: string) => {
@@ -631,6 +615,12 @@ export default function GuestGallery() {
       <p className="text-xs text-text-muted font-light mb-6 text-center">
         여러분의 눈으로 본 우리의 하루를 나눠주세요
       </p>
+
+      {isAdmin && (
+        <div className="mb-4 px-3 py-2 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-xs text-red-600 text-center font-medium">관리자 모드</p>
+        </div>
+      )}
 
       {/* Toggle upload form */}
       <div className="text-center mb-6">
@@ -674,32 +664,7 @@ export default function GuestGallery() {
       {/* Refresh */}
       {!loading && photos.length > 0 && (
         <div className="flex justify-end mb-2">
-          <button
-            onClick={refresh}
-            disabled={refreshing || cooldown > 0}
-            className="relative w-9 h-9 flex items-center justify-center rounded-full border border-border text-text-muted hover:border-primary/30 hover:text-primary transition-colors disabled:opacity-40"
-            style={{ minHeight: "auto" }}
-            aria-label="새로고침"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              className={`w-5 h-5 ${refreshing ? "animate-spin" : ""} ${cooldown > 0 ? "opacity-40" : ""} transition-opacity`}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M20.015 4.356v4.992"
-              />
-            </svg>
-            {cooldown > 0 && (
-              <span className="absolute inset-0 flex items-center justify-center text-[10px] tabular-nums text-text-muted">
-                {cooldown}
-              </span>
-            )}
-          </button>
+          <RefreshButton refreshing={refreshing} cooldown={cooldown} onRefresh={refresh} />
         </div>
       )}
 
@@ -716,6 +681,7 @@ export default function GuestGallery() {
                 key={photo.id}
                 photo={photo}
                 isAdmin={isAdmin}
+                adminPassword={adminPasswordRef.current}
                 onDelete={handleDeleted}
                 onClick={() => setLightboxIndex(i)}
               />

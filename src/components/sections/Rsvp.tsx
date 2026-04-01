@@ -93,15 +93,17 @@ function FormGroup({
   label,
   children,
   hint,
+  htmlFor,
 }: {
   label: string;
   children: React.ReactNode;
   hint?: string;
+  htmlFor?: string;
 }) {
   return (
     <div>
       <div className="flex items-baseline gap-1.5 mb-2">
-        <p className="text-xs text-text-muted text-left">{label}</p>
+        <label htmlFor={htmlFor} className="text-xs text-text-muted text-left">{label}</label>
         {hint && (
           <p className="text-[10px] text-text-muted/80 text-left">{hint}</p>
         )}
@@ -182,7 +184,7 @@ function PasswordPrompt({
           취소
         </button>
       </div>
-      {error && <p className="text-red-500 text-xs mt-2">{error}</p>}
+      {error && <p className="text-red-500 text-xs mt-2" role="alert">{error}</p>}
     </motion.div>
   );
 }
@@ -386,8 +388,9 @@ function RsvpForm({
 
         <div className="bg-bg-card border border-border rounded-xl p-5 space-y-5">
           {/* Step 1: Name */}
-          <FormGroup label="이름">
+          <FormGroup label="이름" htmlFor="rsvp-name">
             <input
+              id="rsvp-name"
               name="name"
               type="text"
               placeholder="성함을 입력해주세요"
@@ -512,8 +515,9 @@ function RsvpForm({
           {/* Step 5: Message + Password (password only for new) */}
           {showSubmit && (
             <motion.div {...fadeIn} className="space-y-5">
-              <FormGroup label="축하 메시지" hint="선택">
+              <FormGroup label="축하 메시지" hint="선택" htmlFor="rsvp-message">
                 <textarea
+                  id="rsvp-message"
                   name="message"
                   placeholder="축하의 말씀을 남겨주세요"
                   rows={2}
@@ -523,8 +527,9 @@ function RsvpForm({
               </FormGroup>
 
               {!isEditing && (
-                <FormGroup label="비밀번호" hint="수정·삭제 시 필요">
+                <FormGroup label="비밀번호" hint="수정·삭제 시 필요" htmlFor="rsvp-password">
                   <input
+                    id="rsvp-password"
                     name="password"
                     type="password"
                     autoComplete="off"
@@ -542,7 +547,7 @@ function RsvpForm({
         {showSubmit && (
           <motion.div {...fadeIn}>
             {state.error && (
-              <p className="text-red-500 text-xs mt-3">{state.error}</p>
+              <p className="text-red-500 text-xs mt-3" role="alert">{state.error}</p>
             )}
             <div className={`mt-4 ${isEditing ? "flex gap-3" : ""}`}>
               {isEditing && (

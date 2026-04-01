@@ -18,6 +18,18 @@ export async function submitGuestbook(
     return { success: false, error: "모든 항목을 입력해주세요." };
   }
 
+  if (name.length > 50) {
+    return { success: false, error: "이름은 50자 이내로 입력해주세요." };
+  }
+
+  if (message.length > 500) {
+    return { success: false, error: "메시지는 500자 이내로 입력해주세요." };
+  }
+
+  if (password.length > 50) {
+    return { success: false, error: "비밀번호는 50자 이내로 입력해주세요." };
+  }
+
   const hashedPassword = await hashPassword(password);
 
   const visitor_id = (formData.get("visitor_id") as string) || null;
@@ -68,6 +80,10 @@ export async function updateGuestbookEntry(
 ): Promise<FormState> {
   if (!newMessage.trim()) {
     return { success: false, error: "메시지를 입력해주세요." };
+  }
+
+  if (newMessage.length > 500) {
+    return { success: false, error: "메시지는 500자 이내로 입력해주세요." };
   }
 
   const verify = await verifyPassword("guestbook", id, password, NOT_FOUND);

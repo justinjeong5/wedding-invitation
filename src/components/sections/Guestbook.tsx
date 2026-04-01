@@ -2,13 +2,14 @@
 
 import { useActionState, useCallback, useEffect, useRef, useState } from "react";
 import SectionWrapper from "@/components/ui/SectionWrapper";
+import RefreshButton from "@/components/ui/RefreshButton";
 import {
   submitGuestbook,
   getGuestbookEntries,
   updateGuestbookEntry,
   deleteGuestbookEntry,
 } from "@/actions/guestbook";
-import { useThrottledRefresh } from "@/hooks/useThrottledRefresh";
+import { usePaginatedData } from "@/hooks/usePaginatedData";
 import { useVisitorId } from "@/components/VisitTracker";
 import { formatRelativeDate } from "@/lib/format";
 import type { GuestbookEntry } from "@/types";
@@ -90,6 +91,8 @@ function GuestbookItem({
                 onClick={() => setMenuOpen(!menuOpen)}
                 className="text-text-muted hover:text-text text-base leading-none"
                 style={{ minHeight: "auto", padding: "2px 4px" }}
+                aria-label="메시지 메뉴"
+                type="button"
               >
                 &#8942;
               </button>
@@ -170,7 +173,7 @@ function GuestbookItem({
               취소
             </button>
           </div>
-          {error && <p className="text-red-500 text-xs">{error}</p>}
+          {error && <p className="text-red-500 text-xs" role="alert">{error}</p>}
         </div>
       ) : activeAction === "delete" ? (
         <div className="mt-2 space-y-2">
@@ -202,7 +205,7 @@ function GuestbookItem({
               취소
             </button>
           </div>
-          {error && <p className="text-red-500 text-xs">{error}</p>}
+          {error && <p className="text-red-500 text-xs" role="alert">{error}</p>}
         </div>
       ) : (
         <p className="text-sm text-text-light whitespace-pre-line">
@@ -240,65 +243,36 @@ function GuestbookSkeleton() {
 
 export default function Guestbook() {
   const visitorId = useVisitorId();
-  const [entries, setEntries] = useState<GuestbookEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [hasMore, setHasMore] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const sentinelRef = useRef<HTMLDivElement>(null);
   const [state, formAction, isPending] = useActionState(submitGuestbook, {
     success: false,
   });
 
-  const loadInitial = useCallback(async () => {
-    const result = await getGuestbookEntries();
-    setEntries(result.entries);
-    setHasMore(result.hasMore);
-    setLoading(false);
-  }, []);
+  const fetchEntries = useCallback(
+    async (cursor?: string) => {
+      const result = await getGuestbookEntries(cursor);
+      return { items: result.entries, hasMore: result.hasMore };
+    },
+    []
+  );
 
-  const { refreshing, cooldown, refresh, silentRefresh } = useThrottledRefresh(loadInitial);
-
-  const loadMore = useCallback(async () => {
-    if (loadingMore || !hasMore || entries.length === 0) return;
-    setLoadingMore(true);
-    const lastEntry = entries[entries.length - 1];
-    const result = await getGuestbookEntries(lastEntry.created_at);
-    setEntries((prev) => [...prev, ...result.entries]);
-    setHasMore(result.hasMore);
-    setLoadingMore(false);
-  }, [loadingMore, hasMore, entries]);
-
-  useEffect(() => {
-    loadInitial();
-  }, [loadInitial]);
-
-  useEffect(() => {
-    const onVisible = () => {
-      if (document.visibilityState === "visible") silentRefresh();
-    };
-    document.addEventListener("visibilitychange", onVisible);
-    return () => document.removeEventListener("visibilitychange", onVisible);
-  }, [silentRefresh]);
+  const {
+    items: entries,
+    setItems: setEntries,
+    loading,
+    loadingMore,
+    refreshing,
+    cooldown,
+    refresh,
+    reload,
+    sentinelRef,
+  } = usePaginatedData<GuestbookEntry>({
+    fetchFn: fetchEntries,
+    getCursor: (entry) => entry.created_at,
+  });
 
   useEffect(() => {
-    if (state.success) {
-      loadInitial();
-    }
-  }, [state]);
-
-  useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) loadMore();
-      },
-      { rootMargin: "200px" }
-    );
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [loadMore]);
+    if (state.success) reload();
+  }, [state, reload]);
 
   const handleUpdated = (id: string, newMessage: string) => {
     setEntries((prev) =>
@@ -345,7 +319,7 @@ export default function Guestbook() {
           className="w-full px-3 py-2.5 text-sm border border-border rounded-lg bg-bg-card focus:outline-none focus:border-primary resize-none"
         />
         {state.error && (
-          <p className="text-red-500 text-xs">{state.error}</p>
+          <p className="text-red-500 text-xs" role="alert">{state.error}</p>
         )}
         <button
           type="submit"
@@ -358,32 +332,7 @@ export default function Guestbook() {
 
       {!loading && entries.length > 0 && (
         <div className="flex justify-end mb-2">
-          <button
-            onClick={refresh}
-            disabled={refreshing || cooldown > 0}
-            className="relative w-9 h-9 flex items-center justify-center rounded-full border border-border text-text-muted hover:border-primary/30 hover:text-primary transition-colors disabled:opacity-40"
-            style={{ minHeight: "auto" }}
-            aria-label="새로고침"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              className={`w-5 h-5 ${refreshing ? "animate-spin" : ""} ${cooldown > 0 ? "opacity-40" : ""} transition-opacity`}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M20.015 4.356v4.992"
-              />
-            </svg>
-            {cooldown > 0 && (
-              <span className="absolute inset-0 flex items-center justify-center text-[10px] tabular-nums text-text-muted">
-                {cooldown}
-              </span>
-            )}
-          </button>
+          <RefreshButton refreshing={refreshing} cooldown={cooldown} onRefresh={refresh} />
         </div>
       )}
 

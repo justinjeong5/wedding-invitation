@@ -41,6 +41,10 @@ export async function uploadGuestPhoto(
     return { success: false, error: "필수 항목을 입력해주세요." };
   }
 
+  if (name.length > 50) {
+    return { success: false, error: "이름은 50자 이내로 입력해주세요." };
+  }
+
   if (caption && caption.length > 50) {
     return { success: false, error: "캡션은 50자 이내로 입력해주세요." };
   }

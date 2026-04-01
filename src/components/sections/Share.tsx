@@ -1,21 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import { WEDDING_CONFIG } from "@/config/wedding";
-import { loadKakaoSDK, shareKakao } from "@/lib/kakao";
+import { shareKakao } from "@/lib/kakao";
+import { copyToClipboard } from "@/lib/clipboard";
+import { useKakaoSDK } from "@/hooks/useKakaoSDK";
 import { QRCodeSVG } from "qrcode.react";
 
 export default function Share() {
   const { meta } = WEDDING_CONFIG;
-  const [kakaoReady, setKakaoReady] = useState(false);
+  const kakaoReady = useKakaoSDK();
   const [linkCopied, setLinkCopied] = useState(false);
-
-  useEffect(() => {
-    loadKakaoSDK()
-      .then(() => setKakaoReady(true))
-      .catch(() => {});
-  }, []);
 
   const handleKakaoShare = () => {
     if (!kakaoReady) return;
@@ -28,18 +24,7 @@ export default function Share() {
   };
 
   const handleCopyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(meta.siteUrl);
-    } catch {
-      const textarea = document.createElement("textarea");
-      textarea.value = meta.siteUrl;
-      textarea.style.position = "fixed";
-      textarea.style.opacity = "0";
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textarea);
-    }
+    await copyToClipboard(meta.siteUrl);
     setLinkCopied(true);
     setTimeout(() => setLinkCopied(false), 2000);
   };
