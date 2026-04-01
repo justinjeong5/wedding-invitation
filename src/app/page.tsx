@@ -13,6 +13,7 @@ import GuestGallery from "@/components/sections/GuestGallery";
 import Guestbook from "@/components/sections/Guestbook";
 import Footer from "@/components/sections/Footer";
 import AccessibilityToggle from "@/components/ui/AccessibilityToggle";
+import AdminIndicator from "@/components/ui/AdminIndicator";
 import ShareFab from "@/components/ui/ShareFab";
 import TopNav from "@/components/ui/TopNav";
 import VisitTracker from "@/components/VisitTracker";
@@ -23,6 +24,7 @@ export default function Home() {
       <VisitTracker />
       <TopNav />
       <AccessibilityToggle />
+      <AdminIndicator />
       <ShareFab />
       <Cover />
       <Greeting />

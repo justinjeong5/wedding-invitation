@@ -623,12 +623,6 @@ export default function GuestGallery() {
         여러분의 눈으로 본 우리의 하루를 나눠주세요
       </p>
 
-      {isAdmin && (
-        <div className="mb-4 px-3 py-2 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-xs text-red-600 text-center font-medium">관리자 모드</p>
-        </div>
-      )}
-
       {/* Toggle upload form */}
       <div className="text-center mb-6">
         <button
