@@ -123,6 +123,10 @@ export async function getGuestPhotos(
   return { photos: rows.slice(0, PAGE_SIZE), hasMore };
 }
 
+export async function verifyAdminPassword(password: string): Promise<boolean> {
+  return !!ADMIN_PASSWORD && password === ADMIN_PASSWORD;
+}
+
 export async function deleteGuestPhoto(
   id: string,
   password: string,

@@ -219,10 +219,10 @@ function GuestbookItem({
   );
 }
 
-function GuestbookSkeleton() {
+function GuestbookSkeleton({ count = 3 }: { count?: number }) {
   return (
     <div className="space-y-3">
-      {Array.from({ length: 3 }).map((_, i) => (
+      {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
           className="bg-bg-card p-4 rounded-lg border border-border animate-pulse"
@@ -354,11 +354,7 @@ export default function Guestbook() {
               />
             ))}
             <div ref={sentinelRef} className="h-1" />
-            {loadingMore && (
-              <div className="flex justify-center py-4">
-                <div className="h-5 w-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
-              </div>
-            )}
+            {loadingMore && <GuestbookSkeleton count={2} />}
           </>
         )}
       </div>

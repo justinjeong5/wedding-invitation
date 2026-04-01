@@ -375,6 +375,7 @@ function Lightbox({
   const [index, setIndex] = useState(initialIndex);
   const [direction, setDirection] = useState(0);
   const [bounce, setBounce] = useState<"left" | "right" | null>(null);
+  const [loadedSet, setLoadedSet] = useState<Set<number>>(new Set());
   const photo = photos[index];
   const touchStartX = useRef(0);
   const touchDeltaX = useRef(0);
@@ -488,6 +489,11 @@ function Lightbox({
             }
             className="absolute inset-0"
           >
+            {!loadedSet.has(index) && (
+              <div className="absolute inset-0 flex items-center justify-center z-10">
+                <div className="h-8 w-8 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              </div>
+            )}
             <Image
               src={getImageUrl(photo.storage_path)}
               alt={photo.caption || `${photo.name}님의 사진`}
@@ -496,6 +502,7 @@ function Lightbox({
               sizes="100vw"
               priority
               unoptimized
+              onLoad={() => setLoadedSet(prev => new Set(prev).add(index))}
             />
           </motion.div>
         </AnimatePresence>

@@ -1,25 +1,24 @@
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef } from "react";
 import { WEDDING_CONFIG } from "@/config/wedding";
+import { verifyAdminPassword } from "@/actions/guest-gallery";
 
-const ADMIN_CLICK_THRESHOLD = 10;
+const ADMIN_CLICK_THRESHOLD = 20;
 const CLICK_TIMEOUT_MS = 2000;
 
 export default function Footer() {
   const { groom, bride, date, venue } = WEDDING_CONFIG;
   const [clickCount, setClickCount] = useState(0);
   const lastClickRef = useRef(0);
-  const adminParamRef = useRef<string | null>(null);
   const activatedRef = useRef(false);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    adminParamRef.current = params.get("admin");
-  }, []);
+  const [showPrompt, setShowPrompt] = useState(false);
+  const [adminPassword, setAdminPassword] = useState("");
+  const [adminError, setAdminError] = useState("");
+  const [verifying, setVerifying] = useState(false);
 
   const handleFooterClick = useCallback(() => {
-    if (!adminParamRef.current || activatedRef.current) return;
+    if (activatedRef.current) return;
     const now = Date.now();
     if (now - lastClickRef.current > CLICK_TIMEOUT_MS) {
       setClickCount(1);
@@ -27,18 +26,39 @@ export default function Footer() {
       setClickCount((prev) => {
         const next = prev + 1;
         if (next >= ADMIN_CLICK_THRESHOLD) {
-          activatedRef.current = true;
-          window.dispatchEvent(
-            new CustomEvent("admin-activated", {
-              detail: { password: adminParamRef.current },
-            })
-          );
+          setShowPrompt(true);
         }
         return next;
       });
     }
     lastClickRef.current = now;
   }, []);
+
+  const closePrompt = () => {
+    setShowPrompt(false);
+    setClickCount(0);
+    setAdminPassword("");
+    setAdminError("");
+  };
+
+  const handlePasswordSubmit = async () => {
+    if (!adminPassword || verifying) return;
+    setVerifying(true);
+    setAdminError("");
+    const valid = await verifyAdminPassword(adminPassword);
+    if (valid) {
+      activatedRef.current = true;
+      setShowPrompt(false);
+      window.dispatchEvent(
+        new CustomEvent("admin-activated", {
+          detail: { password: adminPassword },
+        })
+      );
+    } else {
+      setAdminError("비밀번호가 올바르지 않습니다.");
+    }
+    setVerifying(false);
+  };
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -74,6 +94,51 @@ export default function Footer() {
       >
         &#x25B2; 처음으로
       </button>
+
+      {showPrompt && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/30"
+          onClick={closePrompt}
+        >
+          <div
+            className="bg-bg-card rounded-lg shadow-lg p-5 mx-4 w-full max-w-xs"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p className="text-sm text-text mb-3 text-center">관리자 비밀번호</p>
+            <input
+              type="password"
+              autoComplete="off"
+              value={adminPassword}
+              onChange={(e) => setAdminPassword(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handlePasswordSubmit()}
+              className="w-full px-3 py-2.5 text-sm border border-border rounded-lg bg-bg focus:outline-none focus:border-primary mb-2"
+              placeholder="비밀번호를 입력하세요"
+              autoFocus
+              data-1p-ignore
+            />
+            {adminError && (
+              <p className="text-red-500 text-xs mb-2">{adminError}</p>
+            )}
+            <div className="flex gap-2">
+              <button
+                onClick={closePrompt}
+                className="flex-1 py-2 text-xs text-text-muted border border-border rounded-lg hover:bg-bg transition-colors"
+                style={{ minHeight: "auto" }}
+              >
+                취소
+              </button>
+              <button
+                onClick={handlePasswordSubmit}
+                disabled={verifying || !adminPassword}
+                className="flex-1 py-2 text-xs text-white bg-primary rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50"
+                style={{ minHeight: "auto" }}
+              >
+                {verifying ? "확인 중..." : "확인"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </footer>
   );
 }

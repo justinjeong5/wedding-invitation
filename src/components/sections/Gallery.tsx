@@ -35,6 +35,7 @@ export default function Gallery() {
   const { images, layout } = WEDDING_CONFIG.gallery;
   const [isOpen, setIsOpen] = useState(false);
   const [slideIndex, setSlideIndex] = useState(0);
+  const [loadedSet, setLoadedSet] = useState<Set<number>>(new Set());
 
   const openLightbox = useCallback((idx: number) => {
     setSlideIndex(idx);
@@ -200,6 +201,11 @@ export default function Gallery() {
                 {images.map((image, index) => (
                   <SwiperSlide key={index}>
                     <div className="swiper-zoom-container">
+                      {!loadedSet.has(index) && (
+                        <div className="absolute inset-0 flex items-center justify-center z-10">
+                          <div className="h-8 w-8 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        </div>
+                      )}
                       <Image
                         src={image.src}
                         alt={image.alt}
@@ -207,6 +213,7 @@ export default function Gallery() {
                         className="object-contain"
                         sizes="100vw"
                         priority={index === slideIndex}
+                        onLoad={() => setLoadedSet(prev => new Set(prev).add(index))}
                       />
                     </div>
                   </SwiperSlide>
