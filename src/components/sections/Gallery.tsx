@@ -157,13 +157,14 @@ export default function Gallery() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.96 }}
             transition={{ duration: 0.25 }}
+            onClick={closeLightbox}
           >
             <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between px-4 pt-3 pb-10 bg-gradient-to-b from-black/50 to-transparent">
               <span className="text-white/70 text-sm">
                 {lightboxIndex + 1} / {images.length}
               </span>
               <button
-                onClick={closeLightbox}
+                onClick={(e) => { e.stopPropagation(); closeLightbox(); }}
                 className="text-white/80 hover:text-white p-2.5 -m-1"
                 aria-label="닫기"
               >
@@ -183,31 +184,33 @@ export default function Gallery() {
               </button>
             </div>
 
-            <Swiper
-              modules={[Zoom, Keyboard]}
-              zoom={{ maxRatio: 3 }}
-              keyboard={{ enabled: true }}
-              initialSlide={lightboxIndex}
-              slidesPerView={1}
-              loop
-              className="w-full h-full"
-              onSlideChange={(swiper) => setLightboxIndex(swiper.realIndex)}
-            >
-              {images.map((image, index) => (
-                <SwiperSlide key={index}>
-                  <div className="swiper-zoom-container">
-                    <Image
-                      src={image.src}
-                      alt={image.alt}
-                      fill
-                      className="object-contain"
-                      sizes="100vw"
-                      priority={index === lightboxIndex}
-                    />
-                  </div>
-                </SwiperSlide>
-              ))}
-            </Swiper>
+            <div className="w-full h-full" onClick={(e) => e.stopPropagation()}>
+              <Swiper
+                modules={[Zoom, Keyboard]}
+                zoom={{ maxRatio: 3 }}
+                keyboard={{ enabled: true }}
+                initialSlide={lightboxIndex}
+                slidesPerView={1}
+                loop
+                className="w-full h-full"
+                onSlideChange={(swiper) => setLightboxIndex(swiper.realIndex)}
+              >
+                {images.map((image, index) => (
+                  <SwiperSlide key={index}>
+                    <div className="swiper-zoom-container">
+                      <Image
+                        src={image.src}
+                        alt={image.alt}
+                        fill
+                        className="object-contain"
+                        sizes="100vw"
+                        priority={index === lightboxIndex}
+                      />
+                    </div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
