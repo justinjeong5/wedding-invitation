@@ -154,7 +154,7 @@ export default function Gallery() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 z-50 bg-black"
+            className="fixed top-0 left-0 w-full h-[100dvh] z-50 bg-black"
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.96 }}

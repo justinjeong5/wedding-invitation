@@ -429,7 +429,7 @@ function Lightbox({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
-      className="fixed inset-0 z-50 bg-black flex flex-col"
+      className="fixed top-0 left-0 w-full h-[100dvh] z-50 bg-black flex flex-col"
       onClick={onClose}
     >
       {/* Header */}
