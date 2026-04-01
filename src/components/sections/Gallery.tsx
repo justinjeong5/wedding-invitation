@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Zoom, Keyboard } from "swiper/modules";
 import Image from "next/image";
@@ -34,8 +34,15 @@ function isCompositeRow(
 export default function Gallery() {
   const { images, layout } = WEDDING_CONFIG.gallery;
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const closedAt = useRef(0);
+
+  const openLightbox = useCallback((idx: number) => {
+    if (Date.now() - closedAt.current < 400) return;
+    setLightboxIndex(idx);
+  }, []);
 
   const closeLightbox = useCallback(() => {
+    closedAt.current = Date.now();
     setLightboxIndex(null);
   }, []);
 
@@ -74,7 +81,7 @@ export default function Gallery() {
         {...fadeIn}
         className="relative rounded-xl overflow-hidden cursor-pointer"
         style={{ aspectRatio: `${image.width} / ${image.height}`, ...style }}
-        onClick={() => setLightboxIndex(idx)}
+        onClick={() => openLightbox(idx)}
       >
         <Image
           src={image.src}
@@ -112,7 +119,7 @@ export default function Gallery() {
                     {...fadeIn}
                     className="relative rounded-xl overflow-hidden cursor-pointer"
                     style={{ gridColumn: 3, gridRow: "1 / 3" }}
-                    onClick={() => setLightboxIndex(row.portrait)}
+                    onClick={() => openLightbox(row.portrait)}
                   >
                     <Image
                       src={images[row.portrait].src}
