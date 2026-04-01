@@ -28,6 +28,9 @@
 *.jpg
 !public/**/*.jpg
 
+# playwright MCP
+.playwright-mcp/
+
 # debug
 npm-debug.log*
 yarn-debug.log*
