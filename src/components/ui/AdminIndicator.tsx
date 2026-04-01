@@ -18,7 +18,7 @@ export default function AdminIndicator() {
       {/* Viewport border */}
       <div
         className="fixed inset-0 z-40 pointer-events-none"
-        style={{ boxShadow: "inset 0 0 0 2px rgba(234, 138, 46, 0.5)" }}
+        style={{ boxShadow: "inset 0 0 0 4px rgba(234, 138, 46, 0.6)" }}
       />
       {/* Top label */}
       <div className="fixed top-0 left-1/2 -translate-x-1/2 z-40 pointer-events-none">
