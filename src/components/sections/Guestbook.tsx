@@ -16,10 +16,14 @@ import type { GuestbookEntry } from "@/types";
 
 function GuestbookItem({
   entry,
+  isAdmin,
+  adminPassword,
   onUpdated,
   onDeleted,
 }: {
   entry: GuestbookEntry;
+  isAdmin: boolean;
+  adminPassword?: string;
   onUpdated: (id: string, newMessage: string) => void;
   onDeleted: (id: string) => void;
 }) {
@@ -46,10 +50,11 @@ function GuestbookItem({
   };
 
   const handleDelete = async () => {
-    if (!password) return;
+    if (!isAdmin && !password) return;
     setLoading(true);
     setError("");
-    const result = await deleteGuestbookEntry(entry.id, password);
+    const pw = isAdmin ? (adminPassword ?? "") : password;
+    const result = await deleteGuestbookEntry(entry.id, pw, isAdmin);
     if (result.success) {
       onDeleted(entry.id);
     } else {
@@ -180,31 +185,49 @@ function GuestbookItem({
           <p className="text-sm text-text-light whitespace-pre-line">
             {entry.message}
           </p>
-          <div className="flex gap-2">
-            <input
-              type="password"
-              autoComplete="off"
-              placeholder="비밀번호"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleDelete()}
-              data-1p-ignore
-              className="flex-1 min-w-0 px-3 py-1.5 text-xs border border-border rounded bg-bg focus:outline-none focus:border-primary"
-            />
-            <button
-              onClick={handleDelete}
-              disabled={loading || !password}
-              className="px-3 py-1.5 text-xs text-red-500 border border-red-200 rounded hover:bg-red-50 transition-colors disabled:opacity-50 shrink-0"
-            >
-              {loading ? "삭제 중..." : "삭제"}
-            </button>
-            <button
-              onClick={reset}
-              className="px-3 py-1.5 text-xs text-text-muted border border-border rounded hover:bg-bg transition-colors shrink-0"
-            >
-              취소
-            </button>
-          </div>
+          {isAdmin ? (
+            <div className="flex gap-2">
+              <button
+                onClick={handleDelete}
+                disabled={loading}
+                className="px-3 py-1.5 text-xs text-red-500 border border-red-200 rounded hover:bg-red-50 transition-colors disabled:opacity-50 shrink-0"
+              >
+                {loading ? "삭제 중..." : "관리자 삭제"}
+              </button>
+              <button
+                onClick={reset}
+                className="px-3 py-1.5 text-xs text-text-muted border border-border rounded hover:bg-bg transition-colors shrink-0"
+              >
+                취소
+              </button>
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              <input
+                type="password"
+                autoComplete="off"
+                placeholder="비밀번호"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleDelete()}
+                data-1p-ignore
+                className="flex-1 min-w-0 px-3 py-1.5 text-xs border border-border rounded bg-bg focus:outline-none focus:border-primary"
+              />
+              <button
+                onClick={handleDelete}
+                disabled={loading || !password}
+                className="px-3 py-1.5 text-xs text-red-500 border border-red-200 rounded hover:bg-red-50 transition-colors disabled:opacity-50 shrink-0"
+              >
+                {loading ? "삭제 중..." : "삭제"}
+              </button>
+              <button
+                onClick={reset}
+                className="px-3 py-1.5 text-xs text-text-muted border border-border rounded hover:bg-bg transition-colors shrink-0"
+              >
+                취소
+              </button>
+            </div>
+          )}
           {error && <p className="text-red-500 text-xs" role="alert">{error}</p>}
         </div>
       ) : (
@@ -246,6 +269,18 @@ export default function Guestbook() {
   const [state, formAction, isPending] = useActionState(submitGuestbook, {
     success: false,
   });
+
+  const [isAdmin, setIsAdmin] = useState(false);
+  const adminPasswordRef = useRef("");
+  useEffect(() => {
+    const handleAdmin = (e: Event) => {
+      const { password } = (e as CustomEvent).detail;
+      adminPasswordRef.current = password;
+      setIsAdmin(true);
+    };
+    window.addEventListener("admin-activated", handleAdmin);
+    return () => window.removeEventListener("admin-activated", handleAdmin);
+  }, []);
 
   const fetchEntries = useCallback(
     async (cursor?: string) => {
@@ -349,6 +384,8 @@ export default function Guestbook() {
               <GuestbookItem
                 key={entry.id}
                 entry={entry}
+                isAdmin={isAdmin}
+                adminPassword={adminPasswordRef.current}
                 onUpdated={handleUpdated}
                 onDeleted={handleDeleted}
               />

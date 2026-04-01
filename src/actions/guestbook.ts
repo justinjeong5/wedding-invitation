@@ -5,6 +5,7 @@ import { hashPassword, verifyPassword } from "@/lib/auth";
 import type { FormState, GuestbookEntry } from "@/types";
 
 const NOT_FOUND = "메시지를 찾을 수 없습니다.";
+const ADMIN_PASSWORD = process.env.GUEST_GALLERY_ADMIN_PASSWORD ?? "";
 
 export async function submitGuestbook(
   _prevState: FormState,
@@ -104,10 +105,17 @@ export async function updateGuestbookEntry(
 
 export async function deleteGuestbookEntry(
   id: string,
-  password: string
+  password: string,
+  isAdmin = false
 ): Promise<FormState> {
-  const verify = await verifyPassword("guestbook", id, password, NOT_FOUND);
-  if (!verify.success) return verify;
+  if (isAdmin) {
+    if (!ADMIN_PASSWORD || password !== ADMIN_PASSWORD) {
+      return { success: false, error: "권한이 없습니다." };
+    }
+  } else {
+    const verify = await verifyPassword("guestbook", id, password, NOT_FOUND);
+    if (!verify.success) return verify;
+  }
 
   const serviceClient = getServiceClient();
   const { error } = await serviceClient.from("guestbook").delete().eq("id", id);
