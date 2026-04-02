@@ -8,6 +8,8 @@ const nextConfig: NextConfig = {
     remotePatterns: supabaseHostname
       ? [{ protocol: "https", hostname: supabaseHostname }]
       : [],
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 31536000,
   },
 };
 
