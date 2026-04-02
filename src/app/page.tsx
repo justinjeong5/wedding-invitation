@@ -11,12 +11,14 @@ import Rsvp from "@/components/sections/Rsvp";
 import Share from "@/components/sections/Share";
 import GuestGallery from "@/components/sections/GuestGallery";
 import Guestbook from "@/components/sections/Guestbook";
+import ThankYouGallery from "@/components/sections/ThankYouGallery";
 import Footer from "@/components/sections/Footer";
 import AccessibilityToggle from "@/components/ui/AccessibilityToggle";
 import AdminIndicator from "@/components/ui/AdminIndicator";
 import ShareFab from "@/components/ui/ShareFab";
 import TopNav from "@/components/ui/TopNav";
 import AfterWeddingHide from "@/components/ui/AfterWeddingHide";
+import AfterWeddingShow from "@/components/ui/AfterWeddingShow";
 import VisitTracker from "@/components/VisitTracker";
 
 export default function Home() {
@@ -29,6 +31,9 @@ export default function Home() {
       <ShareFab />
       <Cover />
       <Greeting />
+      <AfterWeddingShow>
+        <ThankYouGallery />
+      </AfterWeddingShow>
       <Couple />
       <AfterWeddingHide>
         <Divider />
@@ -36,8 +41,10 @@ export default function Home() {
       </AfterWeddingHide>
       <Divider />
       <Gallery />
-      <Divider />
-      <Location />
+      <AfterWeddingHide>
+        <Divider />
+        <Location />
+      </AfterWeddingHide>
       <AfterWeddingHide>
         <Divider />
         <Rsvp />

@@ -127,6 +127,11 @@ export const WEDDING_CONFIG = {
       title: "감사의 인사를 전합니다",
       message: `저희의 새로운 시작을 축복해 주신\n모든 분들께 진심으로 감사드립니다.\n\n여러분의 따뜻한 마음을 간직하며\n행복하게 살겠습니다.`,
     },
+    photos: [
+      { src: "/images/gallery/gallery-01.jpg", alt: "감사 사진 1", width: 1920, height: 1440 },
+      { src: "/images/gallery/gallery-02.jpg", alt: "감사 사진 2", width: 1440, height: 1920 },
+    ],
+    photoCaption: "함께해 주신 모든 순간이 감사합니다",
   },
 
   meta: {

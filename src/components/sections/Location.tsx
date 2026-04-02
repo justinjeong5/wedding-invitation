@@ -3,7 +3,6 @@
 import dynamic from "next/dynamic";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import { WEDDING_CONFIG } from "@/config/wedding";
-import { useAfterWedding } from "@/hooks/useAfterWedding";
 
 const KakaoMap = dynamic(() => import("@/components/ui/KakaoMap"), {
   ssr: false,
@@ -37,7 +36,6 @@ const busColors: Record<string, string> = {
 export default function Location() {
   const { venue } = WEDDING_CONFIG;
   const { directions } = venue;
-  const afterWedding = useAfterWedding();
 
   return (
     <SectionWrapper id="location" className="text-center">
@@ -113,9 +111,8 @@ export default function Location() {
         ))}
       </div>
 
-      {/* Directions — hidden after wedding */}
-      {!afterWedding && (
-        <div className="mt-12 text-center">
+      {/* Directions */}
+      <div className="mt-12 text-center">
           <div className="mb-6">
             <p className="font-serif text-base text-text-light tracking-[0.15em] font-light">교통 안내</p>
             <div className="mt-2.5 mx-auto w-12 h-px bg-primary/40" />
@@ -175,7 +172,6 @@ export default function Location() {
             </div>
           </div>
         </div>
-      )}
     </SectionWrapper>
   );
 }
