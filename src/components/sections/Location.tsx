@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import { WEDDING_CONFIG } from "@/config/wedding";
+import { useAfterWedding } from "@/hooks/useAfterWedding";
 
 const KakaoMap = dynamic(() => import("@/components/ui/KakaoMap"), {
   ssr: false,
@@ -36,6 +37,7 @@ const busColors: Record<string, string> = {
 export default function Location() {
   const { venue } = WEDDING_CONFIG;
   const { directions } = venue;
+  const afterWedding = useAfterWedding();
 
   return (
     <SectionWrapper id="location" className="text-center">
@@ -111,67 +113,69 @@ export default function Location() {
         ))}
       </div>
 
-      {/* Directions */}
-      <div className="mt-12 text-center">
-        <div className="mb-6">
-          <p className="font-serif text-base text-text-light tracking-[0.15em] font-light">교통 안내</p>
-          <div className="mt-2.5 mx-auto w-12 h-px bg-primary/40" />
-        </div>
+      {/* Directions — hidden after wedding */}
+      {!afterWedding && (
+        <div className="mt-12 text-center">
+          <div className="mb-6">
+            <p className="font-serif text-base text-text-light tracking-[0.15em] font-light">교통 안내</p>
+            <div className="mt-2.5 mx-auto w-12 h-px bg-primary/40" />
+          </div>
 
-        <div className="border border-border rounded-2xl overflow-hidden divide-y divide-border bg-bg-card text-left">
-          {/* Subway */}
-          <div className="px-5 py-4">
-            <p className="text-xs text-primary font-semibold tracking-[0.12em] mb-3">지하철</p>
-            <div className="space-y-1.5">
-              {directions.subway.map((s) => (
-                <div key={s.line} className="flex items-center gap-2 text-xs text-text-light">
-                  <TransportBadge label={s.line} color={subwayColors[s.line] ?? "#888"} />
-                  <span>{s.detail}</span>
+          <div className="border border-border rounded-2xl overflow-hidden divide-y divide-border bg-bg-card text-left">
+            {/* Subway */}
+            <div className="px-5 py-4">
+              <p className="text-xs text-primary font-semibold tracking-[0.12em] mb-3">지하철</p>
+              <div className="space-y-1.5">
+                {directions.subway.map((s) => (
+                  <div key={s.line} className="flex items-center gap-2 text-xs text-text-light">
+                    <TransportBadge label={s.line} color={subwayColors[s.line] ?? "#888"} />
+                    <span>{s.detail}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Bus */}
+            <div className="px-5 py-4">
+              <p className="text-xs text-primary font-semibold tracking-[0.12em] mb-3">버스</p>
+              <div className="space-y-1.5">
+                {directions.bus.map((b) => (
+                  <div key={b.type} className="flex items-center gap-2 text-xs">
+                    <TransportBadge label={b.type} color={busColors[b.type] ?? "#888"} textColor={b.type === "일반" ? "#333" : "white"} />
+                    <span className="text-text-light">{b.routes}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Car + Parking */}
+            <div className="px-5 py-4">
+              <p className="text-xs text-primary font-semibold tracking-[0.12em] mb-3">자가용 · 주차</p>
+              <div className="space-y-2">
+                <div className="flex gap-3 text-xs">
+                  <span className="text-text-muted w-10 shrink-0">도로명</span>
+                  <span className="text-text-light">{directions.car.newAddress}</span>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Bus */}
-          <div className="px-5 py-4">
-            <p className="text-xs text-primary font-semibold tracking-[0.12em] mb-3">버스</p>
-            <div className="space-y-1.5">
-              {directions.bus.map((b) => (
-                <div key={b.type} className="flex items-center gap-2 text-xs">
-                  <TransportBadge label={b.type} color={busColors[b.type] ?? "#888"} textColor={b.type === "일반" ? "#333" : "white"} />
-                  <span className="text-text-light">{b.routes}</span>
+                <div className="flex gap-3 text-xs">
+                  <span className="text-text-muted w-10 shrink-0">지번</span>
+                  <span className="text-text-light">{directions.car.oldAddress}</span>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Car + Parking */}
-          <div className="px-5 py-4">
-            <p className="text-xs text-primary font-semibold tracking-[0.12em] mb-3">자가용 · 주차</p>
-            <div className="space-y-2">
-              <div className="flex gap-3 text-xs">
-                <span className="text-text-muted w-10 shrink-0">도로명</span>
-                <span className="text-text-light">{directions.car.newAddress}</span>
+                <div className="flex gap-3 text-xs">
+                  <span className="text-text-muted w-10 shrink-0">주차</span>
+                  <span className="text-text-light">{directions.parking.main}</span>
+                </div>
+                <div className="flex gap-3 text-xs">
+                  <span className="text-text-muted w-10 shrink-0" />
+                  <span className="text-text-muted">{directions.parking.overflow}</span>
+                </div>
+                <p className="text-[10px] text-text-muted/80 mt-1">
+                  * {directions.parking.tip}
+                </p>
               </div>
-              <div className="flex gap-3 text-xs">
-                <span className="text-text-muted w-10 shrink-0">지번</span>
-                <span className="text-text-light">{directions.car.oldAddress}</span>
-              </div>
-              <div className="flex gap-3 text-xs">
-                <span className="text-text-muted w-10 shrink-0">주차</span>
-                <span className="text-text-light">{directions.parking.main}</span>
-              </div>
-              <div className="flex gap-3 text-xs">
-                <span className="text-text-muted w-10 shrink-0" />
-                <span className="text-text-muted">{directions.parking.overflow}</span>
-              </div>
-              <p className="text-[10px] text-text-muted/80 mt-1">
-                * {directions.parking.tip}
-              </p>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </SectionWrapper>
   );
 }

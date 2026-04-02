@@ -44,8 +44,10 @@ export default function Home() {
       </AfterWeddingHide>
       <Divider />
       <Contact />
-      <Divider />
-      <Account />
+      <AfterWeddingHide>
+        <Divider />
+        <Account />
+      </AfterWeddingHide>
       <AfterWeddingHide>
         <Divider />
         <Share />
