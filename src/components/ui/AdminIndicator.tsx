@@ -1,17 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useAdminMode } from "@/hooks/useAdminMode";
 import { useAfterWedding } from "@/hooks/useAfterWedding";
 
 export default function AdminIndicator() {
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { isAdmin } = useAdminMode();
   const afterWedding = useAfterWedding();
-
-  useEffect(() => {
-    const handleAdmin = () => setIsAdmin(true);
-    window.addEventListener("admin-activated", handleAdmin);
-    return () => window.removeEventListener("admin-activated", handleAdmin);
-  }, []);
 
   const toggleAfterWedding = () => {
     window.dispatchEvent(

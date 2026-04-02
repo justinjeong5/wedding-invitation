@@ -5,8 +5,8 @@ import { WEDDING_CONFIG } from "@/config/wedding";
 import { useAfterWedding } from "@/hooks/useAfterWedding";
 
 export default function Cover() {
-  const { groom, bride, date, afterWedding } = WEDDING_CONFIG;
-  const after = useAfterWedding();
+  const { groom, bride, date, afterWedding: afterWeddingConfig } = WEDDING_CONFIG;
+  const afterWedding = useAfterWedding();
 
   return (
     <section className="relative h-dvh flex flex-col items-center justify-center overflow-hidden bg-primary-dark">
@@ -21,7 +21,7 @@ export default function Cover() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
         >
-          {after ? afterWedding.coverText : "WEDDING INVITATION"}
+          {afterWedding ? afterWeddingConfig.coverText : "WEDDING INVITATION"}
         </motion.p>
 
         <motion.h1

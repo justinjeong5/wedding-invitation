@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useState, useEffect, useCallback, useRef } from "react";
+import { useActionState, useState, useEffect, useCallback } from "react";
+import { useAdminMode } from "@/hooks/useAdminMode";
 import { motion } from "framer-motion";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import {
@@ -690,17 +691,7 @@ export default function Rsvp() {
   const [justSubmitted, setJustSubmitted] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  const [isAdmin, setIsAdmin] = useState(false);
-  const adminPasswordRef = useRef("");
-  useEffect(() => {
-    const handleAdmin = (e: Event) => {
-      const { password } = (e as CustomEvent).detail;
-      adminPasswordRef.current = password;
-      setIsAdmin(true);
-    };
-    window.addEventListener("admin-activated", handleAdmin);
-    return () => window.removeEventListener("admin-activated", handleAdmin);
-  }, []);
+  const { isAdmin, adminPasswordRef } = useAdminMode();
 
   useEffect(() => {
     try {
@@ -741,10 +732,10 @@ export default function Rsvp() {
     );
   }
 
-  if (savedRsvp && !editing) {
-    return (
-      <>
-        {isAdmin && <RsvpDashboard adminPassword={adminPasswordRef.current} />}
+  return (
+    <>
+      {isAdmin && <RsvpDashboard adminPassword={adminPasswordRef.current} />}
+      {savedRsvp && !editing ? (
         <RsvpSummary
           data={savedRsvp}
           justSubmitted={justSubmitted}
@@ -755,22 +746,17 @@ export default function Rsvp() {
           }}
           onDelete={handleDelete}
         />
-      </>
-    );
-  }
-
-  return (
-    <>
-      {isAdmin && <RsvpDashboard adminPassword={adminPasswordRef.current} />}
-      <RsvpForm
-        initialValues={savedRsvp}
-        editPassword={editPassword}
-        onSuccess={handleSuccess}
-        onCancel={() => {
-          setEditing(false);
-          setEditPassword(null);
-        }}
-      />
+      ) : (
+        <RsvpForm
+          initialValues={savedRsvp}
+          editPassword={editPassword}
+          onSuccess={handleSuccess}
+          onCancel={() => {
+            setEditing(false);
+            setEditPassword(null);
+          }}
+        />
+      )}
     </>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useCallback, useEffect, useRef, useState } from "react";
+import { useAdminMode } from "@/hooks/useAdminMode";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import RefreshButton from "@/components/ui/RefreshButton";
 import {
@@ -270,17 +271,7 @@ export default function Guestbook() {
     success: false,
   });
 
-  const [isAdmin, setIsAdmin] = useState(false);
-  const adminPasswordRef = useRef("");
-  useEffect(() => {
-    const handleAdmin = (e: Event) => {
-      const { password } = (e as CustomEvent).detail;
-      adminPasswordRef.current = password;
-      setIsAdmin(true);
-    };
-    window.addEventListener("admin-activated", handleAdmin);
-    return () => window.removeEventListener("admin-activated", handleAdmin);
-  }, []);
+  const { isAdmin, adminPasswordRef } = useAdminMode();
 
   const fetchEntries = useCallback(
     async (cursor?: string) => {

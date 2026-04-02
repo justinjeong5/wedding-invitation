@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useAdminMode } from "@/hooks/useAdminMode";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import SectionWrapper from "@/components/ui/SectionWrapper";
@@ -569,18 +570,7 @@ export default function GuestGallery() {
   const [formOpen, setFormOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  // Admin mode: ?admin=<password> in URL + 10 footer clicks
-  const [isAdmin, setIsAdmin] = useState(false);
-  const adminPasswordRef = useRef("");
-  useEffect(() => {
-    const handleAdmin = (e: Event) => {
-      const { password } = (e as CustomEvent).detail;
-      adminPasswordRef.current = password;
-      setIsAdmin(true);
-    };
-    window.addEventListener("admin-activated", handleAdmin);
-    return () => window.removeEventListener("admin-activated", handleAdmin);
-  }, []);
+  const { isAdmin, adminPasswordRef } = useAdminMode();
 
   const fetchPhotos = useCallback(
     async (cursor?: string) => {
