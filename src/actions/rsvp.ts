@@ -18,7 +18,18 @@ interface RsvpFormState extends FormState {
   data?: RsvpData;
 }
 
+export interface RsvpSummaryData {
+  total: number;
+  attending: number;
+  notAttending: number;
+  groomSide: number;
+  brideSide: number;
+  totalGuests: number;
+  mealCount: number;
+}
+
 const NOT_FOUND = "참석 정보를 찾을 수 없습니다.";
+const ADMIN_PASSWORD = process.env.GUEST_GALLERY_ADMIN_PASSWORD ?? "";
 
 export async function submitRsvp(
   _prevState: RsvpFormState,
@@ -163,4 +174,39 @@ export async function deleteRsvp(
   }
 
   return { success: true };
+}
+
+export async function getRsvpSummary(adminPassword: string): Promise<{
+  success: boolean;
+  data?: RsvpSummaryData;
+  error?: string;
+}> {
+  if (!ADMIN_PASSWORD || adminPassword !== ADMIN_PASSWORD) {
+    return { success: false, error: "권한이 없습니다." };
+  }
+
+  const serviceClient = getServiceClient();
+  const { data, error } = await serviceClient
+    .from("rsvp")
+    .select("side, attendance, guest_count, meal");
+
+  if (error || !data) {
+    return { success: false, error: "데이터를 불러오는데 실패했습니다." };
+  }
+
+  const summary: RsvpSummaryData = {
+    total: data.length,
+    attending: data.filter((r) => r.attendance).length,
+    notAttending: data.filter((r) => !r.attendance).length,
+    groomSide: data.filter((r) => r.side === "groom").length,
+    brideSide: data.filter((r) => r.side === "bride").length,
+    totalGuests: data
+      .filter((r) => r.attendance)
+      .reduce((sum, r) => sum + (r.guest_count || 0), 0),
+    mealCount: data
+      .filter((r) => r.attendance && r.meal)
+      .reduce((sum, r) => sum + (r.guest_count || 0), 0),
+  };
+
+  return { success: true, data: summary };
 }

@@ -1,8 +1,11 @@
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import { WEDDING_CONFIG } from "@/config/wedding";
+import { isAfterWedding } from "@/lib/date";
 
 export default function Greeting() {
-  const { greeting } = WEDDING_CONFIG;
+  const greeting = isAfterWedding()
+    ? WEDDING_CONFIG.afterWedding.greeting
+    : WEDDING_CONFIG.greeting;
 
   return (
     <SectionWrapper id="greeting" className="text-center">

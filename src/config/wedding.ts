@@ -121,6 +121,14 @@ export const WEDDING_CONFIG = {
     ],
   },
 
+  afterWedding: {
+    coverText: "THANK YOU",
+    greeting: {
+      title: "감사의 인사를 전합니다",
+      message: `저희의 새로운 시작을 축복해 주신\n모든 분들께 진심으로 감사드립니다.\n\n여러분의 따뜻한 마음을 간직하며\n행복하게 살겠습니다.`,
+    },
+  },
+
   meta: {
     title: "정경하 & 전우림 결혼합니다",
     description:

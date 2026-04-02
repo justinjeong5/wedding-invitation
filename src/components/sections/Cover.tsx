@@ -2,9 +2,11 @@
 
 import { motion } from "framer-motion";
 import { WEDDING_CONFIG } from "@/config/wedding";
+import { isAfterWedding } from "@/lib/date";
 
 export default function Cover() {
-  const { groom, bride, date } = WEDDING_CONFIG;
+  const { groom, bride, date, afterWedding } = WEDDING_CONFIG;
+  const after = isAfterWedding();
 
   return (
     <section className="relative h-dvh flex flex-col items-center justify-center overflow-hidden bg-primary-dark">
@@ -19,7 +21,7 @@ export default function Cover() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
         >
-          WEDDING INVITATION
+          {after ? afterWedding.coverText : "WEDDING INVITATION"}
         </motion.p>
 
         <motion.h1

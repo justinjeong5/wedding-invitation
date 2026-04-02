@@ -17,8 +17,11 @@ import AdminIndicator from "@/components/ui/AdminIndicator";
 import ShareFab from "@/components/ui/ShareFab";
 import TopNav from "@/components/ui/TopNav";
 import VisitTracker from "@/components/VisitTracker";
+import { isAfterWedding } from "@/lib/date";
 
 export default function Home() {
+  const afterWedding = isAfterWedding();
+
   return (
     <main className="min-h-dvh bg-bg w-full max-w-[480px] mx-auto overflow-x-hidden" data-1p-ignore>
       <VisitTracker />
@@ -29,20 +32,32 @@ export default function Home() {
       <Cover />
       <Greeting />
       <Couple />
-      <Divider />
-      <Calendar />
+      {!afterWedding && (
+        <>
+          <Divider />
+          <Calendar />
+        </>
+      )}
       <Divider />
       <Gallery />
       <Divider />
       <Location />
-      <Divider />
-      <Rsvp />
+      {!afterWedding && (
+        <>
+          <Divider />
+          <Rsvp />
+        </>
+      )}
       <Divider />
       <Contact />
       <Divider />
       <Account />
-      <Divider />
-      <Share />
+      {!afterWedding && (
+        <>
+          <Divider />
+          <Share />
+        </>
+      )}
       <GuestGallery />
       <Divider />
       <Guestbook />
