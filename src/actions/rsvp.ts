@@ -27,13 +27,17 @@ export async function submitRsvp(
   const name = formData.get("name") as string;
   const side = formData.get("side") as string;
   const attendance = formData.get("attendance") === "true";
-  const guestCount = parseInt(formData.get("guest_count") as string, 10) || 1;
+  const guestCount = Math.max(1, Math.min(10, parseInt(formData.get("guest_count") as string, 10) || 1));
   const meal = formData.get("meal") === "true";
   const message = (formData.get("message") as string) || null;
   const password = formData.get("password") as string;
 
   if (!name || !side || !password) {
     return { success: false, error: "이름, 소속, 비밀번호를 입력해주세요." };
+  }
+
+  if (side !== "groom" && side !== "bride") {
+    return { success: false, error: "소속을 올바르게 선택해주세요." };
   }
 
   if (name.length > 50) {
@@ -99,12 +103,16 @@ export async function updateRsvp(
   const name = formData.get("name") as string;
   const side = formData.get("side") as string;
   const attendance = formData.get("attendance") === "true";
-  const guestCount = parseInt(formData.get("guest_count") as string, 10) || 1;
+  const guestCount = Math.max(1, Math.min(10, parseInt(formData.get("guest_count") as string, 10) || 1));
   const meal = formData.get("meal") === "true";
   const message = (formData.get("message") as string) || null;
 
   if (!id || !name || !side || !password) {
     return { success: false, error: "필수 항목이 누락되었습니다." };
+  }
+
+  if (side !== "groom" && side !== "bride") {
+    return { success: false, error: "소속을 올바르게 선택해주세요." };
   }
 
   const verify = await verifyPassword("rsvp", id, password, NOT_FOUND);
