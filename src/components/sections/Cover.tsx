@@ -2,11 +2,11 @@
 
 import { motion } from "framer-motion";
 import { WEDDING_CONFIG } from "@/config/wedding";
-import { isAfterWedding } from "@/lib/date";
+import { useAfterWedding } from "@/hooks/useAfterWedding";
 
 export default function Cover() {
   const { groom, bride, date, afterWedding } = WEDDING_CONFIG;
-  const after = isAfterWedding();
+  const after = useAfterWedding();
 
   return (
     <section className="relative h-dvh flex flex-col items-center justify-center overflow-hidden bg-primary-dark">

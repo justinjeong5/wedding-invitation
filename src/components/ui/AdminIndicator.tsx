@@ -1,15 +1,25 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useAfterWedding } from "@/hooks/useAfterWedding";
 
 export default function AdminIndicator() {
   const [isAdmin, setIsAdmin] = useState(false);
+  const afterWedding = useAfterWedding();
 
   useEffect(() => {
     const handleAdmin = () => setIsAdmin(true);
     window.addEventListener("admin-activated", handleAdmin);
     return () => window.removeEventListener("admin-activated", handleAdmin);
   }, []);
+
+  const toggleAfterWedding = () => {
+    window.dispatchEvent(
+      new CustomEvent("after-wedding-preview", {
+        detail: { enabled: !afterWedding },
+      })
+    );
+  };
 
   if (!isAdmin) return null;
 
@@ -20,11 +30,21 @@ export default function AdminIndicator() {
         className="fixed inset-0 z-40 pointer-events-none"
         style={{ boxShadow: "inset 0 0 0 4px rgba(234, 138, 46, 0.6)" }}
       />
-      {/* Top label */}
-      <div className="fixed top-0 left-1/2 -translate-x-1/2 z-40 pointer-events-none">
-        <span className="inline-block px-3 py-0.5 text-[10px] text-white bg-orange-400/80 rounded-b-md tracking-wider">
+      {/* Top bar */}
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2">
+        <span className="inline-block px-3 py-0.5 text-[10px] text-white bg-orange-400/80 rounded-b-md tracking-wider pointer-events-none">
           관리자 모드
         </span>
+        <button
+          onClick={toggleAfterWedding}
+          className={`px-2.5 py-0.5 text-[10px] rounded-b-md tracking-wider transition-colors ${
+            afterWedding
+              ? "bg-primary/90 text-white"
+              : "bg-white/80 text-text-muted border border-t-0 border-border"
+          }`}
+        >
+          예식 후 {afterWedding ? "ON" : "OFF"}
+        </button>
       </div>
     </>
   );

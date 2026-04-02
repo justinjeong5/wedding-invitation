@@ -1,9 +1,11 @@
+"use client";
+
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import { WEDDING_CONFIG } from "@/config/wedding";
-import { isAfterWedding } from "@/lib/date";
+import { useAfterWedding } from "@/hooks/useAfterWedding";
 
 export default function Greeting() {
-  const greeting = isAfterWedding()
+  const greeting = useAfterWedding()
     ? WEDDING_CONFIG.afterWedding.greeting
     : WEDDING_CONFIG.greeting;
 

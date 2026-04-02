@@ -16,12 +16,10 @@ import AccessibilityToggle from "@/components/ui/AccessibilityToggle";
 import AdminIndicator from "@/components/ui/AdminIndicator";
 import ShareFab from "@/components/ui/ShareFab";
 import TopNav from "@/components/ui/TopNav";
+import AfterWeddingHide from "@/components/ui/AfterWeddingHide";
 import VisitTracker from "@/components/VisitTracker";
-import { isAfterWedding } from "@/lib/date";
 
 export default function Home() {
-  const afterWedding = isAfterWedding();
-
   return (
     <main className="min-h-dvh bg-bg w-full max-w-[480px] mx-auto overflow-x-hidden" data-1p-ignore>
       <VisitTracker />
@@ -32,32 +30,26 @@ export default function Home() {
       <Cover />
       <Greeting />
       <Couple />
-      {!afterWedding && (
-        <>
-          <Divider />
-          <Calendar />
-        </>
-      )}
+      <AfterWeddingHide>
+        <Divider />
+        <Calendar />
+      </AfterWeddingHide>
       <Divider />
       <Gallery />
       <Divider />
       <Location />
-      {!afterWedding && (
-        <>
-          <Divider />
-          <Rsvp />
-        </>
-      )}
+      <AfterWeddingHide>
+        <Divider />
+        <Rsvp />
+      </AfterWeddingHide>
       <Divider />
       <Contact />
       <Divider />
       <Account />
-      {!afterWedding && (
-        <>
-          <Divider />
-          <Share />
-        </>
-      )}
+      <AfterWeddingHide>
+        <Divider />
+        <Share />
+      </AfterWeddingHide>
       <GuestGallery />
       <Divider />
       <Guestbook />
