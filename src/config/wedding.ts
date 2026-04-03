@@ -58,17 +58,22 @@ export const WEDDING_CONFIG = {
     fatherTel: "010-0000-0000", // placeholder
     motherTel: "010-0000-0000", // placeholder
     accounts: [
-      { bank: "○○은행", number: "000-000-000000", holder: "정경하" },
+      {
+        bank: "○○은행",
+        number: "000-000-000000",
+        holder: "정경하",
+        kakaopayUrl: "https://qr.kakaopay.com/FEWX6F0KO",
+        tossUrl: "supertoss://send?amount=0&bank=%ED%86%A0%EC%8A%A4%EB%B1%85%ED%81%AC&accountNo=100022302438&origin=qr",
+      },
       {
         bank: "○○은행",
         number: "000-000-000000",
         holder: "정○○",
         relation: "부",
+        kakaopayUrl: "",
+        tossUrl: "",
       },
     ],
-    // 간편송금 링크 (설정 시 계좌 섹션에 버튼 표시)
-    kakaopayUrl: "https://qr.kakaopay.com/FEWX6F0KO",
-    tossUrl: "supertoss://send?amount=0&bank=%ED%86%A0%EC%8A%A4%EB%B1%85%ED%81%AC&accountNo=100022302438&origin=qr",
   },
 
   bride: {
@@ -80,16 +85,22 @@ export const WEDDING_CONFIG = {
     fatherTel: "010-0000-0000", // placeholder
     motherTel: "010-0000-0000", // placeholder
     accounts: [
-      { bank: "○○은행", number: "000-000-000000", holder: "전우림" },
+      {
+        bank: "○○은행",
+        number: "000-000-000000",
+        holder: "전우림",
+        kakaopayUrl: "",
+        tossUrl: "",
+      },
       {
         bank: "○○은행",
         number: "000-000-000000",
         holder: "전○○",
         relation: "부",
+        kakaopayUrl: "",
+        tossUrl: "",
       },
     ],
-    kakaopayUrl: "", // 카카오페이 앱 > 더보기 > 송금코드 > 링크 복사 (예: "https://qr.kakaopay.com/Fd1234abcd")
-    tossUrl: "",     // 토스 앱 > 전체 > 토스아이디 > 내 토스아이디 링크 복사 (예: "https://toss.me/username")
   },
 
   greeting: {

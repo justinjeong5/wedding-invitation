@@ -27,6 +27,8 @@ export interface Account {
   number: string;
   holder: string;
   relation?: string;
+  kakaopayUrl?: string;
+  tossUrl?: string;
 }
 
 export interface GalleryImage {

@@ -1,107 +1,93 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import CopyButton from "@/components/ui/CopyButton";
 import { WEDDING_CONFIG } from "@/config/wedding";
 import type { Account as AccountType } from "@/types";
 
-function AccountList({
-  accounts,
-  side,
-  kakaopayUrl,
-  tossUrl,
-}: {
-  accounts: readonly AccountType[];
-  side: string;
-  kakaopayUrl?: string;
-  tossUrl?: string;
-}) {
-  const [isOpen, setIsOpen] = useState(false);
+function KakaopayIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
+      <path d="M12 3C6.48 3 2 6.58 2 10.94c0 2.8 1.86 5.27 4.66 6.67l-.9 3.33c-.08.28.24.52.49.36l3.87-2.57c.6.08 1.23.13 1.88.13 5.52 0 10-3.58 10-7.92S17.52 3 12 3z" />
+    </svg>
+  );
+}
 
+function TossIcon() {
+  return (
+    <span className="text-[10px] font-bold leading-none">T</span>
+  );
+}
+
+function AccountCard({ account }: { account: AccountType }) {
+  return (
+    <div className="rounded-xl border border-border/50 p-4 bg-bg-card">
+      <div className="flex items-center justify-between mb-2.5">
+        <div className="flex items-center gap-1.5">
+          <p className="text-sm font-medium text-text-light">{account.holder}</p>
+          {account.relation && (
+            <span
+              className="text-[10px] text-primary/70 border border-primary/20 rounded px-1 py-0.5 leading-none"
+              style={{ minHeight: "auto" }}
+            >
+              {account.relation}
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-1.5 shrink-0">
+          {account.kakaopayUrl && (
+            <button
+              onClick={() => window.open(account.kakaopayUrl, "_blank")}
+              className="w-8 h-8 rounded-full flex items-center justify-center text-black/80 transition-opacity hover:opacity-80"
+              style={{ backgroundColor: "#FEE500", minHeight: "auto" }}
+              aria-label="카카오페이 송금"
+            >
+              <KakaopayIcon />
+            </button>
+          )}
+          {account.tossUrl && (
+            <button
+              onClick={() => window.open(account.tossUrl, "_blank")}
+              className="w-8 h-8 rounded-full flex items-center justify-center text-white transition-opacity hover:opacity-80"
+              style={{ backgroundColor: "#0064FF", minHeight: "auto" }}
+              aria-label="토스 송금"
+            >
+              <TossIcon />
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-xs text-text-muted font-mono tracking-wide">
+          {account.bank} {account.number}
+        </p>
+        <CopyButton text={`${account.bank} ${account.number} ${account.holder}`} />
+      </div>
+    </div>
+  );
+}
+
+function AccountGroup({
+  label,
+  accounts,
+}: {
+  label: string;
+  accounts: readonly AccountType[];
+}) {
   return (
     <div>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-5 py-4 text-sm font-medium text-text-light tracking-[0.08em]"
-        style={{ minHeight: "auto" }}
-      >
-        <span>{side}</span>
-        <svg
-          className={`w-4 h-4 text-primary/50 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
-
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            key="content"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="overflow-hidden"
-          >
-            <div className="px-5 pb-4 space-y-3">
-              {accounts.map((account) => (
-                <div
-                  key={`${account.bank}-${account.holder}`}
-                  className="flex items-start justify-between gap-3 rounded-lg p-3 bg-bg-card border border-border/50"
-                >
-                  <div className="text-left min-w-0">
-                    <div className="flex items-center gap-1.5 mb-0.5">
-                      <p className="text-sm font-medium">{account.holder}</p>
-                      {account.relation && (
-                        <span
-                          className="text-[10px] text-primary/70 border border-primary/20 rounded px-1 py-0.5 leading-none"
-                          style={{ minHeight: "auto" }}
-                        >
-                          {account.relation}
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-xs text-text-muted">{account.bank}</p>
-                    <p className="text-xs text-text-light mt-0.5 tracking-wide font-mono">
-                      {account.number}
-                    </p>
-                  </div>
-                  <CopyButton text={`${account.bank} ${account.number} ${account.holder}`} />
-                </div>
-              ))}
-
-              {(kakaopayUrl || tossUrl) && (
-                <div className="flex gap-2 pt-1">
-                  {kakaopayUrl && (
-                    <button
-                      onClick={() => window.open(kakaopayUrl, "_blank")}
-                      className="flex-1 text-xs font-medium py-2.5 rounded-lg text-black/85"
-                      style={{ backgroundColor: "#FEE500", minHeight: "auto" }}
-                    >
-                      카카오페이 송금
-                    </button>
-                  )}
-                  {tossUrl && (
-                    <button
-                      onClick={() => window.open(tossUrl, "_blank")}
-                      className="flex-1 text-xs font-medium py-2.5 rounded-lg text-white"
-                      style={{ backgroundColor: "#0064FF", minHeight: "auto" }}
-                    >
-                      토스 송금
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <p className="text-xs text-primary tracking-wider text-left mb-2.5">
+        {label}
+      </p>
+      <div className="space-y-2.5">
+        {accounts.map((account) => (
+          <AccountCard
+            key={`${account.bank}-${account.holder}`}
+            account={account}
+          />
+        ))}
+      </div>
     </div>
   );
 }
@@ -116,9 +102,9 @@ export default function Account() {
       </h2>
       <div className="mt-2.5 mb-8 mx-auto w-12 h-px bg-primary/40" />
 
-      <div className="border border-border rounded-2xl overflow-hidden divide-y divide-border bg-bg-card">
-        <AccountList accounts={groom.accounts} side="신랑측" kakaopayUrl={groom.kakaopayUrl} tossUrl={groom.tossUrl} />
-        <AccountList accounts={bride.accounts} side="신부측" kakaopayUrl={bride.kakaopayUrl} tossUrl={bride.tossUrl} />
+      <div className="space-y-6">
+        <AccountGroup label="신랑측" accounts={groom.accounts} />
+        <AccountGroup label="신부측" accounts={bride.accounts} />
       </div>
     </SectionWrapper>
   );
