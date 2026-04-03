@@ -213,29 +213,70 @@ export default function Calendar() {
       </div>
 
       {/* Add to Calendar */}
-      <button
-        onClick={() => {
-          const start = `${date.year}${String(date.month).padStart(2, "0")}${String(date.day).padStart(2, "0")}T${String(date.hour).padStart(2, "0")}${String(date.minute).padStart(2, "0")}00`;
-          const endDate = new Date(date.year, date.month - 1, date.day, date.hour + 2, date.minute);
-          const end = `${endDate.getFullYear()}${String(endDate.getMonth() + 1).padStart(2, "0")}${String(endDate.getDate()).padStart(2, "0")}T${String(endDate.getHours()).padStart(2, "0")}${String(endDate.getMinutes()).padStart(2, "0")}00`;
-          const params = new URLSearchParams({
-            action: "TEMPLATE",
-            text: "정경하 ♥ 전우림 결혼식",
-            dates: `${start}/${end}`,
-            details: `예식 ${WEDDING_CONFIG.venue.hall}\n연회 ${WEDDING_CONFIG.venue.banquet}`,
-            location: `${WEDDING_CONFIG.venue.name}, ${WEDDING_CONFIG.venue.address}`,
-            ctz: "Asia/Seoul",
-          });
-          window.open(`https://calendar.google.com/calendar/render?${params}`, "_blank", "noopener,noreferrer");
-        }}
-        className="mb-8 inline-flex items-center gap-1.5 px-4 py-2 text-xs text-primary border border-primary/30 rounded-full hover:bg-primary/5 transition-colors"
-        style={{ minHeight: "auto" }}
-      >
-        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-        </svg>
-        Google 캘린더에 저장
-      </button>
+      <div className="flex gap-2 justify-center mb-8">
+        <button
+          onClick={() => {
+            const start = `${date.year}${String(date.month).padStart(2, "0")}${String(date.day).padStart(2, "0")}T${String(date.hour).padStart(2, "0")}${String(date.minute).padStart(2, "0")}00`;
+            const endDate = new Date(date.year, date.month - 1, date.day, date.hour + 2, date.minute);
+            const end = `${endDate.getFullYear()}${String(endDate.getMonth() + 1).padStart(2, "0")}${String(endDate.getDate()).padStart(2, "0")}T${String(endDate.getHours()).padStart(2, "0")}${String(endDate.getMinutes()).padStart(2, "0")}00`;
+            const params = new URLSearchParams({
+              action: "TEMPLATE",
+              text: `${WEDDING_CONFIG.groom.name} ♥ ${WEDDING_CONFIG.bride.name} 결혼식`,
+              dates: `${start}/${end}`,
+              details: `예식 ${WEDDING_CONFIG.venue.hall}\n연회 ${WEDDING_CONFIG.venue.banquet}`,
+              location: `${WEDDING_CONFIG.venue.name}, ${WEDDING_CONFIG.venue.address}`,
+              ctz: "Asia/Seoul",
+            });
+            window.open(`https://calendar.google.com/calendar/render?${params}`, "_blank", "noopener,noreferrer");
+          }}
+          className="inline-flex items-center gap-1.5 px-4 py-2 text-xs text-primary border border-primary/30 rounded-full hover:bg-primary/5 transition-colors"
+          style={{ minHeight: "auto" }}
+        >
+          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+          </svg>
+          Google
+        </button>
+        <button
+          onClick={() => {
+            const pad = (n: number) => String(n).padStart(2, "0");
+            const startUTC = new Date(Date.UTC(date.year, date.month - 1, date.day, date.hour - 9, date.minute));
+            const endUTC = new Date(startUTC.getTime() + 2 * 60 * 60 * 1000);
+
+            const formatUTC = (d: Date) =>
+              `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00Z`;
+
+            const ics = [
+              "BEGIN:VCALENDAR",
+              "VERSION:2.0",
+              "PRODID:-//Wedding//Invitation//KO",
+              "BEGIN:VEVENT",
+              `DTSTART:${formatUTC(startUTC)}`,
+              `DTEND:${formatUTC(endUTC)}`,
+              `SUMMARY:${WEDDING_CONFIG.groom.name} ♥ ${WEDDING_CONFIG.bride.name} 결혼식`,
+              `LOCATION:${WEDDING_CONFIG.venue.name}\\, ${WEDDING_CONFIG.venue.address}`,
+              `DESCRIPTION:예식 ${WEDDING_CONFIG.venue.hall}\\n연회 ${WEDDING_CONFIG.venue.banquet}`,
+              "END:VEVENT",
+              "END:VCALENDAR",
+            ].join("\r\n");
+
+            const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "wedding.ics";
+            a.click();
+            URL.revokeObjectURL(url);
+          }}
+          className="inline-flex items-center gap-1.5 px-4 py-2 text-xs text-primary border border-primary/30 rounded-full hover:bg-primary/5 transition-colors"
+          style={{ minHeight: "auto" }}
+        >
+          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+          </svg>
+          캘린더 저장
+        </button>
+      </div>
 
       {/* D-Day Countdown */}
       {!countdown.ready ? (

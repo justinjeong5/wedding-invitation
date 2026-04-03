@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-primary: #9E8E7E;
-  --color-primary-light: #B5A898;
-  --color-primary-dark: #8A7C6E;
+  --color-primary: #8A7A6A;
+  --color-primary-light: #A89888;
+  --color-primary-dark: #7A6C5E;
   --color-bg: #FDFCFA;
   --color-bg-card: #FFFFFF;
   --color-text: #333333;
   --color-text-light: #555555;
-  --color-text-muted: #777777;
+  --color-text-muted: #666666;
   --color-border: #EDE9E3;
   --color-accent: #849E81;
   --font-serif: "Noto Serif KR", serif;
@@ -63,7 +63,7 @@ html.large-mode .text-sm {
 }
 
 html.large-mode .text-\[10px\] {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
 }
 
 html.large-mode .leading-8 {

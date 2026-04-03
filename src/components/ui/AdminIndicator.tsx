@@ -1,16 +1,28 @@
 "use client";
 
+import { useState } from "react";
 import { useAdminMode } from "@/hooks/useAdminMode";
 import { useAfterWedding } from "@/hooks/useAfterWedding";
 
 export default function AdminIndicator() {
   const { isAdmin } = useAdminMode();
   const afterWedding = useAfterWedding();
+  const [bgmEnabled, setBgmEnabled] = useState(true);
 
   const toggleAfterWedding = () => {
     window.dispatchEvent(
       new CustomEvent("after-wedding-preview", {
         detail: { enabled: !afterWedding },
+      })
+    );
+  };
+
+  const toggleBgm = () => {
+    const next = !bgmEnabled;
+    setBgmEnabled(next);
+    window.dispatchEvent(
+      new CustomEvent("bgm-toggle", {
+        detail: { enabled: next },
       })
     );
   };
@@ -38,6 +50,16 @@ export default function AdminIndicator() {
           }`}
         >
           예식 후 {afterWedding ? "ON" : "OFF"}
+        </button>
+        <button
+          onClick={toggleBgm}
+          className={`px-2.5 py-0.5 text-[10px] rounded-b-md tracking-wider transition-colors ${
+            bgmEnabled
+              ? "bg-primary/90 text-white"
+              : "bg-white/80 text-text-muted border border-t-0 border-border"
+          }`}
+        >
+          BGM {bgmEnabled ? "ON" : "OFF"}
         </button>
       </div>
     </>

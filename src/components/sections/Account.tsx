@@ -10,9 +10,13 @@ import type { Account as AccountType } from "@/types";
 function AccountList({
   accounts,
   side,
+  kakaopayUrl,
+  tossUrl,
 }: {
   accounts: readonly AccountType[];
   side: string;
+  kakaopayUrl?: string;
+  tossUrl?: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -71,6 +75,29 @@ function AccountList({
                   <CopyButton text={`${account.bank} ${account.number} ${account.holder}`} />
                 </div>
               ))}
+
+              {(kakaopayUrl || tossUrl) && (
+                <div className="flex gap-2 pt-1">
+                  {kakaopayUrl && (
+                    <button
+                      onClick={() => window.open(kakaopayUrl, "_blank")}
+                      className="flex-1 text-xs font-medium py-2.5 rounded-lg text-black/85"
+                      style={{ backgroundColor: "#FEE500", minHeight: "auto" }}
+                    >
+                      카카오페이 송금
+                    </button>
+                  )}
+                  {tossUrl && (
+                    <button
+                      onClick={() => window.open(tossUrl, "_blank")}
+                      className="flex-1 text-xs font-medium py-2.5 rounded-lg text-white"
+                      style={{ backgroundColor: "#0064FF", minHeight: "auto" }}
+                    >
+                      토스 송금
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           </motion.div>
         )}
@@ -90,8 +117,8 @@ export default function Account() {
       <div className="mt-2.5 mb-8 mx-auto w-12 h-px bg-primary/40" />
 
       <div className="border border-border rounded-2xl overflow-hidden divide-y divide-border bg-bg-card">
-        <AccountList accounts={groom.accounts} side="신랑측" />
-        <AccountList accounts={bride.accounts} side="신부측" />
+        <AccountList accounts={groom.accounts} side="신랑측" kakaopayUrl={groom.kakaopayUrl} tossUrl={groom.tossUrl} />
+        <AccountList accounts={bride.accounts} side="신부측" kakaopayUrl={bride.kakaopayUrl} tossUrl={bride.tossUrl} />
       </div>
     </SectionWrapper>
   );

@@ -12,7 +12,6 @@ const NAV_ITEMS = [
   { id: "rsvp", label: "참석 여부" },
   { id: "contact", label: "연락처" },
   { id: "account", label: "마음 전하실 곳" },
-  { id: "share", label: "공유하기" },
   { id: "guest-gallery", label: "하객 갤러리" },
   { id: "guestbook", label: "방명록" },
 ];
@@ -20,6 +19,7 @@ const NAV_ITEMS = [
 export default function TopNav() {
   const [visible, setVisible] = useState(false);
   const [open, setOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<string>("");
 
   const handleScroll = useCallback(() => {
     setVisible(window.scrollY > window.innerHeight * 0.8);
@@ -30,6 +30,26 @@ export default function TopNav() {
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
+
+  useEffect(() => {
+    const sections = NAV_ITEMS.map((item) => document.getElementById(item.id)).filter(Boolean) as HTMLElement[];
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleEntries = entries.filter((e) => e.isIntersecting);
+        if (visibleEntries.length > 0) {
+          const most = visibleEntries.reduce((a, b) =>
+            a.intersectionRatio > b.intersectionRatio ? a : b
+          );
+          setActiveSection(most.target.id);
+        }
+      },
+      { threshold: [0, 0.25, 0.5], rootMargin: "-44px 0px 0px 0px" }
+    );
+
+    sections.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
+  }, []);
 
   const scrollTo = (id: string) => {
     setOpen(false);
@@ -87,17 +107,27 @@ export default function TopNav() {
                   transition={{ duration: 0.2 }}
                 >
                   <ul className="py-2 flex-1">
-                    {NAV_ITEMS.map(({ id, label }) => (
-                      <li key={id}>
-                        <button
-                          onClick={() => scrollTo(id)}
-                          className="w-full text-left px-6 py-3 text-sm text-text hover:bg-primary/5 transition-colors"
-                          style={{ minHeight: "auto" }}
-                        >
-                          {label}
-                        </button>
-                      </li>
-                    ))}
+                    {NAV_ITEMS.map(({ id, label }) => {
+                      const isActive = activeSection === id;
+                      return (
+                        <li key={id} className="relative">
+                          {isActive && (
+                            <span className="absolute left-0 top-0 w-0.5 h-full bg-primary" />
+                          )}
+                          <button
+                            onClick={() => scrollTo(id)}
+                            className={`w-full text-left px-6 py-3 text-sm transition-colors ${
+                              isActive
+                                ? "bg-primary/5 text-primary font-medium"
+                                : "text-text hover:bg-primary/5"
+                            }`}
+                            style={{ minHeight: "auto" }}
+                          >
+                            {label}
+                          </button>
+                        </li>
+                      );
+                    })}
                   </ul>
                   <div className="px-6 py-6 border-t border-border/40 text-center">
                     <p className="text-xs text-text-muted/80 font-serif">

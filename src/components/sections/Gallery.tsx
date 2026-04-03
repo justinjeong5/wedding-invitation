@@ -220,6 +220,12 @@ export default function Gallery() {
                 ))}
               </Swiper>
             </div>
+
+            <div className="absolute bottom-0 left-0 right-0 z-10 text-center px-4 pb-6 pt-10 bg-gradient-to-t from-black/50 to-transparent">
+              <p className="text-white/80 text-sm font-serif font-light tracking-wider">
+                {images[slideIndex].alt}
+              </p>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

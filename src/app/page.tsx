@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import Cover from "@/components/sections/Cover";
 import Greeting from "@/components/sections/Greeting";
 import Couple from "@/components/sections/Couple";
@@ -7,19 +8,20 @@ import Gallery from "@/components/sections/Gallery";
 import Location from "@/components/sections/Location";
 import Contact from "@/components/sections/Contact";
 import Account from "@/components/sections/Account";
-import Rsvp from "@/components/sections/Rsvp";
-import Share from "@/components/sections/Share";
-import GuestGallery from "@/components/sections/GuestGallery";
-import Guestbook from "@/components/sections/Guestbook";
 import ThankYouGallery from "@/components/sections/ThankYouGallery";
 import Footer from "@/components/sections/Footer";
 import AccessibilityToggle from "@/components/ui/AccessibilityToggle";
 import AdminIndicator from "@/components/ui/AdminIndicator";
 import ShareFab from "@/components/ui/ShareFab";
+import BgmPlayer from "@/components/ui/BgmPlayer";
 import TopNav from "@/components/ui/TopNav";
 import AfterWeddingHide from "@/components/ui/AfterWeddingHide";
 import AfterWeddingShow from "@/components/ui/AfterWeddingShow";
 import VisitTracker from "@/components/VisitTracker";
+
+const Rsvp = dynamic(() => import("@/components/sections/Rsvp"));
+const Guestbook = dynamic(() => import("@/components/sections/Guestbook"));
+const GuestGallery = dynamic(() => import("@/components/sections/GuestGallery"));
 
 export default function Home() {
   return (
@@ -29,6 +31,7 @@ export default function Home() {
       <AccessibilityToggle />
       <AdminIndicator />
       <ShareFab />
+      <BgmPlayer />
       <Cover />
       <Greeting />
       <AfterWeddingShow>
@@ -55,11 +58,10 @@ export default function Home() {
         <Divider />
         <Account />
       </AfterWeddingHide>
-      <AfterWeddingHide>
+      <AfterWeddingShow>
         <Divider />
-        <Share />
-      </AfterWeddingHide>
-      <GuestGallery />
+        <GuestGallery />
+      </AfterWeddingShow>
       <Divider />
       <Guestbook />
       <Footer />

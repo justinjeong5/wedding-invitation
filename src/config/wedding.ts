@@ -66,6 +66,9 @@ export const WEDDING_CONFIG = {
         relation: "부",
       },
     ],
+    // 간편송금 링크 (설정 시 계좌 섹션에 버튼 표시)
+    kakaopayUrl: "", // e.g. "https://qr.kakaopay.com/..."
+    tossUrl: "",     // e.g. "https://toss.me/username"
   },
 
   bride: {
@@ -85,6 +88,8 @@ export const WEDDING_CONFIG = {
         relation: "부",
       },
     ],
+    kakaopayUrl: "",
+    tossUrl: "",
   },
 
   greeting: {
@@ -98,19 +103,19 @@ export const WEDDING_CONFIG = {
 
   gallery: {
     images: [
-      { src: "/images/gallery/gallery-01.jpg", alt: "웨딩 사진 1", width: 1920, height: 1440 },
-      { src: "/images/gallery/gallery-02.jpg", alt: "웨딩 사진 2", width: 1440, height: 1920 },
-      { src: "/images/gallery/gallery-03.jpg", alt: "웨딩 사진 3", width: 1920, height: 1440 },
-      { src: "/images/gallery/gallery-04.jpg", alt: "웨딩 사진 4", width: 1920, height: 1440 },
-      { src: "/images/gallery/gallery-05.jpg", alt: "웨딩 사진 5", width: 1440, height: 1920 },
-      { src: "/images/gallery/gallery-06.jpg", alt: "웨딩 사진 6", width: 1920, height: 1440 },
-      { src: "/images/gallery/gallery-07.jpg", alt: "웨딩 사진 7", width: 1920, height: 1440 },
-      { src: "/images/gallery/gallery-08.jpg", alt: "웨딩 사진 8", width: 1920, height: 1440 },
-      { src: "/images/gallery/gallery-09.jpg", alt: "웨딩 사진 9", width: 1920, height: 1440 },
-      { src: "/images/gallery/gallery-10.jpg", alt: "웨딩 사진 10", width: 1920, height: 1440 },
-      { src: "/images/gallery/gallery-11.jpg", alt: "웨딩 사진 11", width: 1920, height: 1440 },
-      { src: "/images/gallery/gallery-12.jpg", alt: "웨딩 사진 12", width: 1920, height: 1440 },
-      { src: "/images/gallery/gallery-13.jpg", alt: "웨딩 사진 13", width: 1920, height: 1440 },
+      { src: "/images/gallery/gallery-01.jpg", alt: "함께 걷는 길", width: 1920, height: 1440 },
+      { src: "/images/gallery/gallery-02.jpg", alt: "눈을 마주보며", width: 1440, height: 1920 },
+      { src: "/images/gallery/gallery-03.jpg", alt: "나란히, 함께", width: 1920, height: 1440 },
+      { src: "/images/gallery/gallery-04.jpg", alt: "소중한 순간", width: 1920, height: 1440 },
+      { src: "/images/gallery/gallery-05.jpg", alt: "두 손을 맞잡고", width: 1440, height: 1920 },
+      { src: "/images/gallery/gallery-06.jpg", alt: "행복한 미소", width: 1920, height: 1440 },
+      { src: "/images/gallery/gallery-07.jpg", alt: "영원히 기억할 날", width: 1920, height: 1440 },
+      { src: "/images/gallery/gallery-08.jpg", alt: "사랑의 약속", width: 1920, height: 1440 },
+      { src: "/images/gallery/gallery-09.jpg", alt: "둘만의 시간", width: 1920, height: 1440 },
+      { src: "/images/gallery/gallery-10.jpg", alt: "설레는 시작", width: 1920, height: 1440 },
+      { src: "/images/gallery/gallery-11.jpg", alt: "꿈꾸던 오늘", width: 1920, height: 1440 },
+      { src: "/images/gallery/gallery-12.jpg", alt: "함께여서 행복한", width: 1920, height: 1440 },
+      { src: "/images/gallery/gallery-13.jpg", alt: "우리의 이야기", width: 1920, height: 1440 },
     ],
     layout: [
       [0],
@@ -132,6 +137,11 @@ export const WEDDING_CONFIG = {
       { src: "/images/gallery/gallery-02.jpg", alt: "감사 사진 2", width: 1440, height: 1920 },
     ],
     photoCaption: "함께해 주신 모든 순간이 감사합니다",
+  },
+
+  bgm: {
+    src: "/audio/bgm.mp3",
+    title: "Wedding BGM",
   },
 
   meta: {

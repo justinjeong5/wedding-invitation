@@ -12,6 +12,7 @@ export default function ShareFab() {
   const kakaoReady = useKakaoSDK();
   const [linkCopied, setLinkCopied] = useState(false);
   const { meta } = WEDDING_CONFIG;
+  const canNativeShare = typeof navigator !== "undefined" && !!navigator.share;
 
   const handleKakaoShare = () => {
     if (!kakaoReady) return;
@@ -22,6 +23,19 @@ export default function ShareFab() {
       webUrl: meta.siteUrl,
     });
     setOpen(false);
+  };
+
+  const handleNativeShare = async () => {
+    try {
+      await navigator.share({
+        title: meta.title,
+        text: meta.description,
+        url: meta.siteUrl,
+      });
+      setOpen(false);
+    } catch {
+      // User cancelled - ignore
+    }
   };
 
   const handleCopyLink = async () => {
@@ -95,6 +109,17 @@ export default function ShareFab() {
                   {linkCopied ? "복사 완료" : "링크 복사"}
                 </button>
               </div>
+              {canNativeShare && (
+                <button
+                  onClick={handleNativeShare}
+                  className="w-full mt-2 flex items-center justify-center gap-2 py-3 text-sm bg-primary/10 text-primary rounded-xl hover:bg-primary/20 transition font-medium"
+                >
+                  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v12M7 9l5-5 5 5" />
+                  </svg>
+                  다른 앱으로 공유
+                </button>
+              )}
             </motion.div>
           </motion.div>
         )}
