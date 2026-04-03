@@ -68,7 +68,7 @@ export const WEDDING_CONFIG = {
     ],
     // 간편송금 링크 (설정 시 계좌 섹션에 버튼 표시)
     kakaopayUrl: "https://qr.kakaopay.com/FEWX6F0KO",
-    tossUrl: "",
+    tossUrl: "supertoss://send?amount=0&bank=%ED%86%A0%EC%8A%A4%EB%B1%85%ED%81%AC&accountNo=100022302438&origin=qr",
   },
 
   bride: {
