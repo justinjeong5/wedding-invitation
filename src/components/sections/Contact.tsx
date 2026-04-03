@@ -50,18 +50,21 @@ function ContactPerson({ name, tel, parents }: ContactPersonProps) {
           <span className="text-[10px] text-text-muted">문자</span>
         </a>
       </div>
-      <div className="w-full space-y-1.5">
+      <div className="w-full space-y-2.5">
         {parents.map((parent) => (
-          <div key={parent.name} className="flex items-center justify-between">
-            <span className="text-xs text-text-muted truncate">
+          <div key={parent.name} className="flex flex-col items-center">
+            <span className="text-xs text-text-muted mb-1.5">
               {parent.relation} {parent.name}
             </span>
             <a
               href={`tel:${parent.tel}`}
-              className="ml-2 shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-primary/50 border border-primary/15 bg-white"
+              className="flex flex-col items-center gap-1"
               aria-label={`${parent.name}에게 전화`}
             >
-              <PhoneIcon size="w-3.5 h-3.5" />
+              <span className="w-9 h-9 rounded-full flex items-center justify-center text-primary/60 border border-primary/20 bg-white shadow-sm">
+                <PhoneIcon size="w-3.5 h-3.5" />
+              </span>
+              <span className="text-[10px] text-text-muted/60">전화</span>
             </a>
           </div>
         ))}
