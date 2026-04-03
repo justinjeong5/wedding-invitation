@@ -6,13 +6,14 @@ import { WEDDING_CONFIG } from "@/config/wedding";
 import { useAfterWedding } from "@/hooks/useAfterWedding";
 
 const PETALS = [
-  { size: 8, left: 12, delay: 0, duration: 6, swayAmp: 20, opacity: 0.4 },
-  { size: 6, left: 28, delay: 1.2, duration: 8, swayAmp: 15, opacity: 0.3 },
-  { size: 10, left: 45, delay: 0.5, duration: 7, swayAmp: 25, opacity: 0.5 },
-  { size: 7, left: 62, delay: 2, duration: 6.5, swayAmp: 18, opacity: 0.35 },
-  { size: 12, left: 78, delay: 0.8, duration: 9, swayAmp: 22, opacity: 0.45 },
-  { size: 9, left: 88, delay: 1.5, duration: 7.5, swayAmp: 16, opacity: 0.6 },
-  { size: 6, left: 35, delay: 3, duration: 8.5, swayAmp: 20, opacity: 0.3 },
+  { size: 14, left: 10, delay: 0, duration: 8, swayAmp: 30, opacity: 0.5 },
+  { size: 10, left: 25, delay: 1.5, duration: 10, swayAmp: 20, opacity: 0.45 },
+  { size: 18, left: 42, delay: 0.5, duration: 9, swayAmp: 35, opacity: 0.55 },
+  { size: 12, left: 58, delay: 2.5, duration: 8.5, swayAmp: 25, opacity: 0.4 },
+  { size: 16, left: 75, delay: 1, duration: 11, swayAmp: 28, opacity: 0.5 },
+  { size: 13, left: 90, delay: 2, duration: 9.5, swayAmp: 22, opacity: 0.6 },
+  { size: 10, left: 55, delay: 3.5, duration: 10.5, swayAmp: 30, opacity: 0.45 },
+  { size: 15, left: 5, delay: 4, duration: 9, swayAmp: 26, opacity: 0.5 },
 ] as const;
 
 const petalKeyframes = `
@@ -49,7 +50,7 @@ export default function Cover() {
         {PETALS.map((petal, i) => (
           <div
             key={i}
-            className="absolute rounded-full bg-white/30"
+            className="absolute rounded-full bg-white/50"
             style={{
               width: petal.size,
               height: petal.size * 1.3,
