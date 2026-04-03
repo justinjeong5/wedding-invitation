@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import CopyButton from "@/components/ui/CopyButton";
 import { WEDDING_CONFIG } from "@/config/wedding";
@@ -20,50 +21,67 @@ function TossIcon() {
 }
 
 function AccountCard({ account }: { account: AccountType }) {
+  const hasPayLinks = !!(account.kakaopayUrl || account.tossUrl);
+  const hasAccount = !!(account.bank && account.number);
+  const [showAccount, setShowAccount] = useState(false);
+
   return (
     <div className="rounded-xl border border-border/50 p-4 bg-bg-card">
-      <div className="flex items-center justify-between mb-2.5">
-        <div className="flex items-center gap-1.5">
-          <p className="text-sm font-medium text-text-light">{account.holder}</p>
-          {account.relation && (
-            <span
-              className="text-[10px] text-primary/70 border border-primary/20 rounded px-1 py-0.5 leading-none"
-              style={{ minHeight: "auto" }}
-            >
-              {account.relation}
-            </span>
-          )}
-        </div>
-        <div className="flex items-center gap-1.5 shrink-0">
+      <div className="flex items-center gap-1.5 mb-3">
+        <p className="text-sm font-medium text-text-light">{account.holder}</p>
+        {account.relation && (
+          <span
+            className="text-[10px] text-primary/70 border border-primary/20 rounded px-1 py-0.5 leading-none"
+            style={{ minHeight: "auto" }}
+          >
+            {account.relation}
+          </span>
+        )}
+      </div>
+
+      {hasPayLinks && (
+        <div className="flex gap-2 mb-2">
           {account.kakaopayUrl && (
             <button
               onClick={() => window.open(account.kakaopayUrl, "_blank")}
-              className="w-8 h-8 rounded-full flex items-center justify-center text-black/80 transition-opacity hover:opacity-80"
+              className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-medium text-black/85 transition-opacity hover:opacity-80"
               style={{ backgroundColor: "#FEE500", minHeight: "auto" }}
-              aria-label="카카오페이 송금"
             >
               <KakaopayIcon />
+              카카오페이
             </button>
           )}
           {account.tossUrl && (
             <button
               onClick={() => window.open(account.tossUrl, "_blank")}
-              className="w-8 h-8 rounded-full flex items-center justify-center text-white transition-opacity hover:opacity-80"
+              className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-medium text-white transition-opacity hover:opacity-80"
               style={{ backgroundColor: "#0064FF", minHeight: "auto" }}
-              aria-label="토스 송금"
             >
               <TossIcon />
+              토스
             </button>
           )}
         </div>
-      </div>
+      )}
 
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-xs text-text-muted font-mono tracking-wide">
-          {account.bank} {account.number}
-        </p>
-        <CopyButton text={`${account.bank} ${account.number} ${account.holder}`} />
-      </div>
+      {hasAccount && hasPayLinks && (
+        <button
+          onClick={() => setShowAccount(!showAccount)}
+          className="w-full text-[11px] text-text-muted/60 text-center pt-1 transition-colors hover:text-text-muted"
+          style={{ minHeight: "auto" }}
+        >
+          계좌번호 {showAccount ? "접기" : "보기"}
+        </button>
+      )}
+
+      {hasAccount && (!hasPayLinks || showAccount) && (
+        <div className="flex items-center justify-between gap-3 pt-1">
+          <p className="text-xs text-text-muted font-mono tracking-wide">
+            {account.bank} {account.number}
+          </p>
+          <CopyButton text={`${account.bank} ${account.number} ${account.holder}`} />
+        </div>
+      )}
     </div>
   );
 }
