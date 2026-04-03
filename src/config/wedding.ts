@@ -67,8 +67,8 @@ export const WEDDING_CONFIG = {
       },
     ],
     // 간편송금 링크 (설정 시 계좌 섹션에 버튼 표시)
-    kakaopayUrl: "", // 카카오페이 앱 > 더보기 > 송금코드 > 링크 복사 (예: "https://qr.kakaopay.com/Fd1234abcd")
-    tossUrl: "",     // 토스 앱 > 전체 > 토스아이디 > 내 토스아이디 링크 복사 (예: "https://toss.me/username")
+    kakaopayUrl: "https://qr.kakaopay.com/FEWX6F0KO",
+    tossUrl: "",
   },
 
   bride: {
