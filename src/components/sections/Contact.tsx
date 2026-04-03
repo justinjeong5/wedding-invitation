@@ -3,16 +3,17 @@ import { WEDDING_CONFIG } from "@/config/wedding";
 
 function PhoneIcon({ size = "w-4 h-4" }: { size?: string }) {
   return (
-    <svg className={size} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+    <svg className={size} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z" />
     </svg>
   );
 }
 
 function SmsIcon() {
   return (
-    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
+    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z" />
+      <path d="M7 9h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z" />
     </svg>
   );
 }
@@ -26,35 +27,41 @@ interface ContactPersonProps {
 function ContactPerson({ name, tel, parents }: ContactPersonProps) {
   return (
     <div className="flex flex-col items-center">
-      <p className="text-sm font-medium text-text-light mb-2">{name}</p>
-      <div className="flex gap-2 mb-3">
+      <p className="text-sm font-medium text-text-light mb-3">{name}</p>
+      <div className="flex gap-3 mb-4">
         <a
           href={`tel:${tel}`}
-          className="w-8 h-8 rounded-full flex items-center justify-center text-primary bg-primary/10"
+          className="flex flex-col items-center gap-1"
           aria-label={`${name}에게 전화`}
         >
-          <PhoneIcon />
+          <span className="w-10 h-10 rounded-full flex items-center justify-center text-primary border border-primary/25 bg-white shadow-sm">
+            <PhoneIcon />
+          </span>
+          <span className="text-[10px] text-text-muted">전화</span>
         </a>
         <a
           href={`sms:${tel}`}
-          className="w-8 h-8 rounded-full flex items-center justify-center text-primary bg-primary/10"
+          className="flex flex-col items-center gap-1"
           aria-label={`${name}에게 문자`}
         >
-          <SmsIcon />
+          <span className="w-10 h-10 rounded-full flex items-center justify-center text-primary border border-primary/25 bg-white shadow-sm">
+            <SmsIcon />
+          </span>
+          <span className="text-[10px] text-text-muted">문자</span>
         </a>
       </div>
-      <div className="w-full space-y-1">
+      <div className="w-full space-y-1.5">
         {parents.map((parent) => (
-          <div key={parent.name} className="flex items-center justify-between py-1">
+          <div key={parent.name} className="flex items-center justify-between">
             <span className="text-xs text-text-muted truncate">
               {parent.relation} {parent.name}
             </span>
             <a
               href={`tel:${parent.tel}`}
-              className="ml-2 shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-primary/60 bg-primary/5"
+              className="ml-2 shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-primary/50 border border-primary/15 bg-white"
               aria-label={`${parent.name}에게 전화`}
             >
-              <PhoneIcon size="w-3 h-3" />
+              <PhoneIcon size="w-3.5 h-3.5" />
             </a>
           </div>
         ))}
