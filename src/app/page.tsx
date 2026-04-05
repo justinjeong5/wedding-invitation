@@ -17,6 +17,7 @@ import BgmPlayer from "@/components/ui/BgmPlayer";
 import TopNav from "@/components/ui/TopNav";
 import AfterWeddingHide from "@/components/ui/AfterWeddingHide";
 import AfterWeddingShow from "@/components/ui/AfterWeddingShow";
+import GuestGalleryGate from "@/components/ui/GuestGalleryGate";
 import VisitTracker from "@/components/VisitTracker";
 
 const Rsvp = dynamic(() => import("@/components/sections/Rsvp"));
@@ -58,10 +59,10 @@ export default function Home() {
         <Divider />
         <Account />
       </AfterWeddingHide>
-      <AfterWeddingShow>
+      <GuestGalleryGate>
         <Divider />
         <GuestGallery />
-      </AfterWeddingShow>
+      </GuestGalleryGate>
       <Divider />
       <Guestbook />
       <Footer />

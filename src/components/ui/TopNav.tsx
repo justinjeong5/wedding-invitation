@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { WEDDING_CONFIG } from "@/config/wedding";
 import { useAfterWedding } from "@/hooks/useAfterWedding";
+import { useGuestGalleryOpen } from "@/hooks/useGuestGalleryOpen";
 
 const NAV_ITEMS = [
   { id: "greeting", label: "인사말" },
@@ -13,7 +14,7 @@ const NAV_ITEMS = [
   { id: "rsvp", label: "참석 여부", hideAfterWedding: true },
   { id: "contact", label: "연락처" },
   { id: "account", label: "마음 전하실 곳", hideAfterWedding: true },
-  { id: "guest-gallery", label: "하객 갤러리", afterWeddingOnly: true },
+  { id: "guest-gallery", label: "하객 갤러리", guestGallery: true },
   { id: "guestbook", label: "방명록" },
 ];
 
@@ -22,15 +23,16 @@ export default function TopNav() {
   const [open, setOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("");
   const afterWedding = useAfterWedding();
+  const guestGalleryOpen = useGuestGalleryOpen();
 
   const filteredItems = useMemo(
     () =>
       NAV_ITEMS.filter((item) => {
         if (afterWedding && item.hideAfterWedding) return false;
-        if (!afterWedding && item.afterWeddingOnly) return false;
+        if (item.guestGallery && !guestGalleryOpen) return false;
         return true;
       }),
-    [afterWedding]
+    [afterWedding, guestGalleryOpen]
   );
 
   const handleScroll = useCallback(() => {
