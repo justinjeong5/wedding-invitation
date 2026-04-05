@@ -120,11 +120,11 @@ export default function Location() {
 
           <div className="border border-border rounded-2xl overflow-hidden divide-y divide-border bg-bg-card text-left">
             {/* Subway */}
-            <div className="px-5 py-4">
-              <p className="text-xs text-primary font-semibold tracking-[0.12em] mb-3">지하철</p>
-              <div className="space-y-1.5">
+            <div className="px-5 py-5">
+              <p className="text-xs text-primary font-semibold tracking-[0.12em] mb-4">지하철</p>
+              <div className="space-y-2.5">
                 {directions.subway.map((s) => (
-                  <div key={s.line} className="flex items-center gap-2 text-xs text-text-light">
+                  <div key={s.line} className="flex items-center gap-2.5 text-xs text-text-light">
                     <TransportBadge label={s.line} color={subwayColors[s.line] ?? "#888"} />
                     <span>{s.detail}</span>
                   </div>
@@ -133,11 +133,11 @@ export default function Location() {
             </div>
 
             {/* Bus */}
-            <div className="px-5 py-4">
-              <p className="text-xs text-primary font-semibold tracking-[0.12em] mb-3">버스</p>
-              <div className="space-y-1.5">
+            <div className="px-5 py-5">
+              <p className="text-xs text-primary font-semibold tracking-[0.12em] mb-4">버스</p>
+              <div className="space-y-2.5">
                 {directions.bus.map((b) => (
-                  <div key={b.type} className="flex items-center gap-2 text-xs">
+                  <div key={b.type} className="flex items-center gap-2.5 text-xs">
                     <TransportBadge label={b.type} color={busColors[b.type] ?? "#888"} textColor={b.type === "일반" ? "#333" : "white"} />
                     <span className="text-text-light">{b.routes}</span>
                   </div>
@@ -146,9 +146,9 @@ export default function Location() {
             </div>
 
             {/* Car + Parking */}
-            <div className="px-5 py-4">
-              <p className="text-xs text-primary font-semibold tracking-[0.12em] mb-3">자가용 · 주차</p>
-              <div className="space-y-2">
+            <div className="px-5 py-5">
+              <p className="text-xs text-primary font-semibold tracking-[0.12em] mb-4">자가용 · 주차</p>
+              <div className="space-y-3">
                 <div className="flex gap-3 text-xs">
                   <span className="text-text-muted w-10 shrink-0">도로명</span>
                   <span className="text-text-light">{directions.car.newAddress}</span>
@@ -165,7 +165,7 @@ export default function Location() {
                   <span className="text-text-muted w-10 shrink-0" />
                   <span className="text-text-muted">{directions.parking.overflow}</span>
                 </div>
-                <p className="text-[10px] text-text-muted/80 mt-1">
+                <p className="text-[10px] text-text-muted/80 mt-2">
                   * {directions.parking.tip}
                 </p>
               </div>
