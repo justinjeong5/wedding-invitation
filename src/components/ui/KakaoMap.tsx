@@ -48,8 +48,6 @@ export default function KakaoMap({ lat, lng, name }: KakaoMapProps) {
 
         new window.kakao.maps.Marker({ map, position, title: name });
 
-        map.setDraggable(false);
-        map.setZoomable(false);
         setLoaded(true);
       });
     };
