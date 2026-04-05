@@ -1,18 +1,19 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { WEDDING_CONFIG } from "@/config/wedding";
+import { useAfterWedding } from "@/hooks/useAfterWedding";
 
 const NAV_ITEMS = [
   { id: "greeting", label: "인사말" },
-  { id: "calendar", label: "예식 일시" },
+  { id: "calendar", label: "예식 일시", hideAfterWedding: true },
   { id: "gallery", label: "갤러리" },
-  { id: "location", label: "오시는 길" },
-  { id: "rsvp", label: "참석 여부" },
+  { id: "location", label: "오시는 길", hideAfterWedding: true },
+  { id: "rsvp", label: "참석 여부", hideAfterWedding: true },
   { id: "contact", label: "연락처" },
-  { id: "account", label: "마음 전하실 곳" },
-  { id: "guest-gallery", label: "하객 갤러리" },
+  { id: "account", label: "마음 전하실 곳", hideAfterWedding: true },
+  { id: "guest-gallery", label: "하객 갤러리", afterWeddingOnly: true },
   { id: "guestbook", label: "방명록" },
 ];
 
@@ -20,6 +21,17 @@ export default function TopNav() {
   const [visible, setVisible] = useState(false);
   const [open, setOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("");
+  const afterWedding = useAfterWedding();
+
+  const filteredItems = useMemo(
+    () =>
+      NAV_ITEMS.filter((item) => {
+        if (afterWedding && item.hideAfterWedding) return false;
+        if (!afterWedding && item.afterWeddingOnly) return false;
+        return true;
+      }),
+    [afterWedding]
+  );
 
   const handleScroll = useCallback(() => {
     setVisible(window.scrollY > window.innerHeight * 0.8);
@@ -32,7 +44,7 @@ export default function TopNav() {
   }, [handleScroll]);
 
   useEffect(() => {
-    const sections = NAV_ITEMS.map((item) => document.getElementById(item.id)).filter(Boolean) as HTMLElement[];
+    const sections = filteredItems.map((item) => document.getElementById(item.id)).filter(Boolean) as HTMLElement[];
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -49,7 +61,7 @@ export default function TopNav() {
 
     sections.forEach((s) => observer.observe(s));
     return () => observer.disconnect();
-  }, []);
+  }, [filteredItems]);
 
   const scrollTo = (id: string) => {
     setOpen(false);
@@ -107,7 +119,7 @@ export default function TopNav() {
                   transition={{ duration: 0.2 }}
                 >
                   <ul className="py-2 flex-1">
-                    {NAV_ITEMS.map(({ id, label }) => {
+                    {filteredItems.map(({ id, label }) => {
                       const isActive = activeSection === id;
                       return (
                         <li key={id} className="relative">
