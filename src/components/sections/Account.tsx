@@ -3,6 +3,7 @@
 import { useState } from "react";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import CopyButton from "@/components/ui/CopyButton";
+import { copyToClipboard } from "@/lib/clipboard";
 import { WEDDING_CONFIG } from "@/config/wedding";
 import type { Account as AccountType } from "@/types";
 
@@ -76,9 +77,13 @@ function AccountCard({ account }: { account: AccountType }) {
 
       {hasAccount && (!hasPayLinks || showAccount) && (
         <div className="flex items-center justify-between gap-3 pt-1">
-          <p className="text-xs text-text-muted font-mono tracking-wide">
+          <button
+            onClick={() => copyToClipboard(`${account.bank} ${account.number}`)}
+            className="text-xs text-text-muted font-mono tracking-wide no-underline"
+            style={{ minHeight: "auto", textDecoration: "none", WebkitTapHighlightColor: "transparent" }}
+          >
             {account.bank} {account.number}
-          </p>
+          </button>
           <CopyButton text={`${account.bank} ${account.number} ${account.holder}`} />
         </div>
       )}

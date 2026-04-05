@@ -10,6 +10,10 @@ const notoSerifKR = Noto_Serif_KR({
   display: "swap",
 });
 
+export const formatDetection = {
+  telephone: false,
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(WEDDING_CONFIG.meta.siteUrl),
   title: WEDDING_CONFIG.meta.title,
