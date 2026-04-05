@@ -56,16 +56,28 @@ function ContactPerson({ name, tel, parents }: ContactPersonProps) {
             <span className="text-xs text-text-muted mb-1.5">
               {parent.relation} {parent.name}
             </span>
-            <a
-              href={`tel:${parent.tel}`}
-              className="flex flex-col items-center gap-1"
-              aria-label={`${parent.name}에게 전화`}
-            >
-              <span className="w-9 h-9 rounded-full flex items-center justify-center text-primary/60 border border-primary/20 bg-white shadow-sm">
-                <PhoneIcon size="w-3.5 h-3.5" />
-              </span>
-              <span className="text-[10px] text-text-muted/60">전화</span>
-            </a>
+            <div className="flex gap-2">
+              <a
+                href={`tel:${parent.tel}`}
+                className="flex flex-col items-center gap-1"
+                aria-label={`${parent.name}에게 전화`}
+              >
+                <span className="w-9 h-9 rounded-full flex items-center justify-center text-primary/60 border border-primary/20 bg-white shadow-sm">
+                  <PhoneIcon size="w-3.5 h-3.5" />
+                </span>
+                <span className="text-[10px] text-text-muted/60">전화</span>
+              </a>
+              <a
+                href={`sms:${parent.tel}`}
+                className="flex flex-col items-center gap-1"
+                aria-label={`${parent.name}에게 문자`}
+              >
+                <span className="w-9 h-9 rounded-full flex items-center justify-center text-primary/60 border border-primary/20 bg-white shadow-sm">
+                  <SmsIcon />
+                </span>
+                <span className="text-[10px] text-text-muted/60">문자</span>
+              </a>
+            </div>
           </div>
         ))}
       </div>
