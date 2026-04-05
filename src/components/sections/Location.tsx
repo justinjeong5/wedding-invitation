@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import SectionWrapper from "@/components/ui/SectionWrapper";
+import CopyButton from "@/components/ui/CopyButton";
 import { WEDDING_CONFIG } from "@/config/wedding";
 
 const KakaoMap = dynamic(() => import("@/components/ui/KakaoMap"), {
@@ -48,7 +49,10 @@ export default function Location() {
         <p className="text-sm text-text-light font-light mt-1">
           예식 {venue.hall} · 연회 {venue.banquet}
         </p>
-        <p className="text-xs text-text-muted mt-2">{venue.address}</p>
+        <div className="flex items-center justify-center gap-2 mt-2">
+          <p className="text-xs text-text-muted">{venue.address}</p>
+          <CopyButton text={venue.address} label="복사" />
+        </div>
         <p className="text-xs text-text-muted mt-1">
           Tel. {venue.tel}
         </p>
