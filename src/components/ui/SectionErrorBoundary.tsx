@@ -1,6 +1,6 @@
 "use client";
 
-import { Component, type ComponentType } from "react";
+import { Component, Suspense, type ComponentType } from "react";
 
 interface Props {
   children: React.ReactNode;
@@ -54,7 +54,9 @@ class SectionErrorBoundary extends Component<Props, State> {
       );
     }
 
-    return this.props.children;
+    // Suspense wrapper: React 19 hydrateRoot + Error Boundary 조합에서
+    // hooks count 불일치 버그(#33580) 워크어라운드
+    return <Suspense>{this.props.children}</Suspense>;
   }
 }
 
