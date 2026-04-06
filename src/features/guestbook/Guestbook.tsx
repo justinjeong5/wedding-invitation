@@ -18,7 +18,6 @@ export default function Guestbook() {
   useEffect(() => {
     if (Math.random() > 0.5) setTestThrow(true);
   }, []);
-  if (testThrow) throw new Error("[TEST] Guestbook 섹션 런타임 에러 테스트");
 
   const visitorId = useVisitorId();
   const [state, formAction, isPending] = useActionState(submitGuestbook, {
@@ -54,6 +53,9 @@ export default function Guestbook() {
   useEffect(() => {
     if (state.success) reload();
   }, [state, reload]);
+
+  // TODO: 테스트 후 삭제 — 모든 hooks 호출 이후에 throw해야 Rules of Hooks 위반 방지
+  if (testThrow) throw new Error("[TEST] Guestbook 섹션 런타임 에러 테스트");
 
   const handleUpdated = (id: string, newMessage: string) => {
     setEntries((prev) =>

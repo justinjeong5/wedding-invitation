@@ -24,13 +24,14 @@ class SectionErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error) {
     console.error(`[${this.props.sectionName ?? "Section"}]`, error);
-    reportError({
+    const info = {
       message: error.message,
       stack: error.stack,
       section: this.props.sectionName,
       url: typeof window !== "undefined" ? window.location.href : undefined,
       userAgent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
-    });
+    };
+    setTimeout(() => reportError(info), 0);
   }
 
   render() {
