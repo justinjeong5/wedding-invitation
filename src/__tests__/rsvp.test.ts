@@ -58,7 +58,7 @@ vi.stubGlobal(
   })
 );
 
-import { submitRsvp, updateRsvp, deleteRsvp, verifyRsvpPassword } from "@/actions/rsvp";
+import { submitRsvp, updateRsvp, deleteRsvp, verifyRsvpPassword } from "@/features/rsvp/actions";
 
 function makeFormData(entries: Record<string, string>): FormData {
   const fd = new FormData();

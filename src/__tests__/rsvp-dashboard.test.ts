@@ -53,7 +53,7 @@ vi.mock("@/lib/auth", async (importOriginal) => {
   };
 });
 
-import { getRsvpSummary } from "@/actions/rsvp";
+import { getRsvpSummary } from "@/features/rsvp/actions";
 
 describe("getRsvpSummary", () => {
   beforeEach(() => {

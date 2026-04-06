@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { validateImage, validateAspectRatio } from "@/lib/image-resize";
+import { validateImage, validateAspectRatio } from "@/features/guest-gallery/image-resize";
 
 function createMockFile(name: string, size: number, type: string): File {
   const content = new Uint8Array(size).fill(0);

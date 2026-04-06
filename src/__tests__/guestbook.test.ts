@@ -32,6 +32,8 @@ const { supabaseMock, serviceMock, mockVerifyPassword } = vi.hoisted(() => {
     };
   }
 
+  process.env.GUEST_GALLERY_ADMIN_PASSWORD = "admin-secret";
+
   return {
     supabaseMock: createMock(),
     serviceMock: createMock(),
@@ -44,17 +46,21 @@ vi.mock("@/lib/supabase", () => ({
   getServiceClient: () => serviceMock,
 }));
 
-vi.mock("@/lib/auth", () => ({
-  hashPassword: vi.fn((pw: string) => Promise.resolve(`hashed_${pw}`)),
-  verifyPassword: mockVerifyPassword,
-}));
+vi.mock("@/lib/auth", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/auth")>();
+  return {
+    ...actual,
+    hashPassword: vi.fn((pw: string) => Promise.resolve(`hashed_${pw}`)),
+    verifyPassword: mockVerifyPassword,
+  };
+});
 
 import {
   submitGuestbook,
   getGuestbookEntries,
   updateGuestbookEntry,
   deleteGuestbookEntry,
-} from "@/actions/guestbook";
+} from "@/features/guestbook/actions";
 
 function makeFormData(entries: Record<string, string>): FormData {
   const fd = new FormData();
@@ -197,5 +203,17 @@ describe("deleteGuestbookEntry", () => {
 
     const result = await deleteGuestbookEntry("id-1", "wrong");
     expect(result.success).toBe(false);
+  });
+
+  it("관리자 삭제 시 admin 비밀번호로 삭제한다", async () => {
+    const result = await deleteGuestbookEntry("id-1", "admin-secret", true);
+    expect(result.success).toBe(true);
+    expect(serviceMock.from).toHaveBeenCalledWith("guestbook");
+  });
+
+  it("관리자 삭제 시 잘못된 admin 비밀번호면 에러를 반환한다", async () => {
+    const result = await deleteGuestbookEntry("id-1", "wrong-admin", true);
+    expect(result.success).toBe(false);
+    expect(result.error).toContain("권한");
   });
 });

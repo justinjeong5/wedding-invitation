@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef } from "react";
 import { WEDDING_CONFIG } from "@/config/wedding";
-import { verifyAdminPassword } from "@/actions/guest-gallery";
+import { verifyAdminPassword } from "@/actions/auth";
 
 const ADMIN_CLICK_THRESHOLD = 20;
 const CLICK_TIMEOUT_MS = 2000;

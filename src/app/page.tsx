@@ -21,9 +21,9 @@ import AfterWeddingShow from "@/components/ui/AfterWeddingShow";
 import GuestGalleryGate from "@/components/ui/GuestGalleryGate";
 import VisitTracker from "@/components/VisitTracker";
 
-const Rsvp = dynamic(() => import("@/components/sections/Rsvp"));
-const Guestbook = dynamic(() => import("@/components/sections/Guestbook"));
-const GuestGallery = dynamic(() => import("@/components/sections/GuestGallery"));
+const Rsvp = dynamic(() => import("@/features/rsvp"));
+const Guestbook = dynamic(() => import("@/features/guestbook"));
+const GuestGallery = dynamic(() => import("@/features/guest-gallery"));
 
 export default function Home() {
   return (

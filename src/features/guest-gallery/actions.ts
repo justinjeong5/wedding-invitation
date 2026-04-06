@@ -16,12 +16,12 @@ const ALLOWED_MIME = new Set([
 const MAGIC_BYTES: [string, number[]][] = [
   ["image/jpeg", [0xff, 0xd8, 0xff]],
   ["image/png", [0x89, 0x50, 0x4e, 0x47]],
-  ["image/webp", [0x52, 0x49, 0x46, 0x46]], // RIFF
+  ["image/webp", [0x52, 0x49, 0x46, 0x46]],
 ];
 
 function verifyMagicBytes(buffer: Buffer, mime: string): boolean {
   const entry = MAGIC_BYTES.find(([m]) => m === mime);
-  if (!entry) return true; // HEIC 등은 magic bytes 검증 생략
+  if (!entry) return true;
   const [, expected] = entry;
   return expected.every((byte, i) => buffer[i] === byte);
 }
@@ -119,10 +119,6 @@ export async function getGuestPhotos(
   const hasMore = rows.length > PAGE_SIZE;
 
   return { photos: rows.slice(0, PAGE_SIZE), hasMore };
-}
-
-export async function verifyAdminPassword(password: string): Promise<boolean> {
-  return isAdminPassword(password);
 }
 
 export async function deleteGuestPhoto(

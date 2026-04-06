@@ -71,7 +71,7 @@ vi.mock("bcryptjs", () => ({
   },
 }));
 
-import { uploadGuestPhoto, deleteGuestPhoto } from "@/actions/guest-gallery";
+import { uploadGuestPhoto, deleteGuestPhoto, getGuestPhotos } from "@/features/guest-gallery/actions";
 
 function createMockFile(
   name: string,
@@ -146,6 +146,37 @@ describe("uploadGuestPhoto", () => {
     expect(result.success).toBe(true);
     expect(serviceMock.storage.from).toHaveBeenCalledWith("guest-photos");
     expect(serviceMock.from).toHaveBeenCalledWith("guest_photos");
+  });
+});
+
+describe("getGuestPhotos", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("정상 조회 시 photos와 hasMore를 반환한다", async () => {
+    const rows = Array.from({ length: 13 }, (_, i) => ({
+      id: `id-${i}`,
+      storage_path: `photo-${i}.jpg`,
+      name: `user-${i}`,
+      caption: null,
+      created_at: new Date(2026, 0, i + 1).toISOString(),
+    }));
+    supabaseMock.chain.then = vi.fn((resolve: (v: unknown) => void) =>
+      resolve({ data: rows, error: null })
+    );
+    const result = await getGuestPhotos();
+    expect(result.photos).toHaveLength(12);
+    expect(result.hasMore).toBe(true);
+  });
+
+  it("에러 시 빈 배열을 반환한다", async () => {
+    supabaseMock.chain.then = vi.fn((resolve: (v: unknown) => void) =>
+      resolve({ data: null, error: { message: "error" } })
+    );
+    const result = await getGuestPhotos();
+    expect(result.photos).toEqual([]);
+    expect(result.hasMore).toBe(false);
   });
 });
 
