@@ -13,6 +13,9 @@ import GuestbookSkeleton from "@/features/guestbook/GuestbookSkeleton";
 import type { GuestbookEntry } from "@/types";
 
 export default function Guestbook() {
+  // TODO: 테스트 후 삭제 — 50% 확률 런타임 에러
+  if (Math.random() > 0.5) throw new Error("[TEST] Guestbook 섹션 런타임 에러 테스트");
+
   const visitorId = useVisitorId();
   const [state, formAction, isPending] = useActionState(submitGuestbook, {
     success: false,

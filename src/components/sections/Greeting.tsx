@@ -5,9 +5,6 @@ import { WEDDING_CONFIG } from "@/config/wedding";
 import { useAfterWedding } from "@/hooks/useAfterWedding";
 
 export default function Greeting() {
-  // TODO: 테스트 후 삭제 — 50% 확률 런타임 에러
-  if (Math.random() > 0.5) throw new Error("[TEST] Greeting 섹션 런타임 에러 테스트");
-
   const greeting = useAfterWedding()
     ? WEDDING_CONFIG.afterWedding.greeting
     : WEDDING_CONFIG.greeting;
