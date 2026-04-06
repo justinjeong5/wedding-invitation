@@ -12,6 +12,7 @@ import ThankYouGallery from "@/components/sections/ThankYouGallery";
 import Footer from "@/components/sections/Footer";
 import AccessibilityToggle from "@/components/ui/AccessibilityToggle";
 import AdminIndicator from "@/components/ui/AdminIndicator";
+import AdminDashboard from "@/components/ui/AdminDashboard";
 import ShareFab from "@/components/ui/ShareFab";
 import BgmPlayer from "@/components/ui/BgmPlayer";
 import Toast from "@/components/ui/Toast";
@@ -32,6 +33,7 @@ export default function Home() {
       <TopNav />
       <AccessibilityToggle />
       <AdminIndicator />
+      <AdminDashboard />
       <ShareFab />
       <BgmPlayer />
       <Toast />
