@@ -1,4 +1,7 @@
-export async function copyToClipboard(text: string): Promise<boolean> {
+export async function copyToClipboard(
+  text: string,
+  toastMessage?: string,
+): Promise<boolean> {
   try {
     if (navigator.clipboard) {
       await navigator.clipboard.writeText(text);
@@ -11,6 +14,11 @@ export async function copyToClipboard(text: string): Promise<boolean> {
       textarea.select();
       document.execCommand("copy");
       document.body.removeChild(textarea);
+    }
+    if (toastMessage) {
+      window.dispatchEvent(
+        new CustomEvent("app-toast", { detail: toastMessage }),
+      );
     }
     return true;
   } catch {

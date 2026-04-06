@@ -78,7 +78,7 @@ function AccountCard({ account }: { account: AccountType }) {
       {hasAccount && (!hasPayLinks || showAccount) && (
         <div className="flex items-center justify-between gap-3 pt-1">
           <button
-            onClick={() => copyToClipboard(`${account.bank} ${account.number}`)}
+            onClick={() => copyToClipboard(`${account.bank} ${account.number}`, "계좌번호가 복사되었습니다")}
             className="text-xs text-text-muted font-mono tracking-wide no-underline"
             style={{ minHeight: "auto", textDecoration: "none", WebkitTapHighlightColor: "transparent" }}
           >

@@ -14,6 +14,7 @@ import AccessibilityToggle from "@/components/ui/AccessibilityToggle";
 import AdminIndicator from "@/components/ui/AdminIndicator";
 import ShareFab from "@/components/ui/ShareFab";
 import BgmPlayer from "@/components/ui/BgmPlayer";
+import Toast from "@/components/ui/Toast";
 import TopNav from "@/components/ui/TopNav";
 import AfterWeddingHide from "@/components/ui/AfterWeddingHide";
 import AfterWeddingShow from "@/components/ui/AfterWeddingShow";
@@ -33,6 +34,7 @@ export default function Home() {
       <AdminIndicator />
       <ShareFab />
       <BgmPlayer />
+      <Toast />
       <Cover />
       <Greeting />
       <AfterWeddingShow>

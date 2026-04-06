@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import SectionWrapper from "@/components/ui/SectionWrapper";
-import CopyButton from "@/components/ui/CopyButton";
+import { copyToClipboard } from "@/lib/clipboard";
 import { WEDDING_CONFIG } from "@/config/wedding";
 
 const KakaoMap = dynamic(() => import("@/components/ui/KakaoMap"), {
@@ -44,17 +44,38 @@ export default function Location() {
         오시는 길
       </h2>
 
-      <div className="mb-4">
-        <p className="text-base font-normal">{venue.name}</p>
-        <p className="text-sm text-text-light font-light mt-1">
+      <div className="mb-6">
+        <p className="font-serif text-base tracking-[0.08em] text-text">
+          {venue.name}
+        </p>
+        <p className="text-[13px] text-text-muted font-light mt-1.5 tracking-wide">
           예식 {venue.hall} · 연회 {venue.banquet}
         </p>
-        <div className="flex items-center justify-center gap-2 mt-2">
-          <p className="text-xs text-text-muted">{venue.address}</p>
-          <CopyButton text={venue.address} label="복사" />
-        </div>
-        <p className="text-xs text-text-muted mt-1">
-          Tel. {venue.tel}
+
+        <div className="mx-auto w-10 h-px bg-primary/30 my-4" />
+
+        <button
+          onClick={() => copyToClipboard(venue.address, "주소가 복사되었습니다")}
+          className="inline-flex items-center gap-1.5 text-[13px] text-text-light tracking-wide transition-colors active:text-primary group"
+          style={{ minHeight: "auto" }}
+        >
+          <span className="border-b border-dashed border-text-muted/40 group-active:border-primary/60 pb-px">
+            {venue.address}
+          </span>
+          <svg
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            className="w-3 h-3 text-text-muted/40 group-active:text-primary/70 shrink-0"
+          >
+            <path d="M7 3.5A1.5 1.5 0 018.5 2h3.879a1.5 1.5 0 011.06.44l3.122 3.12A1.5 1.5 0 0117 6.622V12.5a1.5 1.5 0 01-1.5 1.5h-1v-3.379a3 3 0 00-.879-2.121L10.5 5.379A3 3 0 008.379 4.5H7v-1z" />
+            <path d="M4.5 6A1.5 1.5 0 003 7.5v9A1.5 1.5 0 004.5 18h7a1.5 1.5 0 001.5-1.5v-5.879a1.5 1.5 0 00-.44-1.06L9.44 6.439A1.5 1.5 0 008.378 6H4.5z" />
+          </svg>
+        </button>
+
+        <p className="text-[12px] text-text-muted font-light mt-2 tracking-wide">
+          <a href={`tel:${venue.tel}`} className="transition-colors active:text-primary">
+            Tel. {venue.tel}
+          </a>
         </p>
       </div>
 

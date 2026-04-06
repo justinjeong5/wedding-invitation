@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import { WEDDING_CONFIG } from "@/config/wedding";
 import { useCountdown } from "@/hooks/useCountdown";
@@ -38,6 +39,7 @@ export default function Calendar() {
   const [viewYear, setViewYear] = useState<number>(date.year);
   const [viewMonth, setViewMonth] = useState<number>(date.month);
   const [selected, setSelected] = useState<{ y: number; m: number; d: number } | null>(null);
+  const [slideDir, setSlideDir] = useState<1 | -1>(1);
 
   const [isAppleDevice, setIsAppleDevice] = useState(false);
   useEffect(() => {
@@ -61,6 +63,7 @@ export default function Calendar() {
   const navigate = (dir: -1 | 1) => {
     if (dir === -1 && !canPrev) return;
     if (dir === 1 && !canNext) return;
+    setSlideDir(dir);
     let m = viewMonth + dir;
     let y = viewYear;
     if (m < 1) { m = 12; y--; }
@@ -131,9 +134,26 @@ export default function Calendar() {
               <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
             </svg>
           </button>
-          <span className="text-sm font-light text-text tracking-wider">
-            {viewYear}년 {viewMonth}월
-          </span>
+          <div className="relative overflow-hidden w-28 h-5">
+            <AnimatePresence initial={false} custom={slideDir}>
+              <motion.span
+                key={`${viewYear}-${viewMonth}`}
+                custom={slideDir}
+                variants={{
+                  enter: (dir: number) => ({ y: dir * 20, opacity: 0 }),
+                  center: { y: 0, opacity: 1 },
+                  exit: (dir: number) => ({ y: dir * -20, opacity: 0 }),
+                }}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                className="absolute inset-0 flex items-center justify-center text-sm font-light text-text tracking-wider"
+              >
+                {viewYear}년 {viewMonth}월
+              </motion.span>
+            </AnimatePresence>
+          </div>
           <button
             onClick={() => navigate(1)}
             disabled={!canNext}
@@ -160,38 +180,73 @@ export default function Calendar() {
           ))}
         </div>
 
-        {/* Days grid */}
-        <div className="grid grid-cols-7 gap-1">
-          {calendarDays.map((day, i) => {
-            if (day === null) return <div key={i} />;
+        {/* Days grid with slide animation */}
+        <div className="relative overflow-hidden">
+          <AnimatePresence initial={false} custom={slideDir}>
+            <motion.div
+              key={`${viewYear}-${viewMonth}`}
+              custom={slideDir}
+              variants={{
+                enter: (dir: number) => ({
+                  x: `${dir * 60}%`,
+                  opacity: 0,
+                  position: "absolute" as const,
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                }),
+                center: {
+                  x: 0,
+                  opacity: 1,
+                  position: "relative" as const,
+                },
+                exit: (dir: number) => ({
+                  x: `${dir * -60}%`,
+                  opacity: 0,
+                  position: "absolute" as const,
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                }),
+              }}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+              className="grid grid-cols-7 gap-1"
+            >
+              {calendarDays.map((day, i) => {
+                if (day === null) return <div key={i} />;
 
-            const isWedding = viewYear === date.year && viewMonth === date.month && day === date.day;
-            const isTodayCell = viewYear === todayY && viewMonth === todayM && day === todayD;
-            const isSel = selected?.y === viewYear && selected?.m === viewMonth && selected?.d === day;
-            const dow = i % 7;
+                const isWedding = viewYear === date.year && viewMonth === date.month && day === date.day;
+                const isTodayCell = viewYear === todayY && viewMonth === todayM && day === todayD;
+                const isSel = selected?.y === viewYear && selected?.m === viewMonth && selected?.d === day;
+                const dow = i % 7;
 
-            return (
-              <button
-                key={i}
-                onClick={() => handleDayClick(day)}
-                className={`text-sm py-1.5 rounded-full transition-colors min-h-0 ${
-                  isWedding
-                    ? "bg-primary text-white font-medium"
-                    : isSel
-                    ? "bg-primary/10 text-primary font-medium"
-                    : isTodayCell
-                    ? "ring-1 ring-primary/40 text-primary"
-                    : dow === 0
-                    ? "text-red-400"
-                    : dow === 6
-                    ? "text-blue-400"
-                    : "text-text"
-                }`}
-              >
-                {day}
-              </button>
-            );
-          })}
+                return (
+                  <button
+                    key={i}
+                    onClick={() => handleDayClick(day)}
+                    className={`text-sm py-1.5 rounded-full transition-colors min-h-0 ${
+                      isWedding
+                        ? "bg-primary text-white font-medium"
+                        : isSel
+                        ? "bg-primary/10 text-primary font-medium"
+                        : isTodayCell
+                        ? "ring-1 ring-primary/40 text-primary"
+                        : dow === 0
+                        ? "text-red-400"
+                        : dow === 6
+                        ? "text-blue-400"
+                        : "text-text"
+                    }`}
+                  >
+                    {day}
+                  </button>
+                );
+              })}
+            </motion.div>
+          </AnimatePresence>
         </div>
 
         {/* Selected date info */}
