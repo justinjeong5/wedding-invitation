@@ -144,7 +144,9 @@ NEXT_PUBLIC_KAKAO_JS_KEY=
 GUEST_GALLERY_ADMIN_PASSWORD=
 ```
 
-`NEXT_PUBLIC_` 접두사가 있는 변수는 클라이언트 번들에 포함되므로 민감하지 않은 값만 사용. `SUPABASE_SECRET_KEY`와 `GUEST_GALLERY_ADMIN_PASSWORD`는 서버 사이드(Server Actions)에서만 접근.
+- `NEXT_PUBLIC_` 접두사가 있는 변수는 클라이언트 번들에 포함되므로 민감하지 않은 값만 사용
+- `SUPABASE_SECRET_KEY`와 `GUEST_GALLERY_ADMIN_PASSWORD`는 서버 사이드(Server Actions)에서만 접근
+- 시간 기반 기능(갤러리 오픈, 작성 마감 등)은 코드에서 KST(`+09:00`) 오프셋을 명시하여 서버 환경(UTC)에 무관하게 정확히 동작 (`src/lib/date.ts`)
 
 ### Supabase
 

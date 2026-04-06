@@ -1,21 +1,36 @@
 import { WEDDING_CONFIG } from "@/config/wedding";
 
+const KST = "+09:00";
+
+function kstDate(year: number, month: number, day: number, hour = 0, min = 0, sec = 0): Date {
+  const mm = String(month).padStart(2, "0");
+  const dd = String(day).padStart(2, "0");
+  const hh = String(hour).padStart(2, "0");
+  const mi = String(min).padStart(2, "0");
+  const ss = String(sec).padStart(2, "0");
+  return new Date(`${year}-${mm}-${dd}T${hh}:${mi}:${ss}${KST}`);
+}
+
+function nowKST(): Date {
+  return new Date();
+}
+
 export function isAfterWedding(): boolean {
   const { year, month, day } = WEDDING_CONFIG.date;
-  const weddingEnd = new Date(year, month - 1, day, 23, 59, 59);
-  return new Date() > weddingEnd;
+  const weddingEnd = kstDate(year, month, day, 23, 59, 59);
+  return nowKST() > weddingEnd;
 }
 
 export function isGuestGalleryOpen(): boolean {
   const { year, month, day } = WEDDING_CONFIG.date;
-  const openDate = new Date(year, month - 1, day, 0, 0, 0);
-  return new Date() >= openDate;
+  const openDate = kstDate(year, month, day);
+  return nowKST() >= openDate;
 }
 
 export function isSubmissionClosed(): boolean {
   const { year, month, day } = WEDDING_CONFIG.date;
-  const closeDate = new Date(year, month - 1, day + 3, 0, 0, 0);
-  return new Date() >= closeDate;
+  const closeDate = kstDate(year, month, day + 3);
+  return nowKST() >= closeDate;
 }
 
 export function daysBetween(a: Date, b: Date): number {
