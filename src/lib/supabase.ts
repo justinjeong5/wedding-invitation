@@ -11,7 +11,11 @@ const publishableKey = requireEnv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY");
 
 export const supabase = createClient(supabaseUrl, publishableKey);
 
+let _serviceClient: typeof supabase | null = null;
+
 export function getServiceClient() {
-  const secretKey = requireEnv("SUPABASE_SECRET_KEY");
-  return createClient(supabaseUrl, secretKey);
+  if (!_serviceClient) {
+    _serviceClient = createClient(supabaseUrl, requireEnv("SUPABASE_SECRET_KEY"));
+  }
+  return _serviceClient;
 }

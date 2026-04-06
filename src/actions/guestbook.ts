@@ -1,11 +1,10 @@
 "use server";
 
 import { supabase, getServiceClient } from "@/lib/supabase";
-import { hashPassword, verifyPassword } from "@/lib/auth";
+import { hashPassword, verifyPassword, isAdminPassword } from "@/lib/auth";
 import type { FormState, GuestbookEntry } from "@/types";
 
 const NOT_FOUND = "메시지를 찾을 수 없습니다.";
-const ADMIN_PASSWORD = process.env.GUEST_GALLERY_ADMIN_PASSWORD ?? "";
 
 export async function submitGuestbook(
   _prevState: FormState,
@@ -109,7 +108,7 @@ export async function deleteGuestbookEntry(
   isAdmin = false
 ): Promise<FormState> {
   if (isAdmin) {
-    if (!ADMIN_PASSWORD || password !== ADMIN_PASSWORD) {
+    if (!isAdminPassword(password)) {
       return { success: false, error: "권한이 없습니다." };
     }
   } else {

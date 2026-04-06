@@ -56,9 +56,13 @@ vi.mock("@/lib/supabase", () => ({
   getServiceClient: () => serviceMock,
 }));
 
-vi.mock("@/lib/auth", () => ({
-  hashPassword: vi.fn((pw: string) => Promise.resolve(`hashed_${pw}`)),
-}));
+vi.mock("@/lib/auth", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/auth")>();
+  return {
+    ...actual,
+    hashPassword: vi.fn((pw: string) => Promise.resolve(`hashed_${pw}`)),
+  };
+});
 
 vi.mock("bcryptjs", () => ({
   default: {

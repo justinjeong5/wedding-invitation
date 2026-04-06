@@ -19,7 +19,7 @@ export default function Toast() {
 
   const addMessage = useCallback((text: string) => {
     const id = ++toastId;
-    setMessages((prev) => [...prev.filter((m) => m.id !== id), { id, text }]);
+    setMessages((prev) => [...prev, { id, text }]);
     setTimeout(() => {
       setMessages((prev) => prev.filter((m) => m.id !== id));
     }, 2000);

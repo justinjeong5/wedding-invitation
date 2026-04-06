@@ -11,17 +11,6 @@ export interface GuestbookEntry {
   created_at: string;
 }
 
-export interface RsvpEntry {
-  id: string;
-  name: string;
-  side: "groom" | "bride";
-  attendance: boolean;
-  guest_count: number;
-  meal: boolean;
-  message?: string;
-  created_at: string;
-}
-
 export interface Account {
   bank: string;
   number: string;

@@ -44,10 +44,14 @@ vi.mock("@/lib/supabase", () => ({
   getServiceClient: () => serviceMock,
 }));
 
-vi.mock("@/lib/auth", () => ({
-  hashPassword: vi.fn(),
-  verifyPassword: vi.fn(),
-}));
+vi.mock("@/lib/auth", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/auth")>();
+  return {
+    ...actual,
+    hashPassword: vi.fn(),
+    verifyPassword: vi.fn(),
+  };
+});
 
 import { getRsvpSummary } from "@/actions/rsvp";
 

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import { WEDDING_CONFIG } from "@/config/wedding";
 import { useCountdown } from "@/hooks/useCountdown";
+import { daysBetween } from "@/lib/date";
 
 const DAY_LABELS = ["일", "월", "화", "수", "목", "금", "토"];
 
@@ -17,13 +18,6 @@ function generateCalendarDays(year: number, month: number) {
   for (let i = 1; i <= daysInMonth; i++) days.push(i);
 
   return days;
-}
-
-function daysBetween(a: Date, b: Date) {
-  const msPerDay = 1000 * 60 * 60 * 24;
-  const aDay = new Date(a.getFullYear(), a.getMonth(), a.getDate());
-  const bDay = new Date(b.getFullYear(), b.getMonth(), b.getDate());
-  return Math.round((bDay.getTime() - aDay.getTime()) / msPerDay);
 }
 
 export default function Calendar() {

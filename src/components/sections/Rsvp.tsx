@@ -697,14 +697,14 @@ export default function Rsvp() {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) setSavedRsvp(JSON.parse(saved));
-    } catch {}
+    } catch { /* 시크릿 모드 등 localStorage 미지원 — 무시 */ }
     setMounted(true);
   }, []);
 
   const handleSuccess = useCallback((data: SavedRsvp) => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    } catch {}
+    } catch { /* localStorage 미지원 — 무시 */ }
     setSavedRsvp(data);
     setEditing(false);
     setEditPassword(null);
@@ -714,7 +714,7 @@ export default function Rsvp() {
   const handleDelete = useCallback(() => {
     try {
       localStorage.removeItem(STORAGE_KEY);
-    } catch {}
+    } catch { /* localStorage 미지원 — 무시 */ }
     setSavedRsvp(null);
     setEditing(false);
     setEditPassword(null);

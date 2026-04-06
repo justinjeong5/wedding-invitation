@@ -1,7 +1,7 @@
 "use server";
 
 import { supabase, getServiceClient } from "@/lib/supabase";
-import { hashPassword, verifyPassword } from "@/lib/auth";
+import { hashPassword, verifyPassword, isAdminPassword } from "@/lib/auth";
 import type { FormState } from "@/types";
 
 interface RsvpData {
@@ -29,7 +29,6 @@ export interface RsvpSummaryData {
 }
 
 const NOT_FOUND = "참석 정보를 찾을 수 없습니다.";
-const ADMIN_PASSWORD = process.env.GUEST_GALLERY_ADMIN_PASSWORD ?? "";
 
 export async function submitRsvp(
   _prevState: RsvpFormState,
@@ -181,7 +180,7 @@ export async function getRsvpSummary(adminPassword: string): Promise<{
   data?: RsvpSummaryData;
   error?: string;
 }> {
-  if (!ADMIN_PASSWORD || adminPassword !== ADMIN_PASSWORD) {
+  if (!isAdminPassword(adminPassword)) {
     return { success: false, error: "권한이 없습니다." };
   }
 

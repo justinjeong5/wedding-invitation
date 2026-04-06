@@ -2,10 +2,8 @@
 
 import { supabase, getServiceClient } from "@/lib/supabase";
 import bcrypt from "bcryptjs";
-import { hashPassword } from "@/lib/auth";
+import { hashPassword, isAdminPassword } from "@/lib/auth";
 import type { FormState, GuestPhoto } from "@/types";
-
-const ADMIN_PASSWORD = process.env.GUEST_GALLERY_ADMIN_PASSWORD ?? "";
 
 const ALLOWED_MIME = new Set([
   "image/jpeg",
@@ -124,7 +122,7 @@ export async function getGuestPhotos(
 }
 
 export async function verifyAdminPassword(password: string): Promise<boolean> {
-  return !!ADMIN_PASSWORD && password === ADMIN_PASSWORD;
+  return isAdminPassword(password);
 }
 
 export async function deleteGuestPhoto(
@@ -145,7 +143,7 @@ export async function deleteGuestPhoto(
   }
 
   if (isAdmin) {
-    if (!ADMIN_PASSWORD || password !== ADMIN_PASSWORD) {
+    if (!isAdminPassword(password)) {
       return { success: false, error: "권한이 없습니다." };
     }
   } else {

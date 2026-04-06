@@ -16,16 +16,17 @@ interface CountdownResult {
 export function useCountdown(targetDate: Date): CountdownResult {
   const [now, setNow] = useState<Date | null>(null);
 
+  const targetTime = targetDate.getTime();
+
   useEffect(() => {
     setNow(new Date());
     const totalDays = Math.floor(
-      (targetDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+      (targetTime - Date.now()) / (1000 * 60 * 60 * 24)
     );
     const interval = totalDays <= 7 ? 1000 : 60000;
     const timer = setInterval(() => setNow(new Date()), interval);
     return () => clearInterval(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [targetTime]);
 
   if (!now) {
     return {

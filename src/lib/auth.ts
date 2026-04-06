@@ -3,6 +3,11 @@ import { getServiceClient } from "@/lib/supabase";
 import type { FormState } from "@/types";
 
 const SALT_ROUNDS = 10;
+const ADMIN_PASSWORD = process.env.GUEST_GALLERY_ADMIN_PASSWORD ?? "";
+
+export function isAdminPassword(password: string): boolean {
+  return !!ADMIN_PASSWORD && password === ADMIN_PASSWORD;
+}
 
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, SALT_ROUNDS);

@@ -13,11 +13,8 @@ export default function CopyButton({
   label = "복사",
   toastMessage = "복사되었습니다",
 }: CopyButtonProps) {
-  const handleCopy = async () => {
-    const ok = await copyToClipboard(text, toastMessage);
-    if (!ok) {
-      await copyToClipboard(text);
-    }
+  const handleCopy = () => {
+    copyToClipboard(text, toastMessage);
   };
 
   return (
