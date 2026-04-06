@@ -33,11 +33,11 @@ export default function Home() {
       <TopNav />
       <AccessibilityToggle />
       <AdminIndicator />
-      <AdminDashboard />
       <ShareFab />
       <BgmPlayer />
       <Toast />
       <Cover />
+      <AdminDashboard />
       <Greeting />
       <AfterWeddingShow>
         <ThankYouGallery />

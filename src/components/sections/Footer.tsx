@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { WEDDING_CONFIG } from "@/config/wedding";
 import { verifyAdminPassword } from "@/actions/auth";
 
@@ -12,10 +12,24 @@ export default function Footer() {
   const [clickCount, setClickCount] = useState(0);
   const lastClickRef = useRef(0);
   const activatedRef = useRef(false);
+  const triggerRef = useRef<HTMLDivElement>(null);
   const [showPrompt, setShowPrompt] = useState(false);
   const [adminPassword, setAdminPassword] = useState("");
   const [adminError, setAdminError] = useState("");
   const [verifying, setVerifying] = useState(false);
+
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent | TouchEvent) => {
+      if (
+        triggerRef.current &&
+        !triggerRef.current.contains(e.target as Node)
+      ) {
+        setClickCount(0);
+      }
+    };
+    document.addEventListener("click", handleOutsideClick, true);
+    return () => document.removeEventListener("click", handleOutsideClick, true);
+  }, []);
 
   const handleFooterClick = useCallback(() => {
     if (activatedRef.current) return;
@@ -75,7 +89,7 @@ export default function Footer() {
         모든 분들께 감사드립니다
       </p>
 
-      <div onClick={handleFooterClick} className="select-none">
+      <div ref={triggerRef} onClick={handleFooterClick} className="select-none">
         <p className="text-xs text-text-muted/80 font-serif mb-1">
           {groom.name} & {bride.name}
         </p>
