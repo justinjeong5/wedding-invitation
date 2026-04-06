@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAdminMode } from "@/hooks/useAdminMode";
+import { useSubmissionOpen } from "@/hooks/useSubmissionOpen";
 import { AnimatePresence, motion } from "framer-motion";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import RefreshButton from "@/components/ui/RefreshButton";
@@ -56,8 +57,10 @@ export default function GuestGallery() {
   const [showIntro, setShowIntro] = useState(false);
   const introTriggered = useRef(false);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const submissionOpen = useSubmissionOpen();
 
   useEffect(() => {
+    if (!submissionOpen) return;
     if (localStorage.getItem(INTRO_KEY)) return;
     const el = sectionRef.current;
     if (!el) return;
@@ -73,7 +76,7 @@ export default function GuestGallery() {
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [submissionOpen]);
 
   const { isAdmin, adminPasswordRef } = useAdminMode();
 
@@ -127,43 +130,51 @@ export default function GuestGallery() {
         여러분의 눈으로 본 우리의 하루를 나눠주세요
       </p>
 
-      <div className="text-center mb-6">
-        <button
-          onClick={() => setFormOpen(!formOpen)}
-          className="inline-flex items-center gap-1.5 px-4 py-2 text-xs text-primary border border-primary/30 rounded-full hover:bg-primary/5 transition-colors"
-          style={{ minHeight: "auto" }}
-        >
-          <svg
-            viewBox="0 0 24 24"
-            className={`w-3.5 h-3.5 transition-transform duration-200 ${formOpen ? "rotate-45" : ""}`}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 4.5v15m7.5-7.5h-15"
-            />
-          </svg>
-          사진 남기기
-        </button>
-      </div>
+      {submissionOpen ? (
+        <>
+          <div className="text-center mb-6">
+            <button
+              onClick={() => setFormOpen(!formOpen)}
+              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs text-primary border border-primary/30 rounded-full hover:bg-primary/5 transition-colors"
+              style={{ minHeight: "auto" }}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                className={`w-3.5 h-3.5 transition-transform duration-200 ${formOpen ? "rotate-45" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 4.5v15m7.5-7.5h-15"
+                />
+              </svg>
+              사진 남기기
+            </button>
+          </div>
 
-      <AnimatePresence initial={false}>
-        {formOpen && (
-          <motion.div
-            key="upload-form"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="overflow-hidden"
-          >
-            <UploadForm onUploaded={handleUploaded} />
-          </motion.div>
-        )}
-      </AnimatePresence>
+          <AnimatePresence initial={false}>
+            {formOpen && (
+              <motion.div
+                key="upload-form"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+                className="overflow-hidden"
+              >
+                <UploadForm onUploaded={handleUploaded} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </>
+      ) : (
+        <p className="text-xs text-text-muted/70 text-center mb-6">
+          갤러리 업로드 기간이 종료되었습니다
+        </p>
+      )}
 
       {!loading && photos.length > 0 && (
         <div className="flex justify-end mb-2">

@@ -2,6 +2,7 @@
 
 import { supabase, getServiceClient } from "@/lib/supabase";
 import { hashPassword, verifyPassword, isAdminPassword } from "@/lib/auth";
+import { isSubmissionClosed } from "@/lib/date";
 import type { FormState, GuestbookEntry } from "@/types";
 
 const NOT_FOUND = "메시지를 찾을 수 없습니다.";
@@ -10,6 +11,10 @@ export async function submitGuestbook(
   _prevState: FormState,
   formData: FormData
 ): Promise<FormState> {
+  if (isSubmissionClosed()) {
+    return { success: false, error: "방명록 작성 기간이 종료되었습니다." };
+  }
+
   const name = formData.get("name") as string;
   const message = formData.get("message") as string;
   const password = formData.get("password") as string;

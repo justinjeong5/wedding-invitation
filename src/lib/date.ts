@@ -8,9 +8,14 @@ export function isAfterWedding(): boolean {
 
 export function isGuestGalleryOpen(): boolean {
   const { year, month, day } = WEDDING_CONFIG.date;
-  // 예식 전날 낮 12시부터 공개
-  const openDate = new Date(year, month - 1, day - 1, 12, 0, 0);
-  return new Date() > openDate;
+  const openDate = new Date(year, month - 1, day, 0, 0, 0);
+  return new Date() >= openDate;
+}
+
+export function isSubmissionClosed(): boolean {
+  const { year, month, day } = WEDDING_CONFIG.date;
+  const closeDate = new Date(year, month - 1, day + 3, 0, 0, 0);
+  return new Date() >= closeDate;
 }
 
 export function daysBetween(a: Date, b: Date): number {

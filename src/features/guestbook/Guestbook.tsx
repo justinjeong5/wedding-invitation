@@ -2,6 +2,7 @@
 
 import { useActionState, useCallback, useEffect } from "react";
 import { useAdminMode } from "@/hooks/useAdminMode";
+import { useSubmissionOpen } from "@/hooks/useSubmissionOpen";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import RefreshButton from "@/components/ui/RefreshButton";
 import { submitGuestbook, getGuestbookEntries } from "@/features/guestbook/actions";
@@ -18,6 +19,7 @@ export default function Guestbook() {
   });
 
   const { isAdmin, adminPasswordRef } = useAdminMode();
+  const submissionOpen = useSubmissionOpen();
 
   const fetchEntries = useCallback(
     async (cursor?: string) => {
@@ -64,43 +66,49 @@ export default function Guestbook() {
         방명록
       </h2>
 
-      <form action={formAction} className="space-y-3 mb-6" data-1p-ignore>
-        <input type="hidden" name="visitor_id" value={visitorId} />
-        <div className="flex gap-2">
-          <input
-            name="name"
-            type="text"
-            placeholder="이름"
+      {submissionOpen ? (
+        <form action={formAction} className="space-y-3 mb-6" data-1p-ignore>
+          <input type="hidden" name="visitor_id" value={visitorId} />
+          <div className="flex gap-2">
+            <input
+              name="name"
+              type="text"
+              placeholder="이름"
+              required
+              className="flex-1 px-3 py-2.5 text-sm border border-border rounded-lg bg-bg-card focus:outline-none focus:border-primary"
+            />
+            <input
+              name="password"
+              type="password"
+              autoComplete="off"
+              placeholder="비밀번호"
+              required
+              className="w-24 px-3 py-2.5 text-sm border border-border rounded-lg bg-bg-card focus:outline-none focus:border-primary"
+            />
+          </div>
+          <textarea
+            name="message"
+            placeholder="축하 메시지를 남겨주세요"
             required
-            className="flex-1 px-3 py-2.5 text-sm border border-border rounded-lg bg-bg-card focus:outline-none focus:border-primary"
+            rows={3}
+            className="w-full px-3 py-2.5 text-sm border border-border rounded-lg bg-bg-card focus:outline-none focus:border-primary resize-none"
           />
-          <input
-            name="password"
-            type="password"
-            autoComplete="off"
-            placeholder="비밀번호"
-            required
-            className="w-24 px-3 py-2.5 text-sm border border-border rounded-lg bg-bg-card focus:outline-none focus:border-primary"
-          />
-        </div>
-        <textarea
-          name="message"
-          placeholder="축하 메시지를 남겨주세요"
-          required
-          rows={3}
-          className="w-full px-3 py-2.5 text-sm border border-border rounded-lg bg-bg-card focus:outline-none focus:border-primary resize-none"
-        />
-        {state.error && (
-          <p className="text-red-500 text-xs" role="alert">{state.error}</p>
-        )}
-        <button
-          type="submit"
-          disabled={isPending}
-          className="w-full py-2.5 text-sm bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50"
-        >
-          {isPending ? "작성 중..." : "남기기"}
-        </button>
-      </form>
+          {state.error && (
+            <p className="text-red-500 text-xs" role="alert">{state.error}</p>
+          )}
+          <button
+            type="submit"
+            disabled={isPending}
+            className="w-full py-2.5 text-sm bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50"
+          >
+            {isPending ? "작성 중..." : "남기기"}
+          </button>
+        </form>
+      ) : (
+        <p className="text-xs text-text-muted/70 text-center mb-6">
+          방명록 작성 기간이 종료되었습니다
+        </p>
+      )}
 
       {!loading && entries.length > 0 && (
         <div className="flex justify-end mb-2">

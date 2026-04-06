@@ -3,6 +3,7 @@
 import { supabase, getServiceClient } from "@/lib/supabase";
 import bcrypt from "bcryptjs";
 import { hashPassword, isAdminPassword } from "@/lib/auth";
+import { isSubmissionClosed } from "@/lib/date";
 import type { FormState, GuestPhoto } from "@/types";
 
 const ALLOWED_MIME = new Set([
@@ -30,6 +31,10 @@ export async function uploadGuestPhoto(
   _prevState: FormState,
   formData: FormData
 ): Promise<FormState> {
+  if (isSubmissionClosed()) {
+    return { success: false, error: "갤러리 업로드 기간이 종료되었습니다." };
+  }
+
   const name = (formData.get("name") as string)?.trim();
   const caption = (formData.get("caption") as string)?.trim() || null;
   const password = formData.get("password") as string;

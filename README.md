@@ -24,36 +24,94 @@
 ```
 src/
 ├── app/
-│   ├── layout.tsx          # RootLayout, OG metadata, font
-│   ├── page.tsx            # 섹션 조합 (단일 페이지)
-│   └── globals.css         # 디자인 토큰 (color, font)
+│   ├── layout.tsx            # RootLayout, OG metadata, font
+│   ├── page.tsx              # 섹션 조합 (단일 페이지)
+│   └── globals.css           # 디자인 토큰 (color, font)
 ├── config/
-│   └── wedding.ts          # 모든 예식 데이터 단일 소스 (SSOT)
+│   └── wedding.ts            # 모든 예식 데이터 단일 소스 (SSOT)
+├── features/                 # 복잡 피처 (코로케이션)
+│   ├── guest-gallery/        # 하객 갤러리 (업로드, 그리드, 라이트박스)
+│   │   ├── GuestGallery.tsx, UploadForm.tsx, PhotoCard.tsx, ...
+│   │   ├── actions.ts        # Server Actions
+│   │   └── index.ts
+│   ├── rsvp/                 # RSVP (폼, 대시보드, 통계)
+│   │   ├── Rsvp.tsx, RsvpForm.tsx, RsvpDashboard.tsx, ...
+│   │   ├── actions.ts
+│   │   └── index.ts
+│   └── guestbook/            # 방명록 (폼, 항목, 수정/삭제)
+│       ├── Guestbook.tsx, GuestbookItem.tsx, ...
+│       ├── actions.ts
+│       └── index.ts
 ├── components/
-│   ├── sections/           # 13개 섹션 컴포넌트
-│   │   ├── Cover.tsx       # 메인 커버 이미지 + 날짜
-│   │   ├── Greeting.tsx    # 인사말
-│   │   ├── Couple.tsx      # 신랑/신부 소개
-│   │   ├── Calendar.tsx    # 달력 (직접 구현)
-│   │   ├── Gallery.tsx     # 사진 갤러리 (Swiper)
-│   │   ├── Location.tsx    # 지도 + 교통 안내
-│   │   ├── Rsvp.tsx        # 참석 여부
-│   │   ├── Contact.tsx     # 연락처
-│   │   ├── Account.tsx     # 축의금 계좌
-│   │   ├── Share.tsx       # 카카오/링크 공유
-│   │   ├── GuestGallery.tsx # 하객 사진 업로드
-│   │   ├── Guestbook.tsx   # 방명록
-│   │   └── Footer.tsx
-│   └── ui/                 # 공용 UI 컴포넌트
-├── actions/                # Server Actions (mutations)
-│   ├── rsvp.ts
-│   ├── guestbook.ts
-│   └── guest-gallery.ts
-├── lib/
-│   └── supabase.ts         # Supabase client (anon + service)
-└── types/
-    └── index.ts
+│   ├── sections/             # 경량 섹션 컴포넌트
+│   └── ui/                   # 공용 UI 컴포넌트
+├── actions/
+│   └── visit.ts              # 방문 기록/통계
+├── hooks/                    # 공유 훅
+├── lib/                      # 공유 유틸 (supabase, auth, date)
+├── types/
+│   └── index.ts
+└── config/
 ```
+
+## Time-Based Feature Controls
+
+예식 타임라인에 따라 자동으로 기능이 전환됩니다. 모든 시간 로직은 `src/lib/date.ts`에 정의되어 있습니다.
+
+### 타임라인
+
+```
+─── 예식 전 ──────────────── 7/11 00:00 ──── 7/11 12:30 ──── 7/11 24:00 ──── 7/14 00:00 ───
+                              갤러리 오픈      예식 시작        예식 후 모드     작성 마감
+```
+
+| 시점 | 트리거 | 변경 내용 |
+|------|--------|----------|
+| **예식 당일 자정** (7/11 00:00) | `isGuestGalleryOpen()` | 하객 갤러리 섹션 공개, 안내 모달 활성화 |
+| **예식 종료** (7/11 24:00) | `isAfterWedding()` | 달력·지도·RSVP·계좌 숨김, 감사 갤러리 표시 |
+| **예식 3일 후** (7/14 00:00) | `isSubmissionClosed()` | 하객 갤러리 업로드·방명록 작성 폼 비활성화 (열람은 가능) |
+
+### 기능별 가시성
+
+| 섹션 | 예식 전 | 예식 당일 | 예식 후 | 마감 후 (D+3) |
+|------|---------|----------|---------|--------------|
+| 커버·인사말·커플 | O | O | O | O |
+| 달력 | O | O | **X** | X |
+| 갤러리 (사진) | O | O | O | O |
+| 지도·교통안내 | O | O | **X** | X |
+| RSVP | O | O | **X** | X |
+| 연락처 | O | O | O | O |
+| 계좌 | O | O | **X** | X |
+| 감사 갤러리 | X | X | **O** | O |
+| 하객 갤러리 (열람) | **X** | **O** | O | O |
+| 하객 갤러리 (업로드) | X | O | O | **X** |
+| 방명록 (열람) | O | O | O | O |
+| 방명록 (작성) | O | O | O | **X** |
+
+### 구현 구조
+
+```
+src/lib/date.ts                    ← 3개 시간 판별 함수 (서버 + 클라이언트 공용)
+  ├── isGuestGalleryOpen()         ← 7/11 00:00 이후 true
+  ├── isAfterWedding()             ← 7/11 24:00 이후 true
+  └── isSubmissionClosed()         ← 7/14 00:00 이후 true
+
+src/hooks/
+  ├── useGuestGalleryOpen.ts       ← isGuestGalleryOpen + 관리자 프리뷰 오버라이드
+  ├── useAfterWedding.ts           ← isAfterWedding + 관리자 프리뷰 오버라이드
+  └── useSubmissionOpen.ts         ← !isSubmissionClosed + 관리자 프리뷰 오버라이드
+
+src/components/ui/
+  ├── AfterWeddingHide.tsx         ← 예식 후 자녀 숨김 (달력, 지도, RSVP, 계좌)
+  ├── AfterWeddingShow.tsx         ← 예식 후 자녀 표시 (감사 갤러리)
+  └── GuestGalleryGate.tsx         ← 갤러리 오픈 전 자녀 숨김
+```
+
+서버 액션(`uploadGuestPhoto`, `submitGuestbook`)에도 `isSubmissionClosed()` 체크가 있어 클라이언트 우회를 방지합니다.
+
+### 관리자 프리뷰
+
+모든 시간 기반 기능은 관리자 모드에서 토글로 미리 확인할 수 있습니다. `usePreviewOverride` 훅이 CustomEvent를 통해 실제 시간과 무관하게 상태를 오버라이드합니다.
 
 ## Infrastructure
 
