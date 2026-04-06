@@ -1,18 +1,7 @@
-import dynamic from "next/dynamic";
-import Cover from "@/components/sections/Cover";
-import Greeting from "@/components/sections/Greeting";
-import Couple from "@/components/sections/Couple";
 import Divider from "@/components/ui/Divider";
-import Calendar from "@/components/sections/Calendar";
-import Gallery from "@/components/sections/Gallery";
-import Location from "@/components/sections/Location";
-import Contact from "@/components/sections/Contact";
-import Account from "@/components/sections/Account";
-import ThankYouGallery from "@/components/sections/ThankYouGallery";
 import Footer from "@/components/sections/Footer";
 import AccessibilityToggle from "@/components/ui/AccessibilityToggle";
 import AdminIndicator from "@/components/ui/AdminIndicator";
-import AdminDashboard from "@/components/ui/AdminDashboard";
 import ShareFab from "@/components/ui/ShareFab";
 import BgmPlayer from "@/components/ui/BgmPlayer";
 import Toast from "@/components/ui/Toast";
@@ -21,10 +10,21 @@ import AfterWeddingHide from "@/components/ui/AfterWeddingHide";
 import AfterWeddingShow from "@/components/ui/AfterWeddingShow";
 import GuestGalleryGate from "@/components/ui/GuestGalleryGate";
 import VisitTracker from "@/components/VisitTracker";
-
-const Rsvp = dynamic(() => import("@/features/rsvp"));
-const Guestbook = dynamic(() => import("@/features/guestbook"));
-const GuestGallery = dynamic(() => import("@/features/guest-gallery"));
+import {
+  SafeCover,
+  SafeAdminDashboard,
+  SafeGreeting,
+  SafeThankYouGallery,
+  SafeCouple,
+  SafeCalendar,
+  SafeGallery,
+  SafeLocation,
+  SafeRsvp,
+  SafeContact,
+  SafeAccount,
+  SafeGuestGallery,
+  SafeGuestbook,
+} from "./safe-sections";
 
 export default function Home() {
   return (
@@ -36,39 +36,39 @@ export default function Home() {
       <ShareFab />
       <BgmPlayer />
       <Toast />
-      <Cover />
-      <AdminDashboard />
-      <Greeting />
+      <SafeCover />
+      <SafeAdminDashboard />
+      <SafeGreeting />
       <AfterWeddingShow>
-        <ThankYouGallery />
+        <SafeThankYouGallery />
       </AfterWeddingShow>
-      <Couple />
+      <SafeCouple />
       <AfterWeddingHide>
         <Divider />
-        <Calendar />
+        <SafeCalendar />
       </AfterWeddingHide>
       <Divider />
-      <Gallery />
+      <SafeGallery />
       <AfterWeddingHide>
         <Divider />
-        <Location />
+        <SafeLocation />
       </AfterWeddingHide>
       <AfterWeddingHide>
         <Divider />
-        <Rsvp />
+        <SafeRsvp />
       </AfterWeddingHide>
       <Divider />
-      <Contact />
+      <SafeContact />
       <AfterWeddingHide>
         <Divider />
-        <Account />
+        <SafeAccount />
       </AfterWeddingHide>
       <GuestGalleryGate>
         <Divider />
-        <GuestGallery />
+        <SafeGuestGallery />
       </GuestGalleryGate>
       <Divider />
-      <Guestbook />
+      <SafeGuestbook />
       <Footer />
     </main>
   );

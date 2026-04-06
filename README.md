@@ -142,10 +142,12 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 SUPABASE_SECRET_KEY=
 NEXT_PUBLIC_KAKAO_JS_KEY=
 GUEST_GALLERY_ADMIN_PASSWORD=
+RESEND_API_KEY=
 ```
 
 - `NEXT_PUBLIC_` 접두사가 있는 변수는 클라이언트 번들에 포함되므로 민감하지 않은 값만 사용
 - `SUPABASE_SECRET_KEY`와 `GUEST_GALLERY_ADMIN_PASSWORD`는 서버 사이드(Server Actions)에서만 접근
+- `RESEND_API_KEY`는 런타임 에러 발생 시 이메일 알림 발송에 사용 ([resend.com](https://resend.com)에서 무료 발급). 미설정 시 이메일 알림 없이 콘솔 로그만 출력
 - 시간 기반 기능(갤러리 오픈, 작성 마감 등)은 코드에서 KST(`+09:00`) 오프셋을 명시하여 서버 환경(UTC)에 무관하게 정확히 동작 (`src/lib/date.ts`)
 
 ### Supabase

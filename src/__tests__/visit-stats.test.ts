@@ -87,7 +87,7 @@ describe("getVisitStats", () => {
 
     const result = await getVisitStats("test-admin");
     expect(result.success).toBe(false);
-    expect(result.error).toContain("실패");
+    expect(result.error).toContain("db error");
   });
 
   it("방문 데이터가 없으면 모두 0을 반환한다", async () => {

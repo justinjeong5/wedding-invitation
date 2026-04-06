@@ -1,45 +1,65 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { isAfterWedding, isGuestGalleryOpen, daysBetween } from "@/lib/date";
+import {
+  isAfterWedding,
+  isGuestGalleryOpen,
+  isSubmissionClosed,
+  daysBetween,
+} from "@/lib/date";
+
+// KST 기준 시간을 UTC로 변환하여 테스트 (서버 환경 무관하게 동작)
+// 예식일: 2026-07-11 12:30 KST
 
 describe("isAfterWedding", () => {
-  afterEach(() => {
-    vi.useRealTimers();
-  });
+  afterEach(() => vi.useRealTimers());
 
-  it("예식 전 날짜 → false", () => {
+  it("예식 당일 23:59:58 KST → false", () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 6, 10, 12, 0, 0));
+    vi.setSystemTime(new Date("2026-07-11T14:59:58Z")); // 23:59:58 KST
     expect(isAfterWedding()).toBe(false);
   });
 
-  it("예식 당일 → false (23:59:59까지)", () => {
+  it("예식 다음날 00:00:00 KST → true", () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 6, 11, 23, 59, 58));
-    expect(isAfterWedding()).toBe(false);
-  });
-
-  it("예식 다음날 → true", () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 6, 12, 0, 0, 0));
+    vi.setSystemTime(new Date("2026-07-11T15:00:00Z")); // 7/12 00:00 KST
     expect(isAfterWedding()).toBe(true);
   });
 });
 
 describe("isGuestGalleryOpen", () => {
-  afterEach(() => {
-    vi.useRealTimers();
-  });
+  afterEach(() => vi.useRealTimers());
 
-  it("전날 오전 → false", () => {
+  it("예식 전날 23:59 KST → false", () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 6, 10, 11, 59, 59));
+    vi.setSystemTime(new Date("2026-07-10T14:59:00Z")); // 7/10 23:59 KST
     expect(isGuestGalleryOpen()).toBe(false);
   });
 
-  it("전날 낮 12시 이후 → true", () => {
+  it("예식 당일 00:00 KST → true", () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 6, 10, 12, 0, 1));
+    vi.setSystemTime(new Date("2026-07-10T15:00:00Z")); // 7/11 00:00 KST
     expect(isGuestGalleryOpen()).toBe(true);
+  });
+});
+
+describe("isSubmissionClosed", () => {
+  afterEach(() => vi.useRealTimers());
+
+  it("예식 당일 → false", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-07-11T03:00:00Z")); // 7/11 12:00 KST
+    expect(isSubmissionClosed()).toBe(false);
+  });
+
+  it("예식 2일 후 23:59 KST → false", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-07-13T14:59:00Z")); // 7/13 23:59 KST
+    expect(isSubmissionClosed()).toBe(false);
+  });
+
+  it("예식 3일 후 00:00 KST → true", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-07-13T15:00:00Z")); // 7/14 00:00 KST
+    expect(isSubmissionClosed()).toBe(true);
   });
 });
 
