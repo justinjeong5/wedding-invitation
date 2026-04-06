@@ -1,7 +1,6 @@
 "use client";
 
 import { Component, type ComponentType } from "react";
-import { reportError } from "@/actions/error-report";
 
 interface Props {
   children: React.ReactNode;
@@ -24,14 +23,17 @@ class SectionErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error) {
     console.error(`[${this.props.sectionName ?? "Section"}]`, error);
-    const info = {
-      message: error.message,
-      stack: error.stack,
-      section: this.props.sectionName,
-      url: typeof window !== "undefined" ? window.location.href : undefined,
-      userAgent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
-    };
-    setTimeout(() => reportError(info), 0);
+    fetch("/api/report-error", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: error.message,
+        stack: error.stack,
+        section: this.props.sectionName,
+        url: typeof window !== "undefined" ? window.location.href : undefined,
+        userAgent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
+      }),
+    }).catch(() => {});
   }
 
   render() {

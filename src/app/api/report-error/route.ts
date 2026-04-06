@@ -1,28 +1,24 @@
-"use server";
-
+import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
 const ALERT_EMAIL = "justin.jeong5@gmail.com";
 const THROTTLE_MS = 60_000;
 let lastSentAt = 0;
 
-export async function reportError(info: {
-  message: string;
-  stack?: string;
-  section?: string;
-  url?: string;
-  userAgent?: string;
-}) {
+export async function POST(req: Request) {
   const now = Date.now();
-  if (now - lastSentAt < THROTTLE_MS) return;
+  if (now - lastSentAt < THROTTLE_MS) {
+    return NextResponse.json({ throttled: true });
+  }
   lastSentAt = now;
 
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     console.error("RESEND_API_KEY not set — skipping error email");
-    return;
+    return NextResponse.json({ skipped: true });
   }
 
+  const info = await req.json();
   const resend = new Resend(apiKey);
   const timestamp = new Date().toLocaleString("ko-KR", { timeZone: "Asia/Seoul" });
 
@@ -43,7 +39,9 @@ export async function reportError(info: {
         ${info.stack ? `<pre style="margin-top:16px;padding:12px;background:#f5f5f5;border-radius:8px;font-size:12px;overflow:auto;max-height:300px;">${info.stack}</pre>` : ""}
       `,
     });
+    return NextResponse.json({ sent: true });
   } catch (e) {
     console.error("Failed to send error email:", e);
+    return NextResponse.json({ error: "send failed" }, { status: 500 });
   }
 }
