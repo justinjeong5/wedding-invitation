@@ -32,10 +32,6 @@ function isCompositeRow(
 }
 
 export default function Gallery() {
-  // TODO: 테스트 후 삭제 — 50% 확률 런타임 에러
-  const [testThrow, setTestThrow] = useState(false);
-  useEffect(() => { if (Math.random() > 0.5) setTestThrow(true); }, []);
-
   const { images, layout } = WEDDING_CONFIG.gallery;
   const [isOpen, setIsOpen] = useState(false);
   const [slideIndex, setSlideIndex] = useState(0);
@@ -65,9 +61,6 @@ export default function Gallery() {
       document.body.style.overflow = "";
     };
   }, [isOpen]);
-
-  // TODO: 테스트 후 삭제
-  if (testThrow) throw new Error("[TEST] Gallery 섹션 런타임 에러 테스트");
 
   const eagerSet = new Set<number>(
     layout
