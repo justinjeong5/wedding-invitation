@@ -25,19 +25,23 @@ export default function KakaoMapModal({
   // iOS Safari body scroll lock
   useEffect(() => {
     const scrollY = window.scrollY;
-    document.body.style.position = "fixed";
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.left = "0";
-    document.body.style.right = "0";
-    document.body.style.overflow = "hidden";
+    const { style } = document.body;
+
+    style.position = "fixed";
+    style.top = `-${scrollY}px`;
+    style.left = "0";
+    style.right = "0";
+    style.width = "100%";
+    style.overflow = "hidden";
 
     return () => {
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.left = "";
-      document.body.style.right = "";
-      document.body.style.overflow = "";
-      window.scrollTo(0, scrollY);
+      style.position = "";
+      style.top = "";
+      style.left = "";
+      style.right = "";
+      style.width = "";
+      style.overflow = "";
+      window.scrollTo({ top: scrollY, left: 0, behavior: "instant" });
     };
   }, []);
 
@@ -81,7 +85,7 @@ export default function KakaoMapModal({
 
         {/* 헤더 */}
         <div className="flex items-center justify-between px-5 py-2">
-          <p className="font-serif text-sm tracking-[0.08em] text-text">
+          <p className="text-sm tracking-[0.08em] text-text font-medium">
             {name}
           </p>
           <button
