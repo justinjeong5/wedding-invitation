@@ -1,15 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAdminMode } from "@/hooks/useAdminMode";
 import { useAfterWedding } from "@/hooks/useAfterWedding";
 import { useGuestGalleryOpen } from "@/hooks/useGuestGalleryOpen";
+import AdminHelpModal from "@/components/ui/AdminHelpModal";
+
+const HELP_SEEN_KEY = "admin-help-seen";
 
 export default function AdminIndicator() {
   const { isAdmin } = useAdminMode();
   const afterWedding = useAfterWedding();
   const guestGalleryOpen = useGuestGalleryOpen();
   const [bgmEnabled, setBgmEnabled] = useState(true);
+  const [helpOpen, setHelpOpen] = useState(false);
+
+  useEffect(() => {
+    if (isAdmin && !sessionStorage.getItem(HELP_SEEN_KEY)) {
+      setHelpOpen(true);
+      sessionStorage.setItem(HELP_SEEN_KEY, "1");
+    }
+  }, [isAdmin]);
 
   const toggleAfterWedding = () => {
     window.dispatchEvent(
@@ -70,8 +81,18 @@ export default function AdminIndicator() {
               {label} {active ? "ON" : "OFF"}
             </button>
           ))}
+          <button
+            onClick={() => setHelpOpen(true)}
+            style={{ minHeight: "auto" }}
+            className="w-6 h-6 shrink-0 flex items-center justify-center rounded-full text-[10px] font-semibold text-orange-400 border border-orange-300 active:bg-orange-50 transition-colors"
+            aria-label="관리자 도움말"
+          >
+            ?
+          </button>
         </div>
       </div>
+
+      {helpOpen && <AdminHelpModal onClose={() => setHelpOpen(false)} />}
     </>
   );
 }
