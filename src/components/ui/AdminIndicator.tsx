@@ -12,7 +12,6 @@ export default function AdminIndicator() {
   const { isAdmin } = useAdminMode();
   const afterWedding = useAfterWedding();
   const guestGalleryOpen = useGuestGalleryOpen();
-  const [bgmEnabled, setBgmEnabled] = useState(true);
   const [helpOpen, setHelpOpen] = useState(false);
 
   useEffect(() => {
@@ -38,16 +37,6 @@ export default function AdminIndicator() {
     );
   };
 
-  const toggleBgm = () => {
-    const next = !bgmEnabled;
-    setBgmEnabled(next);
-    window.dispatchEvent(
-      new CustomEvent("bgm-toggle", {
-        detail: { enabled: next },
-      })
-    );
-  };
-
   if (!isAdmin) return null;
 
   return (
@@ -66,7 +55,6 @@ export default function AdminIndicator() {
           {[
             { label: "예식 후", active: afterWedding, onClick: toggleAfterWedding },
             { label: "하객갤러리", active: guestGalleryOpen, onClick: toggleGuestGallery },
-            { label: "BGM", active: bgmEnabled, onClick: toggleBgm },
           ].map(({ label, active, onClick }) => (
             <button
               key={label}

@@ -77,10 +77,6 @@ export default function AdminHelpModal({ onClose }: AdminHelpModalProps) {
               label="하객갤러리"
               desc="하객 사진 갤러리가 오픈된 화면을 미리보기합니다. 실제로는 예식 당일(7/11) 자정부터 모든 방문자에게 자동 오픈됩니다."
             />
-            <Item
-              label="BGM"
-              desc="본인 기기의 배경음악을 재생/정지합니다. 다른 방문자에게는 첫 방문 시 음악 재생 여부를 개별 안내합니다."
-            />
           </Section>
 
           <div className="w-full h-px bg-stone-100 my-4" />
