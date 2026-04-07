@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { AnimatePresence } from "framer-motion";
 import { useKakaoMap } from "@/hooks/useKakaoMap";
 import KakaoMapModal from "@/components/ui/KakaoMapModal";
 
@@ -80,16 +79,14 @@ export default function KakaoMap({ lat, lng, name }: KakaoMapProps) {
         )}
       </div>
 
-      <AnimatePresence>
-        {modalOpen && (
-          <KakaoMapModal
-            lat={lat}
-            lng={lng}
-            name={name}
-            onClose={() => setModalOpen(false)}
-          />
-        )}
-      </AnimatePresence>
+      {modalOpen && (
+        <KakaoMapModal
+          lat={lat}
+          lng={lng}
+          name={name}
+          onClose={() => setModalOpen(false)}
+        />
+      )}
     </>
   );
 }
