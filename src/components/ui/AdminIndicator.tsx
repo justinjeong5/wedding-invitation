@@ -47,40 +47,30 @@ export default function AdminIndicator() {
         style={{ boxShadow: "inset 0 0 0 4px rgba(234, 138, 46, 0.6)" }}
       />
       {/* Top bar */}
-      <div className="fixed top-0 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2">
-        <span className="inline-block px-3 py-0.5 text-[10px] text-white bg-orange-400/80 rounded-b-md tracking-wider pointer-events-none">
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 z-40 w-full max-w-[480px]">
+        <div className="bg-orange-400/90 text-white text-[10px] tracking-widest text-center py-1 pointer-events-none select-none">
           관리자 모드
-        </span>
-        <button
-          onClick={toggleAfterWedding}
-          className={`px-2.5 py-0.5 text-[10px] rounded-b-md tracking-wider transition-colors ${
-            afterWedding
-              ? "bg-primary/90 text-white"
-              : "bg-white/80 text-text-muted border border-t-0 border-border"
-          }`}
-        >
-          예식 후 {afterWedding ? "ON" : "OFF"}
-        </button>
-        <button
-          onClick={toggleGuestGallery}
-          className={`px-2.5 py-0.5 text-[10px] rounded-b-md tracking-wider transition-colors ${
-            guestGalleryOpen
-              ? "bg-primary/90 text-white"
-              : "bg-white/80 text-text-muted border border-t-0 border-border"
-          }`}
-        >
-          하객갤러리 {guestGalleryOpen ? "ON" : "OFF"}
-        </button>
-        <button
-          onClick={toggleBgm}
-          className={`px-2.5 py-0.5 text-[10px] rounded-b-md tracking-wider transition-colors ${
-            bgmEnabled
-              ? "bg-primary/90 text-white"
-              : "bg-white/80 text-text-muted border border-t-0 border-border"
-          }`}
-        >
-          BGM {bgmEnabled ? "ON" : "OFF"}
-        </button>
+        </div>
+        <div className="bg-white/95 backdrop-blur-sm border-b border-orange-200/60 flex items-center justify-center gap-1.5 px-3 py-1.5">
+          {[
+            { label: "예식 후", active: afterWedding, onClick: toggleAfterWedding },
+            { label: "하객갤러리", active: guestGalleryOpen, onClick: toggleGuestGallery },
+            { label: "BGM", active: bgmEnabled, onClick: toggleBgm },
+          ].map(({ label, active, onClick }) => (
+            <button
+              key={label}
+              onClick={onClick}
+              style={{ minHeight: "auto" }}
+              className={`flex-1 max-w-[120px] px-2 py-1 text-[10px] rounded-md tracking-wide transition-colors ${
+                active
+                  ? "bg-orange-400/90 text-white"
+                  : "bg-white text-stone-400 border border-stone-200"
+              }`}
+            >
+              {label} {active ? "ON" : "OFF"}
+            </button>
+          ))}
+        </div>
       </div>
     </>
   );
