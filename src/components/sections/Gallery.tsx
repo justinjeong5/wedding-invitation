@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Zoom, Keyboard } from "swiper/modules";
+import { Zoom, Keyboard, Virtual } from "swiper/modules";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import SectionWrapper from "@/components/ui/SectionWrapper";
@@ -11,18 +11,12 @@ import type { GalleryImage } from "@/types";
 
 import "swiper/css";
 import "swiper/css/zoom";
+import "swiper/css/virtual";
 
 const GRID_COLS: Record<number, string> = {
   1: "grid-cols-1",
   2: "grid-cols-2",
   3: "grid-cols-3",
-};
-
-const fadeIn = {
-  initial: { opacity: 0, y: 20 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-40px" } as const,
-  transition: { duration: 0.5, ease: "easeOut" as const },
 };
 
 function isCompositeRow(
@@ -35,7 +29,6 @@ export default function Gallery() {
   const { images, layout } = WEDDING_CONFIG.gallery;
   const [isOpen, setIsOpen] = useState(false);
   const [slideIndex, setSlideIndex] = useState(0);
-  const [loadedSet, setLoadedSet] = useState<Set<number>>(new Set());
 
   const openLightbox = useCallback((idx: number) => {
     setSlideIndex(idx);
@@ -62,20 +55,28 @@ export default function Gallery() {
     };
   }, [isOpen]);
 
-  const eagerSet = new Set<number>(
-    layout
-      .flatMap((row) =>
-        isCompositeRow(row) ? [...row.landscape, row.portrait] : [...row]
-      )
-      .slice(0, 4)
+  const eagerSet = useMemo(
+    () =>
+      new Set<number>(
+        layout
+          .flatMap((row) =>
+            isCompositeRow(row) ? [...row.landscape, row.portrait] : [...row]
+          )
+          .slice(0, 4)
+      ),
+    [layout]
   );
 
-  function renderImage(image: GalleryImage, idx: number, sizes: string, style?: React.CSSProperties) {
+  function renderImage(
+    image: GalleryImage,
+    idx: number,
+    sizes: string,
+    style?: React.CSSProperties
+  ) {
     return (
-      <motion.div
+      <div
         key={idx}
-        {...fadeIn}
-        className="relative rounded-xl overflow-hidden cursor-pointer"
+        className="gallery-item relative rounded-xl overflow-hidden cursor-pointer"
         style={{ aspectRatio: `${image.width} / ${image.height}`, ...style }}
         onClick={() => openLightbox(idx)}
       >
@@ -87,7 +88,7 @@ export default function Gallery() {
           sizes={sizes}
           loading={eagerSet.has(idx) ? "eager" : "lazy"}
         />
-      </motion.div>
+      </div>
     );
   }
 
@@ -110,10 +111,9 @@ export default function Gallery() {
                   {row.landscape.map((idx) =>
                     renderImage(images[idx], idx, "32vw")
                   )}
-                  <motion.div
+                  <div
                     key={row.portrait}
-                    {...fadeIn}
-                    className="relative rounded-xl overflow-hidden cursor-pointer"
+                    className="gallery-item relative rounded-xl overflow-hidden cursor-pointer"
                     style={{ gridColumn: 3, gridRow: "1 / 3" }}
                     onClick={() => openLightbox(row.portrait)}
                   >
@@ -125,7 +125,7 @@ export default function Gallery() {
                       sizes="37vw"
                       loading={eagerSet.has(row.portrait) ? "eager" : "lazy"}
                     />
-                  </motion.div>
+                  </div>
                 </div>
               );
             }
@@ -143,9 +143,7 @@ export default function Gallery() {
                 key={rowIdx}
                 className={`grid ${GRID_COLS[gridRow.length]} gap-1.5`}
               >
-                {gridRow.map((idx) =>
-                  renderImage(images[idx], idx, sizes)
-                )}
+                {gridRow.map((idx) => renderImage(images[idx], idx, sizes))}
               </div>
             );
           })}
@@ -167,7 +165,10 @@ export default function Gallery() {
                 {slideIndex + 1} / {images.length}
               </span>
               <button
-                onClick={(e) => { e.stopPropagation(); closeLightbox(); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  closeLightbox();
+                }}
                 className="text-white/80 hover:text-white p-2.5 -m-1"
                 aria-label="닫기"
               >
@@ -189,31 +190,30 @@ export default function Gallery() {
 
             <div className="w-full h-full" onClick={(e) => e.stopPropagation()}>
               <Swiper
-                modules={[Zoom, Keyboard]}
+                modules={[Zoom, Keyboard, Virtual]}
+                virtual={{
+                  enabled: true,
+                  addSlidesBefore: 2,
+                  addSlidesAfter: 2,
+                }}
                 zoom={{ maxRatio: 3 }}
                 keyboard={{ enabled: true }}
                 initialSlide={slideIndex}
                 slidesPerView={1}
-                loop
+                rewind
                 className="w-full h-full"
                 onSlideChange={(swiper) => setSlideIndex(swiper.realIndex)}
               >
                 {images.map((image, index) => (
-                  <SwiperSlide key={index}>
+                  <SwiperSlide key={index} virtualIndex={index}>
                     <div className="swiper-zoom-container">
-                      {!loadedSet.has(index) && (
-                        <div className="absolute inset-0 flex items-center justify-center z-10">
-                          <div className="h-8 w-8 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        </div>
-                      )}
                       <Image
                         src={image.src}
                         alt={image.alt}
                         fill
                         className="object-contain"
                         sizes="100vw"
-                        priority={index === slideIndex}
-                        onLoad={() => setLoadedSet(prev => new Set(prev).add(index))}
+                        quality={85}
                       />
                     </div>
                   </SwiperSlide>

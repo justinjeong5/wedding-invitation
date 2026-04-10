@@ -100,3 +100,19 @@ section[id] {
   scroll-margin-top: 3rem;
 }
 
+/* 갤러리 썸네일 페이드인 — framer-motion 88개 whileInView 를 CSS로 대체해 IntersectionObserver 누수 제거 */
+@keyframes gallery-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.gallery-item {
+  animation: gallery-fade-in 0.5s ease-out both;
+}
+

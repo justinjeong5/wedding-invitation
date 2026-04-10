@@ -28,6 +28,10 @@
 *.jpg
 !public/**/*.jpg
 
+# 리사이즈 전 원본 이미지 백업 (로컬 보관용)
+/public/images/gallery/_original/
+/public/images/_original_cover.jpg
+
 # playwright MCP
 .playwright-mcp/
 
