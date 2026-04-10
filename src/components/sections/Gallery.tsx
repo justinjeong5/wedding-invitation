@@ -67,6 +67,13 @@ export default function Gallery() {
     [layout]
   );
 
+  const handleImageLoad = useCallback(
+    (e: React.SyntheticEvent<HTMLImageElement>) => {
+      e.currentTarget.dataset.loaded = "true";
+    },
+    []
+  );
+
   function renderImage(
     image: GalleryImage,
     idx: number,
@@ -76,7 +83,7 @@ export default function Gallery() {
     return (
       <div
         key={idx}
-        className="gallery-item relative rounded-xl overflow-hidden cursor-pointer"
+        className="gallery-item gallery-shimmer relative rounded-xl overflow-hidden cursor-pointer"
         style={{ aspectRatio: `${image.width} / ${image.height}`, ...style }}
         onClick={() => openLightbox(idx)}
       >
@@ -84,9 +91,11 @@ export default function Gallery() {
           src={image.src}
           alt={image.alt}
           fill
-          className="object-cover"
+          className="gallery-img object-cover"
           sizes={sizes}
           loading={eagerSet.has(idx) ? "eager" : "lazy"}
+          onLoad={handleImageLoad}
+          onError={handleImageLoad}
         />
       </div>
     );
@@ -113,7 +122,7 @@ export default function Gallery() {
                   )}
                   <div
                     key={row.portrait}
-                    className="gallery-item relative rounded-xl overflow-hidden cursor-pointer"
+                    className="gallery-item gallery-shimmer relative rounded-xl overflow-hidden cursor-pointer"
                     style={{ gridColumn: 3, gridRow: "1 / 3" }}
                     onClick={() => openLightbox(row.portrait)}
                   >
@@ -121,9 +130,11 @@ export default function Gallery() {
                       src={images[row.portrait].src}
                       alt={images[row.portrait].alt}
                       fill
-                      className="object-cover"
+                      className="gallery-img object-cover"
                       sizes="37vw"
                       loading={eagerSet.has(row.portrait) ? "eager" : "lazy"}
+                      onLoad={handleImageLoad}
+                      onError={handleImageLoad}
                     />
                   </div>
                 </div>

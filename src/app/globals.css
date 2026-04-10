@@ -116,3 +116,46 @@ section[id] {
   animation: gallery-fade-in 0.5s ease-out both;
 }
 
+/* 이미지 로딩 스켈레톤 — transform 기반 shimmer + 크로스페이드 reveal.
+   부모는 정적 배경색, 자식 ::before가 transform 애니메이션을 담당해
+   88개 동시 애니메이션에서도 GPU 합성 레이어로 돌며 repaint 을 회피. */
+.gallery-shimmer {
+  position: relative;
+  background-color: #F5F1EC;
+}
+
+.gallery-shimmer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgba(237, 233, 227, 0.9) 45%,
+    rgba(237, 233, 227, 0.9) 55%,
+    transparent 80%
+  );
+  transform: translateX(-100%);
+  animation: gallery-shimmer 1.6s ease-in-out 0.1s infinite;
+  pointer-events: none;
+}
+
+@keyframes gallery-shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.gallery-img {
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}
+
+.gallery-img[data-loaded="true"] {
+  opacity: 1;
+}
+
+/* 로드/에러 시 shimmer 제거. :has()는 iOS 15.4+, Chrome 105+ (2022~) */
+.gallery-shimmer:has(.gallery-img[data-loaded="true"])::before {
+  display: none;
+}
+
