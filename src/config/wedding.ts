@@ -256,7 +256,7 @@ export const WEDDING_CONFIG = {
     title: "정경하 & 전우림 결혼합니다",
     description:
       "2026년 7월 11일 토요일 오후 12시 30분 | 더컨벤션 잠실",
-    ogImage: "/images/og-image.jpg",
+    ogImage: "/images/og-image-v2.jpg",
     siteUrl: "https://woorim-kyungha.vercel.app",
   },
 } as const;
