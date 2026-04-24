@@ -139,8 +139,12 @@ export default function BgmPlayer() {
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z" />
               </svg>
-              <p className="text-sm font-light tracking-wide leading-relaxed mb-6 opacity-90">
+              <p className="text-sm font-light tracking-wide leading-relaxed mb-2 opacity-90">
                 잔잔한 음악과 함께<br />보시겠어요?
+              </p>
+              <p className="text-xs font-normal tracking-tight mb-6 opacity-60">
+                소리가 크지 않은지 볼륨을 확인해 주세요<br />
+                왼쪽 하단 버튼으로 언제든 켜고 끌 수 있어요
               </p>
               <div className="flex flex-col items-center gap-3">
                 <button

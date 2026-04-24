@@ -109,14 +109,14 @@ export default function Footer() {
         &#x25B2; 처음으로
       </button>
 
-      <p className="mt-6 text-[9px] text-text-muted/40 leading-relaxed">
-        Music: &quot;Reawakening&quot; by Kevin MacLeod
-        <br />
-        Licensed under{" "}
-        <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" className="underline" style={{ minHeight: "auto" }}>
-          CC BY 4.0
-        </a>
-      </p>
+      <div className="mt-6 text-[9px] text-text-muted/40 leading-relaxed">
+        <p>
+          Art Direction by {bride.name} · Built by {groom.name}
+        </p>
+        <p className="mt-1">
+          Music: &quot;A Thousand Years&quot; by Christina Perri
+        </p>
+      </div>
 
       {showPrompt && (
         <div
