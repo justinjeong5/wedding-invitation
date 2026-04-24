@@ -150,6 +150,7 @@ export const WEDDING_CONFIG = {
       { src: "/images/gallery/18.jpeg", alt: "정경하 전우림 웨딩 18", width: 4000, height: 3000 },
       { src: "/images/gallery/19.jpeg", alt: "정경하 전우림 웨딩 19", width: 4000, height: 3000 },
       { src: "/images/gallery/20.jpeg", alt: "정경하 전우림 웨딩 20", width: 4000, height: 3000 },
+      { src: "/images/gallery/21.jpeg", alt: "정경하 전우림 웨딩 21", width: 4000, height: 3000 },
     ],
     layout: [
       { landscape: [2, 5], portrait: 0 },
@@ -159,6 +160,7 @@ export const WEDDING_CONFIG = {
       { landscape: [13, 14], portrait: 3 },
       [15, 16, 17],
       { landscape: [18, 19], portrait: 4 },
+      [20],
     ],
   },
 

@@ -46,25 +46,53 @@ export default function BgmPlayer() {
     };
   }, []);
 
-  // 백그라운드 전환 시 일시정지
+  // 볼륨 페이드 유틸
+  const fadeVolume = useCallback(
+    (audio: HTMLAudioElement, from: number, to: number, duration: number) => {
+      return new Promise<void>((resolve) => {
+        const steps = 20;
+        const stepTime = duration / steps;
+        const stepSize = (to - from) / steps;
+        let step = 0;
+        const interval = setInterval(() => {
+          step++;
+          audio.volume = Math.min(1, Math.max(0, from + stepSize * step));
+          if (step >= steps) {
+            clearInterval(interval);
+            audio.volume = to;
+            resolve();
+          }
+        }, stepTime);
+      });
+    },
+    []
+  );
+
+  // 백그라운드 전환 시 페이드 인/아웃
   useEffect(() => {
     const handleVisibility = () => {
       if (!audioRef.current) return;
       if (document.hidden) {
         wasPlayingBeforeHidden.current = isPlaying;
         if (isPlaying) {
-          audioRef.current.pause();
-          setIsPlaying(false);
+          fadeVolume(audioRef.current, 0.3, 0, 500).then(() => {
+            audioRef.current?.pause();
+            setIsPlaying(false);
+          });
         }
       } else {
-        if (wasPlayingBeforeHidden.current) {
-          audioRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
+        if (wasPlayingBeforeHidden.current && audioRef.current) {
+          audioRef.current.volume = 0;
+          audioRef.current.play().then(() => {
+            setIsPlaying(true);
+            fadeVolume(audioRef.current!, 0, 0.3, 800);
+          }).catch(() => {});
         }
       }
     };
     document.addEventListener("visibilitychange", handleVisibility);
     return () => document.removeEventListener("visibilitychange", handleVisibility);
-  }, [isPlaying]);
+  }, [isPlaying, fadeVolume]);
 
   // 스크롤 잠금 (프롬프트 표시 중)
   useEffect(() => {

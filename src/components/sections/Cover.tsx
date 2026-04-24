@@ -43,7 +43,13 @@ export default function Cover() {
         priority
       />
 
-      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/40 z-10" />
+      <div
+        className="absolute inset-0 z-10"
+        style={{
+          background:
+            "linear-gradient(to bottom, rgba(0,0,0,0.40) 0%, rgba(0,0,0,0.12) 25%, rgba(0,0,0,0.05) 50%, rgba(0,0,0,0.12) 75%, rgba(0,0,0,0.40) 100%)",
+        }}
+      />
 
       {/* Petals — z-[15] between gradient(z-10) and text(z-20) */}
       <div className="absolute inset-0 z-[15] pointer-events-none overflow-hidden">
@@ -64,44 +70,53 @@ export default function Cover() {
         ))}
       </div>
 
-      <div className="relative z-20 text-center text-white">
-        <motion.p
-          className="text-sm tracking-[0.3em] mb-6 font-light"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-        >
-          {afterWedding ? afterWeddingConfig.coverText : "WEDDING INVITATION"}
-        </motion.p>
+      {/* Split text into two groups with space between for photo visibility */}
+      <div className="absolute inset-0 z-20 flex flex-col items-center justify-between pt-[22vh] pb-[15vh]">
+        {/* Group A: heading + names (top) */}
+        <div className="text-center text-white">
+          <motion.p
+            className="text-sm tracking-[0.3em] mb-6 font-light"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
+            {afterWedding
+              ? afterWeddingConfig.coverText
+              : "WEDDING INVITATION"}
+          </motion.p>
 
-        <motion.h1
-          className="text-3xl font-serif font-light tracking-wide mb-2"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-        >
-          {groom.name}
-          <span className="mx-3 text-accent text-lg">&amp;</span>
-          {bride.name}
-        </motion.h1>
+          <motion.h1
+            className="text-3xl font-serif font-light tracking-wide"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+          >
+            {groom.name}
+            <span className="mx-3 text-accent text-lg">&amp;</span>
+            {bride.name}
+          </motion.h1>
+        </div>
 
-        <motion.p
-          className="text-sm font-light tracking-wider mt-6 opacity-90"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.9 }}
-        >
-          {date.display}
-        </motion.p>
+        {/* Group B: date + venue (bottom) */}
+        <div className="text-center text-white">
+          <motion.p
+            className="text-sm font-light tracking-wider opacity-90"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.9 }}
+          >
+            {date.display}
+          </motion.p>
 
-        <motion.p
-          className="text-xs font-light tracking-wider mt-2 opacity-75"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.2 }}
-        >
-          {venue.name} {venue.hall}
-        </motion.p>
+          <motion.p
+            className="text-xs font-light tracking-wider mt-2 opacity-75"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.2 }}
+          >
+            {venue.name} {venue.hall}
+          </motion.p>
+        </div>
       </div>
 
       <motion.div
