@@ -52,15 +52,15 @@ export const WEDDING_CONFIG = {
   groom: {
     name: "정경하",
     role: "신랑",
-    father: { name: "정○○", relation: "아버지" },
-    mother: { name: "○○○", relation: "어머니" },
-    tel: "010-0000-0000", // placeholder
-    fatherTel: "010-0000-0000", // placeholder
-    motherTel: "010-0000-0000", // placeholder
+    father: { name: "정창우", relation: "아버지" },
+    mother: { name: "권계", relation: "어머니" },
+    tel: "010-7273-4775",
+    fatherTel: "010-3725-4774",
+    motherTel: "010-8760-4776",
     accounts: [
       {
-        bank: "○○은행",
-        number: "000-000-000000",
+        bank: "토스뱅크",
+        number: "1000-2230-2438",
         holder: "정경하",
         kakaopayUrl: "https://qr.kakaopay.com/FEWX6F0KO",
         tossUrl: "supertoss://send?amount=0&bank=%ED%86%A0%EC%8A%A4%EB%B1%85%ED%81%AC&accountNo=100022302438&origin=qr",
@@ -68,8 +68,16 @@ export const WEDDING_CONFIG = {
       {
         bank: "○○은행",
         number: "000-000-000000",
-        holder: "정○○",
+        holder: "정창우",
         relation: "부",
+        kakaopayUrl: "",
+        tossUrl: "",
+      },
+      {
+        bank: "○○은행",
+        number: "000-000-000000",
+        holder: "권계",
+        relation: "모",
         kakaopayUrl: "",
         tossUrl: "",
       },
@@ -79,24 +87,32 @@ export const WEDDING_CONFIG = {
   bride: {
     name: "전우림",
     role: "신부",
-    father: { name: "전○○", relation: "아버지" },
-    mother: { name: "○○○", relation: "어머니" },
-    tel: "010-0000-0000", // placeholder
-    fatherTel: "010-0000-0000", // placeholder
-    motherTel: "010-0000-0000", // placeholder
+    father: { name: "전병세", relation: "아버지" },
+    mother: { name: "한도경", relation: "어머니" },
+    tel: "010-8613-3135",
+    fatherTel: "010-9162-6037",
+    motherTel: "010-8778-3135",
     accounts: [
+      {
+        bank: "케이뱅크",
+        number: "100-160-814463",
+        holder: "전우림",
+        kakaopayUrl: "https://qr.kakaopay.com/Ej7qxX4Wn",
+        tossUrl: "",
+      },
       {
         bank: "○○은행",
         number: "000-000-000000",
-        holder: "전우림",
+        holder: "전병세",
+        relation: "부",
         kakaopayUrl: "",
         tossUrl: "",
       },
       {
         bank: "○○은행",
         number: "000-000-000000",
-        holder: "전○○",
-        relation: "부",
+        holder: "한도경",
+        relation: "모",
         kakaopayUrl: "",
         tossUrl: "",
       },
@@ -248,7 +264,7 @@ export const WEDDING_CONFIG = {
   },
 
   bgm: {
-    src: "/audio/bgm.mp3",
+    src: "/audio/bgm-v2.mp3",
     title: "Wedding BGM",
   },
 

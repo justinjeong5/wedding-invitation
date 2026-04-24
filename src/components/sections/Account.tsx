@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import CopyButton from "@/components/ui/CopyButton";
 import { copyToClipboard } from "@/lib/clipboard";
@@ -24,7 +23,6 @@ function TossIcon() {
 function AccountCard({ account }: { account: AccountType }) {
   const hasPayLinks = !!(account.kakaopayUrl || account.tossUrl);
   const hasAccount = !!(account.bank && account.number);
-  const [showAccount, setShowAccount] = useState(false);
 
   return (
     <div className="rounded-xl border border-border/50 p-4 bg-bg-card">
@@ -65,17 +63,7 @@ function AccountCard({ account }: { account: AccountType }) {
         </div>
       )}
 
-      {hasAccount && hasPayLinks && (
-        <button
-          onClick={() => setShowAccount(!showAccount)}
-          className="w-full text-[11px] text-text-muted/60 text-center pt-1 transition-colors hover:text-text-muted"
-          style={{ minHeight: "auto" }}
-        >
-          계좌번호 {showAccount ? "접기" : "보기"}
-        </button>
-      )}
-
-      {hasAccount && (!hasPayLinks || showAccount) && (
+      {hasAccount && (
         <div className="flex items-center justify-between gap-3 pt-1">
           <button
             onClick={() => copyToClipboard(`${account.bank} ${account.number}`, "계좌번호가 복사되었습니다")}
