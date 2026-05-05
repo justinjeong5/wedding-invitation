@@ -17,7 +17,7 @@ export default function Greeting() {
 
       <div className="mx-auto w-8 h-px bg-primary/30 mb-8" />
 
-      <p className="text-[15px] leading-8 text-text-light whitespace-pre-line font-serif font-light">
+      <p className="text-[15px] leading-8 text-text-light whitespace-pre-line font-serif font-light dark:font-normal">
         {greeting.message}
       </p>
 

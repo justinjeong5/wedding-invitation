@@ -106,7 +106,7 @@ export default function Calendar() {
         예식 일시
       </h2>
 
-      <p className="text-sm text-text-light font-serif font-light mb-6">
+      <p className="text-sm text-text-light font-serif font-light dark:font-normal mb-6">
         {date.display}
       </p>
 
@@ -340,7 +340,7 @@ export default function Calendar() {
         <div className="h-10" />
       ) : !countdown.isExpired ? (
         countdown.totalDays > 30 ? (
-          <p className="text-sm text-text-light font-light">
+          <p className="text-sm text-text-light font-light dark:font-normal">
             결혼식까지{" "}
             <span className="text-primary font-medium">
               {countdown.months > 0 && `${countdown.months}개월 `}
@@ -356,7 +356,7 @@ export default function Calendar() {
               { value: countdown.minutes, label: "분" },
             ].map(({ value, label }) => (
               <div key={label} className="text-center">
-                <div className="text-2xl font-light text-primary tabular-nums">
+                <div className="text-2xl font-light dark:font-normal text-primary tabular-nums">
                   {String(value).padStart(2, "0")}
                 </div>
                 <div className="text-[10px] text-text-muted mt-1">
@@ -376,7 +376,7 @@ export default function Calendar() {
               { value: countdown.seconds, label: "초" },
             ].map(({ value, label }) => (
               <div key={label} className="text-center">
-                <div className="text-2xl font-light text-primary tabular-nums">
+                <div className="text-2xl font-light dark:font-normal text-primary tabular-nums">
                   {String(value).padStart(2, "0")}
                 </div>
                 <div className="text-[10px] text-text-muted mt-1">

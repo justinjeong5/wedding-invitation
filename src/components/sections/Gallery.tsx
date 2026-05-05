@@ -286,12 +286,14 @@ export default function Gallery() {
                 keyboard={{ enabled: true }}
                 initialSlide={slideIndex}
                 slidesPerView={1}
-                rewind
                 className="w-full h-full"
                 onSwiper={(s) => {
                   swiperRef.current = s;
                 }}
-                onSlideChange={(swiper) => setSlideIndex(swiper.realIndex)}
+                onSlideChange={(swiper) => {
+                  setSlideIndex(swiper.realIndex);
+                  setRotated(new Set());
+                }}
               >
                 {images.map((image, index) => {
                   const isRotated = rotated.has(index);
@@ -331,22 +333,25 @@ export default function Gallery() {
                 })}
               </Swiper>
 
-              {/* 좌/우 영역 클릭 (인스타 패턴) — swipe와 공존 */}
+              {/* 좌/우 영역 클릭 (인스타 패턴) — swipe와 공존, 첫/마지막 슬라이드에선 비활성 */}
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   swiperRef.current?.slidePrev();
                 }}
-                className="absolute left-0 top-[15%] bottom-[15%] w-[20%] z-10 group flex items-center justify-start pl-2"
+                disabled={slideIndex === 0}
+                className="absolute left-0 top-[15%] bottom-[15%] w-[20%] z-10 group flex items-center justify-start pl-2 disabled:pointer-events-none"
                 style={{ minHeight: "auto" }}
                 aria-label="이전 사진"
               >
-                <span className="opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity bg-black/40 backdrop-blur-sm rounded-full w-9 h-9 flex items-center justify-center text-white/90">
-                  <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                  </svg>
-                </span>
+                {slideIndex > 0 && (
+                  <span className="opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity bg-black/40 backdrop-blur-sm rounded-full w-9 h-9 flex items-center justify-center text-white/90">
+                    <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </span>
+                )}
               </button>
               <button
                 type="button"
@@ -354,15 +359,18 @@ export default function Gallery() {
                   e.stopPropagation();
                   swiperRef.current?.slideNext();
                 }}
-                className="absolute right-0 top-[15%] bottom-[15%] w-[20%] z-10 group flex items-center justify-end pr-2"
+                disabled={slideIndex === images.length - 1}
+                className="absolute right-0 top-[15%] bottom-[15%] w-[20%] z-10 group flex items-center justify-end pr-2 disabled:pointer-events-none"
                 style={{ minHeight: "auto" }}
                 aria-label="다음 사진"
               >
-                <span className="opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity bg-black/40 backdrop-blur-sm rounded-full w-9 h-9 flex items-center justify-center text-white/90">
-                  <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                  </svg>
-                </span>
+                {slideIndex < images.length - 1 && (
+                  <span className="opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity bg-black/40 backdrop-blur-sm rounded-full w-9 h-9 flex items-center justify-center text-white/90">
+                    <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                )}
               </button>
             </div>
 
