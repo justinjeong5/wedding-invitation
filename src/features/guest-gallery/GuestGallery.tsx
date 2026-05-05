@@ -78,7 +78,7 @@ export default function GuestGallery() {
     return () => observer.disconnect();
   }, [submissionOpen]);
 
-  const { isAdmin, adminPasswordRef } = useAdminMode();
+  const { isAdmin, adminPassword } = useAdminMode();
 
   const fetchPhotos = useCallback(
     async (cursor?: string) => {
@@ -194,7 +194,7 @@ export default function GuestGallery() {
                 key={photo.id}
                 photo={photo}
                 isAdmin={isAdmin}
-                adminPassword={adminPasswordRef.current}
+                adminPassword={adminPassword}
                 onDelete={handleDeleted}
                 onClick={() => setLightboxIndex(i)}
               />
@@ -213,6 +213,8 @@ export default function GuestGallery() {
         결혼식과 여러분의 이야기를 사진으로 나눠주세요.
         <br />
         모두가 함께 보는 공간이며, 부적절한 이미지는 별도의 고지 없이 삭제될 수 있습니다.
+        <br />
+        업로드하신 사진은 결혼식 운영 목적으로만 사용되며, 예식 후 2주 내에 모두 파기됩니다.
       </p>
 
       <AnimatePresence>

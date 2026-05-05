@@ -111,7 +111,11 @@ export default function Account() {
       <h2 className="text-lg font-light text-primary mb-2 tracking-wider">
         마음 전하실 곳
       </h2>
-      <div className="mt-2.5 mb-8 mx-auto w-12 h-px bg-primary/40" />
+      <div className="mt-2.5 mb-4 mx-auto w-12 h-px bg-primary/40" />
+
+      <p className="text-xs text-text-muted font-light mb-8 tracking-wide">
+        참석만으로도 큰 축복입니다
+      </p>
 
       <div className="space-y-6">
         <AccountGroup label="신랑측" accounts={groom.accounts} />

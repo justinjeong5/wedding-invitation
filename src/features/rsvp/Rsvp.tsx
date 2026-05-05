@@ -17,11 +17,12 @@ export default function Rsvp() {
   const [justSubmitted, setJustSubmitted] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  const { isAdmin, adminPasswordRef } = useAdminMode();
+  const { isAdmin, adminPassword } = useAdminMode();
 
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (saved) setSavedRsvp(JSON.parse(saved));
     } catch { /* 시크릿 모드 등 localStorage 미지원 — 무시 */ }
     setMounted(true);
@@ -60,7 +61,7 @@ export default function Rsvp() {
 
   return (
     <>
-      {isAdmin && <RsvpDashboard adminPassword={adminPasswordRef.current} />}
+      {isAdmin && <RsvpDashboard adminPassword={adminPassword} />}
       {savedRsvp && !editing ? (
         <RsvpSummary
           data={savedRsvp}

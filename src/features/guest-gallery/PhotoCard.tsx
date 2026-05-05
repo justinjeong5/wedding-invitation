@@ -23,6 +23,7 @@ export default function PhotoCard({
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [menuPos, setMenuPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
   const menuBtnRef = useRef<HTMLButtonElement>(null);
 
   const handleDelete = async () => {
@@ -65,6 +66,13 @@ export default function PhotoCard({
         ref={menuBtnRef}
         onClick={(e) => {
           e.stopPropagation();
+          if (!showDelete && menuBtnRef.current) {
+            const r = menuBtnRef.current.getBoundingClientRect();
+            setMenuPos({
+              top: r.bottom + 4,
+              left: Math.min(Math.max(8, r.left - 140), window.innerWidth - 184),
+            });
+          }
           setShowDelete(!showDelete);
         }}
         className="absolute top-1.5 right-1.5 w-7 h-7 rounded-full bg-black/50 text-white text-sm flex items-center justify-center"
@@ -87,17 +95,7 @@ export default function PhotoCard({
           />
           <div
             className="fixed z-20 bg-bg-card border border-border rounded-lg shadow-lg p-3 w-44"
-            style={{
-              top: menuBtnRef.current
-                ? menuBtnRef.current.getBoundingClientRect().bottom + 4
-                : 0,
-              left: menuBtnRef.current
-                ? Math.min(
-                    Math.max(8, menuBtnRef.current.getBoundingClientRect().left - 140),
-                    window.innerWidth - 184
-                  )
-                : 0,
-            }}
+            style={{ top: menuPos.top, left: menuPos.left }}
           >
             {isAdmin ? (
               <button

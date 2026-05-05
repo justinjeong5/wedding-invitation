@@ -31,10 +31,12 @@ export default function Gallery() {
   const [rotated, setRotated] = useState<Set<number>>(new Set());
   const [rotateHintOpen, setRotateHintOpen] = useState(false);
   const [edgeShake, setEdgeShake] = useState<"start" | "end" | null>(null);
+  const [edgeShakeNonce, setEdgeShakeNonce] = useState(0);
   const swiperRef = useRef<SwiperClass | null>(null);
 
   const triggerEdgeShake = useCallback((edge: "start" | "end") => {
     setEdgeShake(null);
+    setEdgeShakeNonce((n) => n + 1);
     requestAnimationFrame(() => setEdgeShake(edge));
     setTimeout(() => setEdgeShake(null), 500);
   }, []);
@@ -88,6 +90,7 @@ export default function Gallery() {
     };
   }, [isOpen]);
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (!isOpen) {
       setRotateHintOpen(false);
@@ -104,6 +107,7 @@ export default function Gallery() {
     } catch {}
     if (!seen) setRotateHintOpen(true);
   }, [isOpen, slideIndex, images]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const eagerSet = useMemo(
     () =>
@@ -392,7 +396,7 @@ export default function Gallery() {
                 aria-label={slideIndex === 0 ? "처음 사진입니다" : "이전 사진"}
               >
                 <span
-                  key={`prev-${edgeShake === "start" ? Date.now() : "idle"}`}
+                  key={`prev-${edgeShake === "start" ? edgeShakeNonce : "idle"}`}
                   className={`transition-opacity bg-black/40 backdrop-blur-sm rounded-full w-9 h-9 flex items-center justify-center ${
                     edgeShake === "start"
                       ? "opacity-100 text-white/60"
@@ -428,7 +432,7 @@ export default function Gallery() {
                 aria-label={slideIndex === images.length - 1 ? "마지막 사진입니다" : "다음 사진"}
               >
                 <span
-                  key={`next-${edgeShake === "end" ? Date.now() : "idle"}`}
+                  key={`next-${edgeShake === "end" ? edgeShakeNonce : "idle"}`}
                   className={`transition-opacity bg-black/40 backdrop-blur-sm rounded-full w-9 h-9 flex items-center justify-center ${
                     edgeShake === "end"
                       ? "opacity-100 text-white/60"

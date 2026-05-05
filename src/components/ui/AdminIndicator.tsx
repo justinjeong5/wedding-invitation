@@ -18,8 +18,9 @@ export default function AdminIndicator() {
 
   useEffect(() => {
     if (isAdmin && !sessionStorage.getItem(HELP_SEEN_KEY)) {
-      setHelpOpen(true);
       sessionStorage.setItem(HELP_SEEN_KEY, "1");
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setHelpOpen(true);
     }
   }, [isAdmin]);
 

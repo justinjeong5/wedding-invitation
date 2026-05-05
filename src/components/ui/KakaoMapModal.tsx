@@ -31,7 +31,9 @@ export default function KakaoMapModal({
   const mapRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const onCloseRef = useRef(onClose);
-  onCloseRef.current = onClose;
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   useKakaoMap(mapRef, { lat, lng, name, interactive: true });
 

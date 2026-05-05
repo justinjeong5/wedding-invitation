@@ -18,7 +18,7 @@ export default function Guestbook() {
     success: false,
   });
 
-  const { isAdmin, adminPasswordRef } = useAdminMode();
+  const { isAdmin, adminPassword } = useAdminMode();
   const submissionOpen = useSubmissionOpen();
 
   const fetchEntries = useCallback(
@@ -130,7 +130,7 @@ export default function Guestbook() {
                 key={entry.id}
                 entry={entry}
                 isAdmin={isAdmin}
-                adminPassword={adminPasswordRef.current}
+                adminPassword={adminPassword}
                 onUpdated={handleUpdated}
                 onDeleted={handleDeleted}
               />
@@ -143,6 +143,8 @@ export default function Guestbook() {
 
       <p className="text-[10px] text-text-muted/60 text-center mt-6 leading-relaxed">
         모두가 함께 보는 공간이며, 부적절한 내용은 별도의 고지 없이 삭제될 수 있습니다.
+        <br />
+        남겨주신 이름·메시지는 결혼식 운영 목적으로만 사용되며, 예식 후 2주 내에 모두 파기됩니다.
       </p>
     </SectionWrapper>
   );

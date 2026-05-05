@@ -19,6 +19,7 @@ export function useCountdown(targetDate: Date): CountdownResult {
   const targetTime = targetDate.getTime();
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setNow(new Date());
     const totalDays = Math.floor(
       (targetTime - Date.now()) / (1000 * 60 * 60 * 24)

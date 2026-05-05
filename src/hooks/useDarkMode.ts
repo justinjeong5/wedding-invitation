@@ -1,23 +1,27 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useSyncExternalStore } from "react";
 
 const EVENT = "dark-mode-preview";
 const MEDIA = "(prefers-color-scheme: dark)";
 
 type Override = "dark" | "light" | null;
 
+const subscribeMedia = (cb: () => void) => {
+  const mql = window.matchMedia(MEDIA);
+  mql.addEventListener("change", cb);
+  return () => mql.removeEventListener("change", cb);
+};
+const getSnapshot = () => window.matchMedia(MEDIA).matches;
+const getServerSnapshot = () => false;
+
 export function useDarkMode(): { isDark: boolean; toggle: () => void } {
   const [override, setOverride] = useState<Override>(null);
-  const [systemDark, setSystemDark] = useState(false);
-
-  useEffect(() => {
-    const mql = window.matchMedia(MEDIA);
-    setSystemDark(mql.matches);
-    const handler = (e: MediaQueryListEvent) => setSystemDark(e.matches);
-    mql.addEventListener("change", handler);
-    return () => mql.removeEventListener("change", handler);
-  }, []);
+  const systemDark = useSyncExternalStore(
+    subscribeMedia,
+    getSnapshot,
+    getServerSnapshot
+  );
 
   useEffect(() => {
     const handler = (e: Event) => {

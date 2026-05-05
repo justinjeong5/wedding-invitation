@@ -54,6 +54,9 @@ export async function submitRsvp(
     return { success: false, error: "이름은 50자 이내로 입력해주세요." };
   }
 
+  if (password.length < 4) {
+    return { success: false, error: "비밀번호는 4자 이상으로 설정해주세요." };
+  }
   if (password.length > 50) {
     return { success: false, error: "비밀번호는 50자 이내로 입력해주세요." };
   }

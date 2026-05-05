@@ -13,6 +13,7 @@ export function useVisitorId() {
       id = crypto.randomUUID();
       localStorage.setItem(VISITOR_ID_KEY, id);
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setVisitorId(id);
   }, []);
   return visitorId;

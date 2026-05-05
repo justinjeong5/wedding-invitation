@@ -22,6 +22,7 @@ export default function GuestbookItem({
     "edit" | "delete" | null
   >(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuPos, setMenuPos] = useState<{ top: number; right: number }>({ top: 0, right: 0 });
   const menuBtnRef = useRef<HTMLButtonElement>(null);
   const [password, setPassword] = useState("");
   const [editMessage, setEditMessage] = useState(entry.message);
@@ -29,6 +30,8 @@ export default function GuestbookItem({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // 외부 prop(entry.message) 변화 시 로컬 편집 버퍼 동기화
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setEditMessage(entry.message);
   }, [entry.message]);
 
@@ -84,7 +87,13 @@ export default function GuestbookItem({
             <div className="relative">
               <button
                 ref={menuBtnRef}
-                onClick={() => setMenuOpen(!menuOpen)}
+                onClick={() => {
+                  if (!menuOpen && menuBtnRef.current) {
+                    const r = menuBtnRef.current.getBoundingClientRect();
+                    setMenuPos({ top: r.bottom + 4, right: window.innerWidth - r.right });
+                  }
+                  setMenuOpen(!menuOpen);
+                }}
                 className="text-text-muted hover:text-text text-base leading-none"
                 style={{ minHeight: "auto", padding: "2px 4px" }}
                 aria-label="메시지 메뉴"
@@ -100,15 +109,7 @@ export default function GuestbookItem({
                   />
                   <div
                     className="fixed z-20 bg-bg-card border border-border rounded-lg shadow-sm overflow-hidden"
-                    style={{
-                      top: menuBtnRef.current
-                        ? menuBtnRef.current.getBoundingClientRect().bottom + 4
-                        : 0,
-                      right: menuBtnRef.current
-                        ? window.innerWidth -
-                          menuBtnRef.current.getBoundingClientRect().right
-                        : 0,
-                    }}
+                    style={{ top: menuPos.top, right: menuPos.right }}
                   >
                     <button
                       onClick={() => {

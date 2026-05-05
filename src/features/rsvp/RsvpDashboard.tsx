@@ -33,6 +33,7 @@ export default function RsvpDashboard({ adminPassword }: { adminPassword: string
   }, [adminPassword]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchData();
   }, [fetchData]);
 

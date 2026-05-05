@@ -41,6 +41,9 @@ export default function Cover() {
         fill
         className="object-cover"
         priority
+        fetchPriority="high"
+        sizes="(max-width: 480px) 100vw, 480px"
+        quality={85}
         onContextMenu={(e) => e.preventDefault()}
         draggable={false}
       />

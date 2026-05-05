@@ -9,7 +9,7 @@ const CLICK_TIMEOUT_MS = 2000;
 
 export default function Footer() {
   const { groom, bride, date, venue } = WEDDING_CONFIG;
-  const [clickCount, setClickCount] = useState(0);
+  const [, setClickCount] = useState(0);
   const lastClickRef = useRef(0);
   const activatedRef = useRef(false);
   const triggerRef = useRef<HTMLDivElement>(null);

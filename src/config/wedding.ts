@@ -63,7 +63,7 @@ export const WEDDING_CONFIG = {
         number: "1000-2230-2438",
         holder: "정경하",
         kakaopayUrl: "https://qr.kakaopay.com/FEWX6F0KO",
-        tossUrl: "supertoss://send?amount=0&bank=%ED%86%A0%EC%8A%A4%EB%B1%85%ED%81%AC&accountNo=100022302438&origin=qr",
+        tossUrl: "",
       },
       {
         bank: "국민은행",

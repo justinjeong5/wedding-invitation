@@ -305,14 +305,16 @@ export default function RsvpForm({
               </FormGroup>
 
               {!isEditing && (
-                <FormGroup label="비밀번호" hint="수정·삭제 시 필요" htmlFor="rsvp-password">
+                <FormGroup label="비밀번호" hint="수정·삭제 시 필요 (4자 이상)" htmlFor="rsvp-password">
                   <input
                     id="rsvp-password"
                     name="password"
                     type="password"
                     autoComplete="off"
-                    placeholder="비밀번호를 설정해주세요"
+                    placeholder="4자 이상의 비밀번호를 설정해주세요"
                     required
+                    minLength={4}
+                    maxLength={50}
                     className="w-full px-4 py-2.5 text-sm border border-border rounded-lg bg-bg focus:outline-none focus:border-primary transition-colors"
                   />
                 </FormGroup>
@@ -351,6 +353,12 @@ export default function RsvpForm({
               </button>
             </div>
           </motion.div>
+        )}
+
+        {!isEditing && (
+          <p className="text-[10px] text-text-muted/60 text-center mt-4 leading-relaxed">
+            남겨주신 정보는 결혼식 운영 목적으로만 사용되며, 예식 후 2주 내에 모두 파기됩니다.
+          </p>
         )}
       </form>
     </SectionWrapper>

@@ -25,6 +25,20 @@ export const metadata: Metadata = {
     type: "website",
     url: WEDDING_CONFIG.meta.siteUrl,
     siteName: WEDDING_CONFIG.meta.title,
+    locale: "ko_KR",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: WEDDING_CONFIG.meta.title,
+    description: WEDDING_CONFIG.meta.description,
+    images: [WEDDING_CONFIG.meta.ogImage],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  alternates: {
+    canonical: WEDDING_CONFIG.meta.siteUrl,
   },
 };
 
@@ -33,6 +47,10 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#FAF9F7" },
+    { media: "(prefers-color-scheme: dark)", color: "#1A1A1A" },
+  ],
 };
 
 export default function RootLayout({
@@ -87,8 +105,12 @@ export default function RootLayout({
           }}
         />
         <link
+          rel="preconnect"
+          href="https://cdn.jsdelivr.net"
+          crossOrigin="anonymous"
+        />
+        <link
           rel="stylesheet"
-          as="style"
           crossOrigin="anonymous"
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
         />

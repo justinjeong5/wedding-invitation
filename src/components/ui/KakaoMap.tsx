@@ -36,11 +36,15 @@ export default function KakaoMap({ lat, lng, name }: KakaoMapProps) {
 
   return (
     <>
-      <div className="relative w-full h-64 rounded-lg overflow-hidden">
-        <div ref={mapRef} className="w-full h-full" aria-hidden="true" />
+      <div
+        className="relative w-full h-64 rounded-lg overflow-hidden"
+        role="img"
+        aria-label={`${name} 위치 지도`}
+      >
+        <div ref={mapRef} className="w-full h-full" />
 
         {/* 터치 블로킹 오버레이 — 페이지 스크롤 허용, 지도 인터랙션 차단 */}
-        <div className="absolute inset-0 z-10" />
+        <div className="absolute inset-0 z-10" aria-hidden="true" />
 
         {/* 확대 버튼 */}
         {loaded && (

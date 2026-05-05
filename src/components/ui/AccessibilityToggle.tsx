@@ -6,10 +6,10 @@ export default function AccessibilityToggle() {
   const [large, setLarge] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem("wedding-large-mode");
-    if (saved === "true") {
-      setLarge(true);
+    if (localStorage.getItem("wedding-large-mode") === "true") {
       document.documentElement.classList.add("large-mode");
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLarge(true);
     }
   }, []);
 

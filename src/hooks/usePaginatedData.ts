@@ -33,6 +33,8 @@ export function usePaginatedData<T>({ fetchFn, getCursor }: UsePaginatedDataOpti
   }, [loadingMore, hasMore, items, fetchFn, getCursor]);
 
   useEffect(() => {
+    // 외부 데이터 페칭 — 마운트/의존성 변경 시 초기 로드. React Query 도입 시 제거.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadInitial();
   }, [loadInitial]);
 
