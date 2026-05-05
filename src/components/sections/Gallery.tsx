@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
+import type { Swiper as SwiperClass } from "swiper";
 import { Keyboard, Virtual } from "swiper/modules";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -28,6 +29,7 @@ export default function Gallery() {
   const [isOpen, setIsOpen] = useState(false);
   const [slideIndex, setSlideIndex] = useState(0);
   const [rotated, setRotated] = useState<Set<number>>(new Set());
+  const swiperRef = useRef<SwiperClass | null>(null);
 
   const openLightbox = useCallback((idx: number) => {
     setSlideIndex(idx);
@@ -273,7 +275,7 @@ export default function Gallery() {
               </div>
             </div>
 
-            <div className="w-full h-full" onClick={(e) => e.stopPropagation()}>
+            <div className="relative w-full h-full" onClick={(e) => e.stopPropagation()}>
               <Swiper
                 modules={[Keyboard, Virtual]}
                 virtual={{
@@ -286,25 +288,29 @@ export default function Gallery() {
                 slidesPerView={1}
                 rewind
                 className="w-full h-full"
+                onSwiper={(s) => {
+                  swiperRef.current = s;
+                }}
                 onSlideChange={(swiper) => setSlideIndex(swiper.realIndex)}
               >
                 {images.map((image, index) => {
                   const isRotated = rotated.has(index);
                   return (
                     <SwiperSlide key={index} virtualIndex={index}>
-                      <div className="w-full h-full flex items-center justify-center overflow-hidden">
+                      <div className="relative w-full h-full overflow-hidden">
                         <div
-                          className="relative transition-transform duration-300"
+                          className="absolute top-1/2 left-1/2 transition-transform duration-300"
                           style={
                             isRotated
                               ? {
                                   width: "100dvh",
                                   height: "100vw",
-                                  transform: "rotate(90deg)",
+                                  transform: "translate(-50%, -50%) rotate(-90deg)",
                                 }
                               : {
                                   width: "100vw",
                                   height: "100dvh",
+                                  transform: "translate(-50%, -50%)",
                                 }
                           }
                         >
@@ -312,7 +318,7 @@ export default function Gallery() {
                             src={image.src}
                             alt={image.alt}
                             fill
-                            className="object-contain"
+                            className={isRotated ? "object-cover" : "object-contain"}
                             sizes="100vw"
                             quality={85}
                             onContextMenu={preventContextMenu}
@@ -324,6 +330,40 @@ export default function Gallery() {
                   );
                 })}
               </Swiper>
+
+              {/* 좌/우 영역 클릭 (인스타 패턴) — swipe와 공존 */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  swiperRef.current?.slidePrev();
+                }}
+                className="absolute left-0 top-[15%] bottom-[15%] w-[20%] z-10 group flex items-center justify-start pl-2"
+                style={{ minHeight: "auto" }}
+                aria-label="이전 사진"
+              >
+                <span className="opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity bg-black/40 backdrop-blur-sm rounded-full w-9 h-9 flex items-center justify-center text-white/90">
+                  <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                  </svg>
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  swiperRef.current?.slideNext();
+                }}
+                className="absolute right-0 top-[15%] bottom-[15%] w-[20%] z-10 group flex items-center justify-end pr-2"
+                style={{ minHeight: "auto" }}
+                aria-label="다음 사진"
+              >
+                <span className="opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity bg-black/40 backdrop-blur-sm rounded-full w-9 h-9 flex items-center justify-center text-white/90">
+                  <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </span>
+              </button>
             </div>
 
             <div className="absolute bottom-0 left-0 right-0 z-10 text-center px-4 pb-6 pt-10 bg-gradient-to-t from-black/50 to-transparent">

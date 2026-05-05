@@ -44,6 +44,28 @@ export default function RootLayout({
     <html lang="ko" className={notoSerifKR.variable}>
       {/* 여기까지 읽은 사람은 개발자겠죠? 축하해주세요 🙏 */}
       <head>
+        {/* OS prefers-color-scheme 자동 감지 + admin .light 강제 우선. FOUC 방지 위해 first paint 전 실행. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(){
+                try {
+                  var html = document.documentElement;
+                  var mql = window.matchMedia('(prefers-color-scheme: dark)');
+                  function sync() {
+                    var has = html.classList.contains('dark');
+                    var should = !html.classList.contains('light') && mql.matches;
+                    if (should && !has) html.classList.add('dark');
+                    else if (!should && has) html.classList.remove('dark');
+                  }
+                  sync();
+                  mql.addEventListener('change', sync);
+                  new MutationObserver(sync).observe(html, {attributes:true, attributeFilter:['class']});
+                } catch(e){}
+              })();
+            `,
+          }}
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `

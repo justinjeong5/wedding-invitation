@@ -51,7 +51,7 @@ export default function ShareFab() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 z-40 w-10 h-10 rounded-full bg-white shadow-lg border border-border flex items-center justify-center text-primary active:scale-95 transition-transform"
+        className="fixed bottom-6 right-6 z-40 w-10 h-10 rounded-full bg-bg-card shadow-lg border border-border flex items-center justify-center text-primary active:scale-95 transition-transform"
         style={{ minHeight: "auto" }}
         aria-label="공유하기"
         title="공유하기"
@@ -75,7 +75,7 @@ export default function ShareFab() {
           >
             <div className="absolute inset-0 bg-black/40" onClick={() => setOpen(false)} />
             <motion.div
-              className="relative w-full max-w-[480px] bg-white rounded-t-2xl px-6 pt-6 pb-8"
+              className="relative w-full max-w-[480px] bg-bg-card rounded-t-2xl px-6 pt-6 pb-8"
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               exit={{ y: "100%" }}

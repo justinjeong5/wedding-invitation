@@ -198,7 +198,7 @@ export default function BgmPlayer() {
       {/* 토글 버튼 */}
       <button
         onClick={toggle}
-        className="fixed bottom-6 left-6 z-40 w-10 h-10 rounded-full bg-white shadow-lg border border-border flex items-center justify-center text-primary active:scale-95 transition-transform"
+        className="fixed bottom-6 left-6 z-40 w-10 h-10 rounded-full bg-bg-card shadow-lg border border-border flex items-center justify-center text-primary active:scale-95 transition-transform"
         style={{ minHeight: "auto" }}
         aria-label={isPlaying ? "음악 끄기" : "음악 켜기"}
         title={isPlaying ? "음악 끄기" : "음악 켜기"}

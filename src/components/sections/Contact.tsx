@@ -34,7 +34,7 @@ function ContactPerson({ name, tel, parents }: ContactPersonProps) {
           className="flex flex-col items-center gap-1"
           aria-label={`${name}에게 전화`}
         >
-          <span className="w-10 h-10 rounded-full flex items-center justify-center text-primary border border-primary/25 bg-white shadow-sm">
+          <span className="w-10 h-10 rounded-full flex items-center justify-center text-primary border border-primary/25 bg-bg-card shadow-sm">
             <PhoneIcon />
           </span>
           <span className="text-[10px] text-text-muted">전화</span>
@@ -44,7 +44,7 @@ function ContactPerson({ name, tel, parents }: ContactPersonProps) {
           className="flex flex-col items-center gap-1"
           aria-label={`${name}에게 문자`}
         >
-          <span className="w-10 h-10 rounded-full flex items-center justify-center text-primary border border-primary/25 bg-white shadow-sm">
+          <span className="w-10 h-10 rounded-full flex items-center justify-center text-primary border border-primary/25 bg-bg-card shadow-sm">
             <SmsIcon />
           </span>
           <span className="text-[10px] text-text-muted">문자</span>
@@ -62,7 +62,7 @@ function ContactPerson({ name, tel, parents }: ContactPersonProps) {
                 className="flex flex-col items-center gap-1"
                 aria-label={`${parent.name}에게 전화`}
               >
-                <span className="w-9 h-9 rounded-full flex items-center justify-center text-primary/60 border border-primary/20 bg-white shadow-sm">
+                <span className="w-9 h-9 rounded-full flex items-center justify-center text-primary/60 border border-primary/20 bg-bg-card shadow-sm">
                   <PhoneIcon size="w-3.5 h-3.5" />
                 </span>
                 <span className="text-[10px] text-text-muted/60">전화</span>
@@ -72,7 +72,7 @@ function ContactPerson({ name, tel, parents }: ContactPersonProps) {
                 className="flex flex-col items-center gap-1"
                 aria-label={`${parent.name}에게 문자`}
               >
-                <span className="w-9 h-9 rounded-full flex items-center justify-center text-primary/60 border border-primary/20 bg-white shadow-sm">
+                <span className="w-9 h-9 rounded-full flex items-center justify-center text-primary/60 border border-primary/20 bg-bg-card shadow-sm">
                   <SmsIcon />
                 </span>
                 <span className="text-[10px] text-text-muted/60">문자</span>

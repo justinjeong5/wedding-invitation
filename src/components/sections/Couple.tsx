@@ -11,7 +11,7 @@ export default function Couple() {
         <div className="flex-1 text-right">
           <p className="text-xs text-text-muted mb-2">
             {groom.father.name} · {groom.mother.name}
-            <span className="text-text-muted/80 ml-1">의 아들</span>
+            <span className="text-text-muted/80 ml-1">의 장남</span>
           </p>
           <p className="text-xl font-normal text-text tracking-wide">{groom.name}</p>
         </div>
@@ -26,7 +26,7 @@ export default function Couple() {
         <div className="flex-1 text-left">
           <p className="text-xs text-text-muted mb-2">
             {bride.father.name} · {bride.mother.name}
-            <span className="text-text-muted/80 ml-1">의 딸</span>
+            <span className="text-text-muted/80 ml-1">의 장녀</span>
           </p>
           <p className="text-xl font-normal text-text tracking-wide">{bride.name}</p>
         </div>

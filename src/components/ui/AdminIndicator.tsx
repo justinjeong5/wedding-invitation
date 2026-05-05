@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useAdminMode } from "@/hooks/useAdminMode";
 import { useAfterWedding } from "@/hooks/useAfterWedding";
 import { useGuestGalleryOpen } from "@/hooks/useGuestGalleryOpen";
+import { useDarkMode } from "@/hooks/useDarkMode";
 import AdminHelpModal from "@/components/ui/AdminHelpModal";
 
 const HELP_SEEN_KEY = "admin-help-seen";
@@ -12,6 +13,7 @@ export default function AdminIndicator() {
   const { isAdmin } = useAdminMode();
   const afterWedding = useAfterWedding();
   const guestGalleryOpen = useGuestGalleryOpen();
+  const { isDark, toggle: toggleDark } = useDarkMode();
   const [helpOpen, setHelpOpen] = useState(false);
 
   useEffect(() => {
@@ -37,6 +39,7 @@ export default function AdminIndicator() {
     );
   };
 
+
   if (!isAdmin) return null;
 
   return (
@@ -51,10 +54,11 @@ export default function AdminIndicator() {
         <div className="bg-orange-400/90 text-white text-[10px] tracking-widest text-center py-1 pointer-events-none select-none">
           관리자 모드
         </div>
-        <div className="bg-white/95 backdrop-blur-sm border-b border-orange-200/60 flex items-center justify-center gap-1.5 px-3 py-1.5">
+        <div className="bg-bg-card/95 backdrop-blur-sm border-b border-orange-200/60 flex items-center justify-center gap-1.5 px-3 py-1.5">
           {[
             { label: "예식 후", active: afterWedding, onClick: toggleAfterWedding },
             { label: "하객갤러리", active: guestGalleryOpen, onClick: toggleGuestGallery },
+            { label: "다크", active: isDark, onClick: toggleDark },
           ].map(({ label, active, onClick }) => (
             <button
               key={label}
@@ -63,7 +67,7 @@ export default function AdminIndicator() {
               className={`flex-1 max-w-[120px] px-2 py-1 text-[10px] rounded-md tracking-wide transition-colors ${
                 active
                   ? "bg-orange-400/90 text-white"
-                  : "bg-white text-stone-400 border border-stone-200"
+                  : "bg-bg-card text-text-muted border border-border"
               }`}
             >
               {label} {active ? "ON" : "OFF"}

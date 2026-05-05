@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
-@theme inline {
+/* Tailwind v4: dark: variant가 html.dark 클래스 기반으로 작동하도록 재정의.
+   prefers-color-scheme은 layout.tsx 의 inline script가 .dark 클래스로 통합 처리. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
   --color-primary: #8A7A6A;
   --color-primary-light: #A89888;
   --color-primary-dark: #7A6C5E;
@@ -13,6 +17,30 @@
   --color-accent: #849E81;
   --font-serif: "Noto Serif KR", serif;
   --font-sans: "Pretendard Variable", Pretendard, sans-serif;
+}
+
+/* 다크모드 — 캔들라이트 무드 (저녁 결혼식 톤).
+   .dark 클래스는 layout.tsx inline script(OS prefers 자동 감지) 또는 admin 토글이 부여.
+   .light 는 admin이 OS 다크에서도 라이트 강제 시 부여 — inline script가 .dark 추가하지 않음. */
+html.dark {
+  --color-bg: #2A2825;
+  --color-bg-card: #353330;
+  --color-primary: #E0D2B8;
+  --color-primary-light: #EDE0C8;
+  --color-primary-dark: #C5AC8C;
+  --color-text: #FBF7F0;
+  --color-text-light: #E8E2D6;
+  --color-text-muted: #CDC4B6;
+  --color-border: #5A524A;
+  --color-accent: #B5CFB1;
+  --color-shimmer-bg: #3A332D;
+  --color-shimmer-glint: rgba(125, 113, 100, 0.55);
+}
+
+html {
+  --color-shimmer-bg: #F5F1EC;
+  --color-shimmer-glint: rgba(237, 233, 227, 0.9);
+  transition: background-color 200ms, color 200ms;
 }
 
 html {
@@ -129,7 +157,7 @@ section[id] {
    88개 동시 애니메이션에서도 GPU 합성 레이어로 돌며 repaint 을 회피. */
 .gallery-shimmer {
   position: relative;
-  background-color: #F5F1EC;
+  background-color: var(--color-shimmer-bg);
 }
 
 .gallery-shimmer::before {
@@ -139,8 +167,8 @@ section[id] {
   background: linear-gradient(
     100deg,
     transparent 20%,
-    rgba(237, 233, 227, 0.9) 45%,
-    rgba(237, 233, 227, 0.9) 55%,
+    var(--color-shimmer-glint) 45%,
+    var(--color-shimmer-glint) 55%,
     transparent 80%
   );
   transform: translateX(-100%);

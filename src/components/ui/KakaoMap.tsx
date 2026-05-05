@@ -46,7 +46,7 @@ export default function KakaoMap({ lat, lng, name }: KakaoMapProps) {
         {loaded && (
           <button
             type="button"
-            className="absolute top-3 right-3 z-20 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm rounded-full pl-2.5 pr-3 h-8 border border-border/60 shadow-sm active:scale-95 transition-transform"
+            className="absolute top-3 right-3 z-20 flex items-center gap-1.5 bg-bg-card/90 backdrop-blur-sm rounded-full pl-2.5 pr-3 h-8 border border-border/60 shadow-sm active:scale-95 transition-transform"
             onClick={() => setModalOpen(true)}
             aria-label={`${name} 지도 크게 보기`}
             style={{ minHeight: "auto" }}

@@ -166,7 +166,7 @@ export default function Calendar() {
             <div
               key={label}
               className={`text-xs py-1 ${
-                i === 0 ? "text-red-400" : i === 6 ? "text-blue-400" : "text-text-muted"
+                i === 0 ? "text-red-400 dark:text-red-300" : i === 6 ? "text-blue-400 dark:text-blue-300" : "text-text-muted"
               }`}
             >
               {label}
@@ -223,15 +223,15 @@ export default function Calendar() {
                     onClick={() => handleDayClick(day)}
                     className={`text-sm py-1.5 rounded-full transition-colors min-h-0 ${
                       isWedding
-                        ? "bg-primary text-white font-medium"
+                        ? "bg-primary text-bg font-medium"
                         : isSel
                         ? "bg-primary/10 text-primary font-medium"
                         : isTodayCell
                         ? "ring-1 ring-primary/40 text-primary"
                         : dow === 0
-                        ? "text-red-400"
+                        ? "text-red-400 dark:text-red-300"
                         : dow === 6
-                        ? "text-blue-400"
+                        ? "text-blue-400 dark:text-blue-300"
                         : "text-text"
                     }`}
                   >

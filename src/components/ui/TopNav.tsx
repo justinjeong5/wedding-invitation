@@ -82,7 +82,7 @@ export default function TopNav() {
             exit={{ y: -60 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
           >
-            <div className="w-full max-w-[480px] bg-white/90 backdrop-blur-md border-b border-border/60 px-4 h-11 flex items-center justify-between">
+            <div className="w-full max-w-[480px] bg-bg-card/90 backdrop-blur-md border-b border-border/60 px-4 h-11 flex items-center justify-between">
               <span className="text-xs font-serif text-primary tracking-wider">
                 {open ? "메뉴" : "경하 & 우림"}
               </span>
@@ -114,7 +114,7 @@ export default function TopNav() {
               >
                 <div className="absolute inset-0 bg-black/30" onClick={() => setOpen(false)} />
                 <motion.div
-                  className="relative w-full max-w-[480px] mt-11 h-[calc(100dvh-2.75rem)] bg-white/95 backdrop-blur-md flex flex-col"
+                  className="relative w-full max-w-[480px] mt-11 h-[calc(100dvh-2.75rem)] bg-bg-card/95 backdrop-blur-md flex flex-col"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}

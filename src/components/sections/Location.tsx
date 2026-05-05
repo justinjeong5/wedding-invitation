@@ -7,7 +7,7 @@ import { WEDDING_CONFIG } from "@/config/wedding";
 
 const KakaoMap = dynamic(() => import("@/components/ui/KakaoMap"), {
   ssr: false,
-  loading: () => <div className="w-full h-64 rounded-lg bg-gray-100 animate-pulse" />,
+  loading: () => <div className="w-full h-64 rounded-lg bg-bg-card animate-pulse" />,
 });
 
 function TransportBadge({ label, color, textColor = "white" }: { label: string; color: string; textColor?: string }) {

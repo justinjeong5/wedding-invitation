@@ -41,19 +41,19 @@ export default function AdminHelpModal({ onClose }: AdminHelpModalProps) {
     <>
       <div className="fixed inset-0 z-[70] bg-black/40" onClick={onClose} />
       <div
-        className="fixed inset-x-4 top-1/2 -translate-y-1/2 z-[71] max-w-[400px] mx-auto max-h-[80dvh] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+        className="fixed inset-x-4 top-1/2 -translate-y-1/2 z-[71] max-w-[400px] mx-auto max-h-[80dvh] bg-bg-card rounded-2xl shadow-2xl overflow-hidden flex flex-col"
         role="dialog"
         aria-modal="true"
         aria-label="관리자 도움말"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3 border-b border-orange-100 shrink-0">
+        <div className="flex items-center justify-between px-5 py-3 border-b border-orange-500/20 shrink-0">
           <p className="text-xs font-semibold text-orange-500 tracking-wider">관리자 도움말</p>
           <button
             ref={closeBtnRef}
             onClick={onClose}
             style={{ minHeight: "auto" }}
-            className="w-7 h-7 flex items-center justify-center rounded-full text-stone-400 active:bg-stone-100 transition-colors"
+            className="w-7 h-7 flex items-center justify-center rounded-full text-text-muted active:bg-border/60 transition-colors"
             aria-label="닫기"
             type="button"
           >
@@ -77,9 +77,13 @@ export default function AdminHelpModal({ onClose }: AdminHelpModalProps) {
               label="하객갤러리"
               desc="하객 사진 갤러리가 오픈된 화면을 미리보기합니다. 실제로는 예식 당일(7/11) 자정부터 모든 방문자에게 자동 오픈됩니다."
             />
+            <Item
+              label="다크"
+              desc="다크모드 화면을 미리보기합니다. 새로고침 시 리셋되며, OS 시스템 설정으로 자동 복귀합니다."
+            />
           </Section>
 
-          <div className="w-full h-px bg-stone-100 my-4" />
+          <div className="w-full h-px bg-border my-4" />
 
           <Section title="시간별 자동 전환">
             <div className="text-[11px] text-text-muted leading-relaxed space-y-2">
@@ -102,7 +106,7 @@ export default function AdminHelpModal({ onClose }: AdminHelpModalProps) {
             </div>
           </Section>
 
-          <div className="w-full h-px bg-stone-100 my-4" />
+          <div className="w-full h-px bg-border my-4" />
 
           <Section title="관리자 권한">
             <Item
@@ -123,7 +127,7 @@ export default function AdminHelpModal({ onClose }: AdminHelpModalProps) {
             />
           </Section>
 
-          <div className="w-full h-px bg-stone-100 my-4" />
+          <div className="w-full h-px bg-border my-4" />
 
           <Section title="관리자 진입 방법">
             <p className="text-[11px] text-text-muted leading-relaxed">

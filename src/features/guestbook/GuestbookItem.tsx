@@ -181,7 +181,7 @@ export default function GuestbookItem({
               <button
                 onClick={handleDelete}
                 disabled={loading}
-                className="px-3 py-1.5 text-xs text-red-500 border border-red-200 rounded hover:bg-red-50 transition-colors disabled:opacity-50 shrink-0"
+                className="px-3 py-1.5 text-xs text-red-500 border border-red-500/30 rounded hover:bg-red-500/10 transition-colors disabled:opacity-50 shrink-0"
               >
                 {loading ? "삭제 중..." : "관리자 삭제"}
               </button>
@@ -207,7 +207,7 @@ export default function GuestbookItem({
               <button
                 onClick={handleDelete}
                 disabled={loading || !password}
-                className="px-3 py-1.5 text-xs text-red-500 border border-red-200 rounded hover:bg-red-50 transition-colors disabled:opacity-50 shrink-0"
+                className="px-3 py-1.5 text-xs text-red-500 border border-red-500/30 rounded hover:bg-red-500/10 transition-colors disabled:opacity-50 shrink-0"
               >
                 {loading ? "삭제 중..." : "삭제"}
               </button>

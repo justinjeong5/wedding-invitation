@@ -27,7 +27,7 @@ export default function AccessibilityToggle() {
   return (
     <button
       onClick={toggle}
-      className="fixed bottom-[4.5rem] right-6 z-40 w-10 h-10 rounded-full bg-white shadow-lg border border-border flex items-center justify-center text-primary active:scale-95 transition-transform"
+      className="fixed bottom-[4.5rem] right-6 z-40 w-10 h-10 rounded-full bg-bg-card shadow-lg border border-border flex items-center justify-center text-primary active:scale-95 transition-transform"
       style={{ minHeight: "auto" }}
       aria-label={large ? "글자 작게" : "글자 크게"}
       title={large ? "글자 작게" : "글자 크게"}
