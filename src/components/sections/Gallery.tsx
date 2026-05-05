@@ -29,7 +29,15 @@ export default function Gallery() {
   const [isOpen, setIsOpen] = useState(false);
   const [slideIndex, setSlideIndex] = useState(0);
   const [rotated, setRotated] = useState<Set<number>>(new Set());
+  const [rotateHintOpen, setRotateHintOpen] = useState(false);
   const swiperRef = useRef<SwiperClass | null>(null);
+
+  const dismissRotateHint = useCallback(() => {
+    setRotateHintOpen(false);
+    try {
+      localStorage.setItem("gallery-rotate-hint-seen", "1");
+    } catch {}
+  }, []);
 
   const openLightbox = useCallback((idx: number) => {
     setSlideIndex(idx);
@@ -72,6 +80,23 @@ export default function Gallery() {
       document.body.style.overflow = "";
     };
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setRotateHintOpen(false);
+      return;
+    }
+    const current = images[slideIndex];
+    if (!current || current.width <= current.height) {
+      setRotateHintOpen(false);
+      return;
+    }
+    let seen = false;
+    try {
+      seen = localStorage.getItem("gallery-rotate-hint-seen") === "1";
+    } catch {}
+    if (!seen) setRotateHintOpen(true);
+  }, [isOpen, slideIndex, images]);
 
   const eagerSet = useMemo(
     () =>
@@ -228,6 +253,7 @@ export default function Gallery() {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
+                      dismissRotateHint();
                       toggleRotate();
                     }}
                     className="text-white/80 hover:text-white p-2.5 -m-1"
@@ -372,6 +398,66 @@ export default function Gallery() {
                   </span>
                 )}
               </button>
+
+              {/* 회전 버튼 첫 진입 안내 — localStorage로 영구 dismiss */}
+              <AnimatePresence>
+                {rotateHintOpen && (
+                  <motion.div
+                    className="absolute inset-0 z-30 flex items-start justify-end pt-16 pr-3"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.25 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      dismissRotateHint();
+                    }}
+                  >
+                    <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+                    <motion.div
+                      className="relative max-w-[280px] bg-bg-card text-text rounded-2xl shadow-2xl px-5 py-4 mr-1"
+                      initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                      transition={{ duration: 0.25, ease: "easeOut" }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div
+                        className="absolute -top-1.5 right-6 w-3 h-3 bg-bg-card rotate-45"
+                        aria-hidden="true"
+                      />
+                      <div className="flex items-start gap-2.5">
+                        <span className="shrink-0 w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center text-primary">
+                          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v6h6M20 20v-6h-6M4 10a8 8 0 0114-5l2 2M20 14a8 8 0 01-14 5l-2-2" />
+                          </svg>
+                        </span>
+                        <div className="text-left">
+                          <p className="text-sm font-medium text-text mb-0.5">
+                            세로로 크게 보기
+                          </p>
+                          <p className="text-xs text-text-light leading-relaxed">
+                            가로 사진은 회전 버튼으로
+                            <br />
+                            화면 가득 볼 수 있어요
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          dismissRotateHint();
+                        }}
+                        className="mt-3 w-full text-xs text-primary border border-primary/30 rounded-lg py-1.5 hover:bg-primary/5 transition-colors"
+                        style={{ minHeight: "auto" }}
+                      >
+                        확인
+                      </button>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             <div className="absolute bottom-0 left-0 right-0 z-10 text-center px-4 pb-6 pt-10 bg-gradient-to-t from-black/50 to-transparent">
