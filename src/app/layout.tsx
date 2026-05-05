@@ -34,8 +34,12 @@ export const metadata: Metadata = {
     images: [WEDDING_CONFIG.meta.ogImage],
   },
   robots: {
-    index: true,
-    follow: true,
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
   },
   alternates: {
     canonical: WEDDING_CONFIG.meta.siteUrl,
