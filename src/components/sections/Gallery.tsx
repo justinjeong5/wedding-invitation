@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Zoom, Keyboard, Virtual } from "swiper/modules";
+import { Keyboard, Virtual } from "swiper/modules";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import SectionWrapper from "@/components/ui/SectionWrapper";
@@ -10,13 +10,11 @@ import { WEDDING_CONFIG } from "@/config/wedding";
 import type { GalleryImage } from "@/types";
 
 import "swiper/css";
-import "swiper/css/zoom";
 import "swiper/css/virtual";
 
 const GRID_COLS: Record<number, string> = {
   1: "grid-cols-1",
   2: "grid-cols-2",
-  3: "grid-cols-3",
 };
 
 function isCompositeRow(
@@ -29,6 +27,7 @@ export default function Gallery() {
   const { images, layout } = WEDDING_CONFIG.gallery;
   const [isOpen, setIsOpen] = useState(false);
   const [slideIndex, setSlideIndex] = useState(0);
+  const [rotated, setRotated] = useState<Set<number>>(new Set());
 
   const openLightbox = useCallback((idx: number) => {
     setSlideIndex(idx);
@@ -37,7 +36,24 @@ export default function Gallery() {
 
   const closeLightbox = useCallback(() => {
     setIsOpen(false);
+    setRotated(new Set());
   }, []);
+
+  const toggleRotate = useCallback(() => {
+    setRotated((prev) => {
+      const next = new Set(prev);
+      if (next.has(slideIndex)) next.delete(slideIndex);
+      else next.add(slideIndex);
+      return next;
+    });
+  }, [slideIndex]);
+
+  const preventContextMenu = useCallback(
+    (e: React.MouseEvent | React.SyntheticEvent) => {
+      e.preventDefault();
+    },
+    []
+  );
 
   useEffect(() => {
     if (!isOpen) return;
@@ -96,6 +112,36 @@ export default function Gallery() {
           loading={eagerSet.has(idx) ? "eager" : "lazy"}
           onLoad={handleImageLoad}
           onError={handleImageLoad}
+          onContextMenu={preventContextMenu}
+          draggable={false}
+        />
+      </div>
+    );
+  }
+
+  function renderIntrinsicImage(
+    image: GalleryImage,
+    idx: number,
+    sizes: string
+  ) {
+    return (
+      <div
+        key={idx}
+        className="gallery-item gallery-shimmer relative rounded-xl overflow-hidden cursor-pointer"
+        onClick={() => openLightbox(idx)}
+      >
+        <Image
+          src={image.src}
+          alt={image.alt}
+          width={image.width}
+          height={image.height}
+          className="gallery-img w-full h-auto"
+          sizes={sizes}
+          loading={eagerSet.has(idx) ? "eager" : "lazy"}
+          onLoad={handleImageLoad}
+          onError={handleImageLoad}
+          onContextMenu={preventContextMenu}
+          draggable={false}
         />
       </div>
     );
@@ -115,10 +161,10 @@ export default function Gallery() {
                 <div
                   key={rowIdx}
                   className="grid gap-1.5"
-                  style={{ gridTemplateColumns: "6fr 6fr 7fr" }}
+                  style={{ gridTemplateColumns: "9fr 9fr 8fr" }}
                 >
                   {row.landscape.map((idx) =>
-                    renderImage(images[idx], idx, "32vw")
+                    renderImage(images[idx], idx, "34vw")
                   )}
                   <div
                     key={row.portrait}
@@ -131,10 +177,12 @@ export default function Gallery() {
                       alt={images[row.portrait].alt}
                       fill
                       className="gallery-img object-cover"
-                      sizes="37vw"
+                      sizes="32vw"
                       loading={eagerSet.has(row.portrait) ? "eager" : "lazy"}
                       onLoad={handleImageLoad}
                       onError={handleImageLoad}
+                      onContextMenu={preventContextMenu}
+                      draggable={false}
                     />
                   </div>
                 </div>
@@ -145,16 +193,14 @@ export default function Gallery() {
             const sizes =
               gridRow.length === 1
                 ? "(max-width: 480px) 100vw, 480px"
-                : gridRow.length === 2
-                  ? "50vw"
-                  : "33vw";
+                : "50vw";
 
             return (
               <div
                 key={rowIdx}
-                className={`grid ${GRID_COLS[gridRow.length]} gap-1.5`}
+                className={`grid ${GRID_COLS[gridRow.length]} gap-1.5 items-start`}
               >
-                {gridRow.map((idx) => renderImage(images[idx], idx, sizes))}
+                {gridRow.map((idx) => renderIntrinsicImage(images[idx], idx, sizes))}
               </div>
             );
           })}
@@ -175,39 +221,66 @@ export default function Gallery() {
               <span className="text-white/70 text-sm">
                 {slideIndex + 1} / {images.length}
               </span>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  closeLightbox();
-                }}
-                className="text-white/80 hover:text-white p-2.5 -m-1"
-                aria-label="닫기"
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2}
+              <div className="flex items-center gap-1">
+                {images[slideIndex].width > images[slideIndex].height && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleRotate();
+                    }}
+                    className="text-white/80 hover:text-white p-2.5 -m-1"
+                    aria-label={
+                      rotated.has(slideIndex) ? "원래대로" : "세로로 보기"
+                    }
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M4 4v6h6M20 20v-6h-6M4 10a8 8 0 0114-5l2 2M20 14a8 8 0 01-14 5l-2-2"
+                      />
+                    </svg>
+                  </button>
+                )}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    closeLightbox();
+                  }}
+                  className="text-white/80 hover:text-white p-2.5 -m-1"
+                  aria-label="닫기"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
 
             <div className="w-full h-full" onClick={(e) => e.stopPropagation()}>
               <Swiper
-                modules={[Zoom, Keyboard, Virtual]}
+                modules={[Keyboard, Virtual]}
                 virtual={{
                   enabled: true,
                   addSlidesBefore: 2,
                   addSlidesAfter: 2,
                 }}
-                zoom={{ maxRatio: 3 }}
                 keyboard={{ enabled: true }}
                 initialSlide={slideIndex}
                 slidesPerView={1}
@@ -215,20 +288,41 @@ export default function Gallery() {
                 className="w-full h-full"
                 onSlideChange={(swiper) => setSlideIndex(swiper.realIndex)}
               >
-                {images.map((image, index) => (
-                  <SwiperSlide key={index} virtualIndex={index}>
-                    <div className="swiper-zoom-container">
-                      <Image
-                        src={image.src}
-                        alt={image.alt}
-                        fill
-                        className="object-contain"
-                        sizes="100vw"
-                        quality={85}
-                      />
-                    </div>
-                  </SwiperSlide>
-                ))}
+                {images.map((image, index) => {
+                  const isRotated = rotated.has(index);
+                  return (
+                    <SwiperSlide key={index} virtualIndex={index}>
+                      <div className="w-full h-full flex items-center justify-center overflow-hidden">
+                        <div
+                          className="relative transition-transform duration-300"
+                          style={
+                            isRotated
+                              ? {
+                                  width: "100dvh",
+                                  height: "100vw",
+                                  transform: "rotate(90deg)",
+                                }
+                              : {
+                                  width: "100vw",
+                                  height: "100dvh",
+                                }
+                          }
+                        >
+                          <Image
+                            src={image.src}
+                            alt={image.alt}
+                            fill
+                            className="object-contain"
+                            sizes="100vw"
+                            quality={85}
+                            onContextMenu={preventContextMenu}
+                            draggable={false}
+                          />
+                        </div>
+                      </div>
+                    </SwiperSlide>
+                  );
+                })}
               </Swiper>
             </div>
 

@@ -10,11 +10,11 @@ export default function ThankYouGallery() {
 
   return (
     <SectionWrapper className="text-center">
-      <div className="flex gap-3 max-w-sm mx-auto">
+      <div className="flex flex-col gap-3 max-w-sm mx-auto">
         {photos.map((photo, i) => (
           <motion.div
             key={photo.src}
-            className="flex-1 overflow-hidden rounded-xl"
+            className="overflow-hidden rounded-xl"
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
@@ -25,8 +25,10 @@ export default function ThankYouGallery() {
               alt={photo.alt}
               width={photo.width}
               height={photo.height}
-              className="w-full h-auto object-cover"
-              sizes="45vw"
+              className="w-full h-auto"
+              sizes="(max-width: 384px) 100vw, 384px"
+              onContextMenu={(e) => e.preventDefault()}
+              draggable={false}
             />
           </motion.div>
         ))}

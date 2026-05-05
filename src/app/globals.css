@@ -41,6 +41,14 @@ img, video, svg {
   height: auto;
 }
 
+/* 길게 눌러 저장 / 드래그 / 텍스트 선택 차단 */
+img {
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 /* 어르신 모드 — 글자, 버튼, 간격 확대 */
 html.large-mode {
   font-size: 20px;

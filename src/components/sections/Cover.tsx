@@ -36,11 +36,13 @@ export default function Cover() {
       <style dangerouslySetInnerHTML={{ __html: petalKeyframes }} />
 
       <Image
-        src="/images/cover.jpg"
+        src="/images/cover-v2.jpg"
         alt="웨딩 커버"
         fill
         className="object-cover"
         priority
+        onContextMenu={(e) => e.preventDefault()}
+        draggable={false}
       />
 
       <div
