@@ -463,7 +463,7 @@ export default function Gallery() {
                       onClick={(e) => e.stopPropagation()}
                     >
                       <div
-                        className="absolute -top-1.5 right-12 w-3 h-3 bg-bg-card rotate-45 shadow-[-1px_-1px_2px_rgba(0,0,0,0.04)]"
+                        className="absolute -top-1.5 right-16 w-3 h-3 bg-bg-card rotate-45 shadow-[-1px_-1px_2px_rgba(0,0,0,0.04)]"
                         aria-hidden="true"
                       />
                       <div className="flex items-start gap-2.5">
