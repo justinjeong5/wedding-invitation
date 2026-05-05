@@ -309,6 +309,15 @@ export default function Gallery() {
             </div>
 
             <div className="relative w-full h-full" onClick={(e) => e.stopPropagation()}>
+              <div
+                className={`w-full h-full ${
+                  edgeShake === "start"
+                    ? "lightbox-slide-bounce-prev"
+                    : edgeShake === "end"
+                      ? "lightbox-slide-bounce-next"
+                      : ""
+                }`}
+              >
               <Swiper
                 modules={[Keyboard, Virtual]}
                 virtual={{
@@ -365,6 +374,7 @@ export default function Gallery() {
                   );
                 })}
               </Swiper>
+              </div>
 
               {/* 좌/우 영역 클릭 (인스타 패턴) — swipe와 공존. 경계 도달 시 흔들림 피드백 */}
               <button
@@ -385,7 +395,7 @@ export default function Gallery() {
                   key={`prev-${edgeShake === "start" ? Date.now() : "idle"}`}
                   className={`transition-opacity bg-black/40 backdrop-blur-sm rounded-full w-9 h-9 flex items-center justify-center ${
                     edgeShake === "start"
-                      ? "opacity-100 text-white/50 lightbox-edge-shake-left"
+                      ? "opacity-100 text-white/60"
                       : slideIndex === 0
                         ? "opacity-0"
                         : "opacity-0 group-hover:opacity-100 group-active:opacity-100 text-white/90"
@@ -421,7 +431,7 @@ export default function Gallery() {
                   key={`next-${edgeShake === "end" ? Date.now() : "idle"}`}
                   className={`transition-opacity bg-black/40 backdrop-blur-sm rounded-full w-9 h-9 flex items-center justify-center ${
                     edgeShake === "end"
-                      ? "opacity-100 text-white/50 lightbox-edge-shake-right"
+                      ? "opacity-100 text-white/60"
                       : slideIndex === images.length - 1
                         ? "opacity-0"
                         : "opacity-0 group-hover:opacity-100 group-active:opacity-100 text-white/90"
@@ -463,7 +473,7 @@ export default function Gallery() {
                       onClick={(e) => e.stopPropagation()}
                     >
                       <div
-                        className="absolute -top-1.5 right-16 w-3 h-3 bg-bg-card rotate-45 shadow-[-1px_-1px_2px_rgba(0,0,0,0.04)]"
+                        className="absolute -top-1.5 right-14 w-3 h-3 bg-bg-card rotate-45 shadow-[-1px_-1px_2px_rgba(0,0,0,0.04)]"
                         aria-hidden="true"
                       />
                       <div className="flex items-start gap-2.5">

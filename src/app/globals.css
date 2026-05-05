@@ -190,26 +190,28 @@ section[id] {
   opacity: 1;
 }
 
-/* 라이트박스 첫/끝 경계 시각 피드백 — 막힌 방향으로 짧게 흔들림 */
-@keyframes lightbox-edge-shake-left {
-  0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-10px); }
-  40% { transform: translateX(0); }
-  60% { transform: translateX(-6px); }
-  80% { transform: translateX(0); }
+/* 라이트박스 첫/끝 경계 시각 피드백 — 사진이 넘어가려다 막혀 튕겨 돌아옴
+   prev 시도(좌측 경계) = 사진이 오른쪽으로 살짝 밀렸다가 복귀
+   next 시도(우측 경계) = 사진이 왼쪽으로 살짝 밀렸다가 복귀 */
+@keyframes lightbox-slide-bounce-prev {
+  0%   { transform: translateX(0); }
+  30%  { transform: translateX(45px); }
+  55%  { transform: translateX(8px); }
+  75%  { transform: translateX(18px); }
+  100% { transform: translateX(0); }
 }
-@keyframes lightbox-edge-shake-right {
-  0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(10px); }
-  40% { transform: translateX(0); }
-  60% { transform: translateX(6px); }
-  80% { transform: translateX(0); }
+@keyframes lightbox-slide-bounce-next {
+  0%   { transform: translateX(0); }
+  30%  { transform: translateX(-45px); }
+  55%  { transform: translateX(-8px); }
+  75%  { transform: translateX(-18px); }
+  100% { transform: translateX(0); }
 }
-.lightbox-edge-shake-left {
-  animation: lightbox-edge-shake-left 0.45s ease-out;
+.lightbox-slide-bounce-prev {
+  animation: lightbox-slide-bounce-prev 0.5s cubic-bezier(0.22, 0.9, 0.32, 1);
 }
-.lightbox-edge-shake-right {
-  animation: lightbox-edge-shake-right 0.45s ease-out;
+.lightbox-slide-bounce-next {
+  animation: lightbox-slide-bounce-next 0.5s cubic-bezier(0.22, 0.9, 0.32, 1);
 }
 
 /* 로드/에러 시 shimmer 제거. :has()는 iOS 15.4+, Chrome 105+ (2022~) */
