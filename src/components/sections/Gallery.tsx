@@ -403,19 +403,18 @@ export default function Gallery() {
               <AnimatePresence>
                 {rotateHintOpen && (
                   <motion.div
-                    className="absolute inset-0 z-30 flex items-start justify-end pt-16 pr-3"
+                    className="absolute inset-0 z-30"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.25 }}
+                    transition={{ duration: 0.2 }}
                     onClick={(e) => {
                       e.stopPropagation();
                       dismissRotateHint();
                     }}
                   >
-                    <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
                     <motion.div
-                      className="relative max-w-[280px] bg-bg-card text-text rounded-2xl shadow-2xl px-5 py-4 mr-1"
+                      className="absolute top-[3.5rem] right-3 max-w-[260px] bg-bg-card text-text rounded-2xl shadow-2xl px-5 py-4"
                       initial={{ opacity: 0, y: -8, scale: 0.96 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -8, scale: 0.96 }}
@@ -423,7 +422,7 @@ export default function Gallery() {
                       onClick={(e) => e.stopPropagation()}
                     >
                       <div
-                        className="absolute -top-1.5 right-6 w-3 h-3 bg-bg-card rotate-45"
+                        className="absolute -top-1.5 right-12 w-3 h-3 bg-bg-card rotate-45 shadow-[-1px_-1px_2px_rgba(0,0,0,0.04)]"
                         aria-hidden="true"
                       />
                       <div className="flex items-start gap-2.5">
