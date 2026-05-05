@@ -30,7 +30,14 @@ export default function Gallery() {
   const [slideIndex, setSlideIndex] = useState(0);
   const [rotated, setRotated] = useState<Set<number>>(new Set());
   const [rotateHintOpen, setRotateHintOpen] = useState(false);
+  const [edgeShake, setEdgeShake] = useState<"start" | "end" | null>(null);
   const swiperRef = useRef<SwiperClass | null>(null);
+
+  const triggerEdgeShake = useCallback((edge: "start" | "end") => {
+    setEdgeShake(null);
+    requestAnimationFrame(() => setEdgeShake(edge));
+    setTimeout(() => setEdgeShake(null), 500);
+  }, []);
 
   const dismissRotateHint = useCallback(() => {
     setRotateHintOpen(false);
@@ -359,44 +366,78 @@ export default function Gallery() {
                 })}
               </Swiper>
 
-              {/* 좌/우 영역 클릭 (인스타 패턴) — swipe와 공존, 첫/마지막 슬라이드에선 비활성 */}
+              {/* 좌/우 영역 클릭 (인스타 패턴) — swipe와 공존. 경계 도달 시 흔들림 피드백 */}
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  swiperRef.current?.slidePrev();
+                  if (slideIndex === 0) {
+                    triggerEdgeShake("start");
+                  } else {
+                    swiperRef.current?.slidePrev();
+                  }
                 }}
-                disabled={slideIndex === 0}
-                className="absolute left-0 top-[15%] bottom-[15%] w-[20%] z-10 group flex items-center justify-start pl-2 disabled:pointer-events-none"
+                className="absolute left-0 top-[15%] bottom-[15%] w-[20%] z-10 group flex items-center justify-start pl-2"
                 style={{ minHeight: "auto" }}
-                aria-label="이전 사진"
+                aria-label={slideIndex === 0 ? "처음 사진입니다" : "이전 사진"}
               >
-                {slideIndex > 0 && (
-                  <span className="opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity bg-black/40 backdrop-blur-sm rounded-full w-9 h-9 flex items-center justify-center text-white/90">
+                <span
+                  key={`prev-${edgeShake === "start" ? Date.now() : "idle"}`}
+                  className={`transition-opacity bg-black/40 backdrop-blur-sm rounded-full w-9 h-9 flex items-center justify-center ${
+                    edgeShake === "start"
+                      ? "opacity-100 text-white/50 lightbox-edge-shake-left"
+                      : slideIndex === 0
+                        ? "opacity-0"
+                        : "opacity-0 group-hover:opacity-100 group-active:opacity-100 text-white/90"
+                  }`}
+                >
+                  {edgeShake === "start" ? (
+                    <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2}>
+                      <circle cx="12" cy="12" r="9" />
+                      <path strokeLinecap="round" d="M5.6 5.6l12.8 12.8" />
+                    </svg>
+                  ) : (
                     <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
                     </svg>
-                  </span>
-                )}
+                  )}
+                </span>
               </button>
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  swiperRef.current?.slideNext();
+                  if (slideIndex === images.length - 1) {
+                    triggerEdgeShake("end");
+                  } else {
+                    swiperRef.current?.slideNext();
+                  }
                 }}
-                disabled={slideIndex === images.length - 1}
-                className="absolute right-0 top-[15%] bottom-[15%] w-[20%] z-10 group flex items-center justify-end pr-2 disabled:pointer-events-none"
+                className="absolute right-0 top-[15%] bottom-[15%] w-[20%] z-10 group flex items-center justify-end pr-2"
                 style={{ minHeight: "auto" }}
-                aria-label="다음 사진"
+                aria-label={slideIndex === images.length - 1 ? "마지막 사진입니다" : "다음 사진"}
               >
-                {slideIndex < images.length - 1 && (
-                  <span className="opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity bg-black/40 backdrop-blur-sm rounded-full w-9 h-9 flex items-center justify-center text-white/90">
+                <span
+                  key={`next-${edgeShake === "end" ? Date.now() : "idle"}`}
+                  className={`transition-opacity bg-black/40 backdrop-blur-sm rounded-full w-9 h-9 flex items-center justify-center ${
+                    edgeShake === "end"
+                      ? "opacity-100 text-white/50 lightbox-edge-shake-right"
+                      : slideIndex === images.length - 1
+                        ? "opacity-0"
+                        : "opacity-0 group-hover:opacity-100 group-active:opacity-100 text-white/90"
+                  }`}
+                >
+                  {edgeShake === "end" ? (
+                    <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2}>
+                      <circle cx="12" cy="12" r="9" />
+                      <path strokeLinecap="round" d="M5.6 5.6l12.8 12.8" />
+                    </svg>
+                  ) : (
                     <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                     </svg>
-                  </span>
-                )}
+                  )}
+                </span>
               </button>
 
               {/* 회전 버튼 첫 진입 안내 — localStorage로 영구 dismiss */}

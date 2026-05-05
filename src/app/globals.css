@@ -190,6 +190,28 @@ section[id] {
   opacity: 1;
 }
 
+/* 라이트박스 첫/끝 경계 시각 피드백 — 막힌 방향으로 짧게 흔들림 */
+@keyframes lightbox-edge-shake-left {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-10px); }
+  40% { transform: translateX(0); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(0); }
+}
+@keyframes lightbox-edge-shake-right {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(10px); }
+  40% { transform: translateX(0); }
+  60% { transform: translateX(6px); }
+  80% { transform: translateX(0); }
+}
+.lightbox-edge-shake-left {
+  animation: lightbox-edge-shake-left 0.45s ease-out;
+}
+.lightbox-edge-shake-right {
+  animation: lightbox-edge-shake-right 0.45s ease-out;
+}
+
 /* 로드/에러 시 shimmer 제거. :has()는 iOS 15.4+, Chrome 105+ (2022~) */
 .gallery-shimmer:has(.gallery-img[data-loaded="true"])::before {
   display: none;
