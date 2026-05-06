@@ -3,7 +3,7 @@
 import { useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
 
-const INTRO_KEY = "guest-gallery-intro-seen";
+const INTRO_KEY = "wjw-guest-gallery-intro-seen";
 
 export { INTRO_KEY };
 

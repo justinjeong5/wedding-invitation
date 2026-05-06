@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { recordVisit } from "@/actions/visit";
 
-const VISITOR_ID_KEY = "wedding_visitor_id";
+const VISITOR_ID_KEY = "wjw-visitor-id";
 
 export function useVisitorId() {
   const [visitorId, setVisitorId] = useState("");

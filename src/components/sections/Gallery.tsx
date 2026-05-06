@@ -46,7 +46,7 @@ export default function Gallery() {
   const dismissRotateHint = useCallback(() => {
     setRotateHintOpen(false);
     try {
-      localStorage.setItem("gallery-rotate-hint-seen", "1");
+      localStorage.setItem("wjw-gallery-rotate-hint-seen", "1");
     } catch {}
   }, []);
 
@@ -97,7 +97,7 @@ export default function Gallery() {
     }
     let seen = false;
     try {
-      seen = localStorage.getItem("gallery-rotate-hint-seen") === "1";
+      seen = localStorage.getItem("wjw-gallery-rotate-hint-seen") === "1";
     } catch {}
     setRotateHintOpen(!seen);
   }, [isOpen, slideIndex, images]);

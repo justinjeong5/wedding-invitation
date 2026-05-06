@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { WEDDING_CONFIG } from "@/config/wedding";
 
-const STORAGE_KEY = "bgm-pref";
+const STORAGE_KEY = "wjw-bgm-pref";
 
 export default function BgmPlayer() {
   const audioRef = useRef<HTMLAudioElement | null>(null);

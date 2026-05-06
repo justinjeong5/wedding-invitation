@@ -8,7 +8,7 @@ import RsvpSummary from "@/features/rsvp/RsvpSummary";
 import RsvpDashboard from "@/features/rsvp/RsvpDashboard";
 import type { SavedRsvp } from "@/features/rsvp/types";
 
-const STORAGE_KEY = "wedding_rsvp";
+const STORAGE_KEY = "wjw-rsvp";
 
 export default function Rsvp() {
   const [savedRsvp, setSavedRsvp] = useState<SavedRsvp | null>(null);

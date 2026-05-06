@@ -7,7 +7,7 @@ import { useGuestGalleryOpen } from "@/hooks/useGuestGalleryOpen";
 import { useDarkMode } from "@/hooks/useDarkMode";
 import AdminHelpModal from "@/components/ui/AdminHelpModal";
 
-const HELP_SEEN_KEY = "admin-help-seen";
+const HELP_SEEN_KEY = "wjw-admin-help-seen";
 
 export default function AdminIndicator() {
   const { isAdmin } = useAdminMode();
