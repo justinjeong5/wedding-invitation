@@ -33,6 +33,9 @@ export default function Gallery() {
   const [edgeShake, setEdgeShake] = useState<"start" | "end" | null>(null);
   const [edgeShakeNonce, setEdgeShakeNonce] = useState(0);
   const swiperRef = useRef<SwiperClass | null>(null);
+  const navPointerRef = useRef<{ x: number; y: number; t: number } | null>(null);
+  const SWIPE_THRESHOLD = 35;
+  const TAP_THRESHOLD = 10;
 
   const triggerEdgeShake = useCallback((edge: "start" | "end") => {
     setEdgeShake(null);
@@ -380,19 +383,48 @@ export default function Gallery() {
               </Swiper>
               </div>
 
-              {/* 좌/우 영역 클릭 (인스타 패턴) — swipe와 공존. 경계 도달 시 흔들림 피드백 */}
+              {/* 좌/우 영역 — pointer 이벤트로 tap(버튼)과 swipe(슬라이드 전환) 둘 다 지원 */}
               <button
                 type="button"
-                onClick={(e) => {
+                onPointerDown={(e) => {
+                  navPointerRef.current = {
+                    x: e.clientX,
+                    y: e.clientY,
+                    t: performance.now(),
+                  };
+                }}
+                onPointerUp={(e) => {
                   e.stopPropagation();
-                  if (slideIndex === 0) {
-                    triggerEdgeShake("start");
-                  } else {
-                    swiperRef.current?.slidePrev();
+                  const start = navPointerRef.current;
+                  navPointerRef.current = null;
+                  if (!start) return;
+                  const dx = e.clientX - start.x;
+                  const dy = e.clientY - start.y;
+                  const isTap =
+                    Math.abs(dx) < TAP_THRESHOLD && Math.abs(dy) < TAP_THRESHOLD;
+                  const isHorizontalSwipe =
+                    Math.abs(dx) > SWIPE_THRESHOLD &&
+                    Math.abs(dx) > Math.abs(dy);
+
+                  if (isTap) {
+                    if (slideIndex === 0) triggerEdgeShake("start");
+                    else swiperRef.current?.slidePrev();
+                  } else if (isHorizontalSwipe) {
+                    if (dx > 0) {
+                      if (slideIndex === 0) triggerEdgeShake("start");
+                      else swiperRef.current?.slidePrev();
+                    } else {
+                      if (slideIndex === images.length - 1)
+                        triggerEdgeShake("end");
+                      else swiperRef.current?.slideNext();
+                    }
                   }
                 }}
+                onPointerCancel={() => {
+                  navPointerRef.current = null;
+                }}
+                style={{ minHeight: "auto", touchAction: "pan-y" }}
                 className="absolute left-0 top-[15%] bottom-[15%] w-[20%] z-10 group flex items-center justify-start pl-2"
-                style={{ minHeight: "auto" }}
                 aria-label={slideIndex === 0 ? "처음 사진입니다" : "이전 사진"}
               >
                 <span
@@ -419,16 +451,46 @@ export default function Gallery() {
               </button>
               <button
                 type="button"
-                onClick={(e) => {
+                onPointerDown={(e) => {
+                  navPointerRef.current = {
+                    x: e.clientX,
+                    y: e.clientY,
+                    t: performance.now(),
+                  };
+                }}
+                onPointerUp={(e) => {
                   e.stopPropagation();
-                  if (slideIndex === images.length - 1) {
-                    triggerEdgeShake("end");
-                  } else {
-                    swiperRef.current?.slideNext();
+                  const start = navPointerRef.current;
+                  navPointerRef.current = null;
+                  if (!start) return;
+                  const dx = e.clientX - start.x;
+                  const dy = e.clientY - start.y;
+                  const isTap =
+                    Math.abs(dx) < TAP_THRESHOLD && Math.abs(dy) < TAP_THRESHOLD;
+                  const isHorizontalSwipe =
+                    Math.abs(dx) > SWIPE_THRESHOLD &&
+                    Math.abs(dx) > Math.abs(dy);
+
+                  if (isTap) {
+                    if (slideIndex === images.length - 1)
+                      triggerEdgeShake("end");
+                    else swiperRef.current?.slideNext();
+                  } else if (isHorizontalSwipe) {
+                    if (dx > 0) {
+                      if (slideIndex === 0) triggerEdgeShake("start");
+                      else swiperRef.current?.slidePrev();
+                    } else {
+                      if (slideIndex === images.length - 1)
+                        triggerEdgeShake("end");
+                      else swiperRef.current?.slideNext();
+                    }
                   }
                 }}
+                onPointerCancel={() => {
+                  navPointerRef.current = null;
+                }}
+                style={{ minHeight: "auto", touchAction: "pan-y" }}
                 className="absolute right-0 top-[15%] bottom-[15%] w-[20%] z-10 group flex items-center justify-end pr-2"
-                style={{ minHeight: "auto" }}
                 aria-label={slideIndex === images.length - 1 ? "마지막 사진입니다" : "다음 사진"}
               >
                 <span
