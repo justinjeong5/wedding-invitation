@@ -510,14 +510,16 @@ export default function Gallery() {
                         <span className="w-14 h-14 rounded-full bg-primary/15 flex items-center justify-center text-primary">
                           <motion.span
                             className="inline-flex"
-                            initial={{ rotate: 0 }}
-                            animate={{ rotate: -90 }}
+                            initial={{ rotate: 0, opacity: 1 }}
+                            animate={{
+                              rotate: [0, -90, -90, 0, 0, 0],
+                              opacity: [1, 1, 0, 0, 1, 1],
+                            }}
                             transition={{
-                              duration: 0.9,
+                              duration: 3,
+                              times: [0, 0.33, 0.45, 0.55, 0.7, 1],
                               ease: "easeInOut",
                               repeat: Infinity,
-                              repeatType: "reverse",
-                              repeatDelay: 0.5,
                             }}
                           >
                             <svg viewBox="0 0 24 24" className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth={1.5}>
