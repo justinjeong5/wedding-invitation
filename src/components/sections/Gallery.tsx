@@ -50,10 +50,26 @@ export default function Gallery() {
     } catch {}
   }, []);
 
-  const openLightbox = useCallback((idx: number) => {
-    setSlideIndex(idx);
-    setIsOpen(true);
-  }, []);
+  const openLightbox = useCallback(
+    (idx: number) => {
+      setSlideIndex(idx);
+      setIsOpen(true);
+      // 가로 사진이고 처음 보는 경우 즉시 안내 카드 띄움
+      // (useEffect 실행 시점까지 기다리지 않고 라이트박스와 동시 mount)
+      const target = images[idx];
+      if (target && target.width > target.height) {
+        let seen = false;
+        try {
+          seen =
+            localStorage.getItem("wjw-gallery-rotate-hint-seen") === "1";
+        } catch {}
+        setRotateHintOpen(!seen);
+      } else {
+        setRotateHintOpen(false);
+      }
+    },
+    [images]
+  );
 
   const closeLightbox = useCallback(() => {
     setIsOpen(false);
