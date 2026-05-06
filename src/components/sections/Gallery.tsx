@@ -28,7 +28,6 @@ export default function Gallery() {
   const { images, layout } = WEDDING_CONFIG.gallery;
   const [isOpen, setIsOpen] = useState(false);
   const [slideIndex, setSlideIndex] = useState(0);
-  const [rotated, setRotated] = useState<Set<number>>(new Set());
   const [rotateHintOpen, setRotateHintOpen] = useState(false);
   const [edgeShake, setEdgeShake] = useState<"start" | "end" | null>(null);
   const [edgeShakeNonce, setEdgeShakeNonce] = useState(0);
@@ -58,17 +57,7 @@ export default function Gallery() {
 
   const closeLightbox = useCallback(() => {
     setIsOpen(false);
-    setRotated(new Set());
   }, []);
-
-  const toggleRotate = useCallback(() => {
-    setRotated((prev) => {
-      const next = new Set(prev);
-      if (next.has(slideIndex)) next.delete(slideIndex);
-      else next.add(slideIndex);
-      return next;
-    });
-  }, [slideIndex]);
 
   const preventContextMenu = useCallback(
     (e: React.MouseEvent | React.SyntheticEvent) => {
@@ -263,33 +252,6 @@ export default function Gallery() {
                 {slideIndex + 1} / {images.length}
               </span>
               <div className="flex items-center gap-1">
-                {images[slideIndex].width > images[slideIndex].height && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      dismissRotateHint();
-                      toggleRotate();
-                    }}
-                    className="text-white/80 hover:text-white p-2.5 -m-1"
-                    aria-label={
-                      rotated.has(slideIndex) ? "원래대로" : "세로로 보기"
-                    }
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      className="w-6 h-6"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M4 4v6h6M20 20v-6h-6M4 10a8 8 0 0114-5l2 2M20 14a8 8 0 01-14 5l-2-2"
-                      />
-                    </svg>
-                  </button>
-                )}
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -341,45 +303,24 @@ export default function Gallery() {
                 }}
                 onSlideChange={(swiper) => {
                   setSlideIndex(swiper.realIndex);
-                  setRotated(new Set());
                 }}
               >
-                {images.map((image, index) => {
-                  const isRotated = rotated.has(index);
-                  return (
-                    <SwiperSlide key={index} virtualIndex={index}>
-                      <div className="relative w-full h-full overflow-hidden">
-                        <div
-                          className="absolute top-1/2 left-1/2 transition-transform duration-300"
-                          style={
-                            isRotated
-                              ? {
-                                  width: "100dvh",
-                                  height: "100vw",
-                                  transform: "translate(-50%, -50%) rotate(-90deg)",
-                                }
-                              : {
-                                  width: "100vw",
-                                  height: "100dvh",
-                                  transform: "translate(-50%, -50%)",
-                                }
-                          }
-                        >
-                          <Image
-                            src={image.src}
-                            alt={image.alt}
-                            fill
-                            className={isRotated ? "object-cover" : "object-contain"}
-                            sizes="100vw"
-                            quality={85}
-                            onContextMenu={preventContextMenu}
-                            draggable={false}
-                          />
-                        </div>
-                      </div>
-                    </SwiperSlide>
-                  );
-                })}
+                {images.map((image, index) => (
+                  <SwiperSlide key={index} virtualIndex={index}>
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={image.src}
+                        alt={image.alt}
+                        fill
+                        className="object-contain"
+                        sizes="100vw"
+                        quality={85}
+                        onContextMenu={preventContextMenu}
+                        draggable={false}
+                      />
+                    </div>
+                  </SwiperSlide>
+                ))}
               </Swiper>
               </div>
 
@@ -531,31 +472,28 @@ export default function Gallery() {
                     }}
                   >
                     <motion.div
-                      className="absolute top-[3.5rem] right-3 max-w-[260px] bg-bg-card text-text rounded-2xl shadow-2xl px-5 py-4"
+                      className="absolute top-[3.5rem] left-1/2 -translate-x-1/2 max-w-[280px] w-[calc(100%-2rem)] bg-bg-card text-text rounded-2xl shadow-2xl px-5 py-4"
                       initial={{ opacity: 0, y: -8, scale: 0.96 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -8, scale: 0.96 }}
                       transition={{ duration: 0.25, ease: "easeOut" }}
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <div
-                        className="absolute -top-1.5 right-14 w-3 h-3 bg-bg-card rotate-45 shadow-[-1px_-1px_2px_rgba(0,0,0,0.04)]"
-                        aria-hidden="true"
-                      />
                       <div className="flex items-start gap-2.5">
                         <span className="shrink-0 w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center text-primary">
                           <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v6h6M20 20v-6h-6M4 10a8 8 0 0114-5l2 2M20 14a8 8 0 01-14 5l-2-2" />
+                            <rect x="5" y="3" width="14" height="18" rx="2" />
+                            <path strokeLinecap="round" d="M11 18h2" />
                           </svg>
                         </span>
                         <div className="text-left">
                           <p className="text-sm font-medium text-text mb-0.5">
-                            세로로 크게 보기
+                            가로로 더 크게 보기
                           </p>
                           <p className="text-xs text-text-light leading-relaxed">
-                            가로 사진은 회전 버튼으로
+                            휴대폰을 가로로 돌리면
                             <br />
-                            화면 가득 볼 수 있어요
+                            전체 화면으로 감상하실 수 있어요
                           </p>
                         </div>
                       </div>
