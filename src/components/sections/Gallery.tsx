@@ -252,6 +252,31 @@ export default function Gallery() {
                 {slideIndex + 1} / {images.length}
               </span>
               <div className="flex items-center gap-1">
+                {images[slideIndex].width > images[slideIndex].height && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setRotateHintOpen(true);
+                    }}
+                    className="text-white/80 hover:text-white p-2.5 -m-1"
+                    aria-label="안내 다시 보기"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={1.8}
+                    >
+                      <circle cx="12" cy="12" r="9" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M9.5 9.5a2.5 2.5 0 015 0c0 1-.5 1.7-1.5 2.3-.8.5-1 1-1 1.7M12 17h.01"
+                      />
+                    </svg>
+                  </button>
+                )}
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
