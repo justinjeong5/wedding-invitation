@@ -457,11 +457,11 @@ export default function Gallery() {
                 </span>
               </button>
 
-              {/* 회전 버튼 첫 진입 안내 — localStorage로 영구 dismiss */}
+              {/* 가로 사진 첫 진입 안내 — 가벼운 튜토리얼 (라이트박스 내 중앙 카드 + dim + 휴대폰 회전 애니메이션 1회) */}
               <AnimatePresence>
                 {rotateHintOpen && (
                   <motion.div
-                    className="absolute inset-0 z-30"
+                    className="absolute inset-0 z-30 flex items-center justify-center bg-black/55 backdrop-blur-[2px] px-6"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -472,38 +472,43 @@ export default function Gallery() {
                     }}
                   >
                     <motion.div
-                      className="absolute top-[3.5rem] left-1/2 -translate-x-1/2 max-w-[280px] w-[calc(100%-2rem)] bg-bg-card text-text rounded-2xl shadow-2xl px-5 py-4"
-                      initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                      className="relative max-w-[280px] w-full bg-bg-card text-text rounded-2xl shadow-2xl px-6 py-5 text-center"
+                      initial={{ opacity: 0, y: 8, scale: 0.96 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.96 }}
                       transition={{ duration: 0.25, ease: "easeOut" }}
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <div className="flex items-start gap-2.5">
-                        <span className="shrink-0 w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center text-primary">
-                          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}>
-                            <rect x="5" y="3" width="14" height="18" rx="2" />
-                            <path strokeLinecap="round" d="M11 18h2" />
-                          </svg>
+                      <div className="flex justify-center mb-3">
+                        <span className="w-14 h-14 rounded-full bg-primary/15 flex items-center justify-center text-primary">
+                          <motion.span
+                            className="inline-flex"
+                            initial={{ rotate: 0 }}
+                            animate={{ rotate: -90 }}
+                            transition={{ delay: 0.35, duration: 0.7, ease: "easeInOut" }}
+                          >
+                            <svg viewBox="0 0 24 24" className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth={1.5}>
+                              <rect x="6" y="2" width="12" height="20" rx="2.5" />
+                              <path strokeLinecap="round" d="M10.5 5h3M11.5 19h1" />
+                            </svg>
+                          </motion.span>
                         </span>
-                        <div className="text-left">
-                          <p className="text-sm font-medium text-text mb-0.5">
-                            가로로 더 크게 보기
-                          </p>
-                          <p className="text-xs text-text-light leading-relaxed">
-                            휴대폰을 가로로 돌리면
-                            <br />
-                            전체 화면으로 감상하실 수 있어요
-                          </p>
-                        </div>
                       </div>
+                      <p className="text-sm font-medium text-text mb-1.5">
+                        가로로 보기
+                      </p>
+                      <p className="text-xs text-text-light leading-relaxed">
+                        휴대폰을 가로로 돌려 보세요
+                        <br />
+                        자동 회전이 꺼져 있다면 잠금을 해제해 주세요
+                      </p>
                       <button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
                           dismissRotateHint();
                         }}
-                        className="mt-3 w-full text-xs text-primary border border-primary/30 rounded-lg py-1.5 hover:bg-primary/5 transition-colors"
+                        className="mt-4 w-full text-xs text-primary border border-primary/30 rounded-lg py-2 hover:bg-primary/5 transition-colors"
                         style={{ minHeight: "auto" }}
                       >
                         확인
