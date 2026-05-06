@@ -89,7 +89,9 @@ export default function Gallery() {
       return;
     }
     const current = images[slideIndex];
-    if (!current || current.width <= current.height) {
+    if (!current) return;
+    const isLandscape = current.width > current.height;
+    if (!isLandscape) {
       setRotateHintOpen(false);
       return;
     }
@@ -97,7 +99,7 @@ export default function Gallery() {
     try {
       seen = localStorage.getItem("gallery-rotate-hint-seen") === "1";
     } catch {}
-    if (!seen) setRotateHintOpen(true);
+    setRotateHintOpen(!seen);
   }, [isOpen, slideIndex, images]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
@@ -510,7 +512,13 @@ export default function Gallery() {
                             className="inline-flex"
                             initial={{ rotate: 0 }}
                             animate={{ rotate: -90 }}
-                            transition={{ delay: 0.35, duration: 0.7, ease: "easeInOut" }}
+                            transition={{
+                              duration: 0.9,
+                              ease: "easeInOut",
+                              repeat: Infinity,
+                              repeatType: "reverse",
+                              repeatDelay: 0.5,
+                            }}
                           >
                             <svg viewBox="0 0 24 24" className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth={1.5}>
                               <rect x="6" y="2" width="12" height="20" rx="2.5" />
