@@ -33,6 +33,12 @@ export function isSubmissionClosed(): boolean {
   return nowKST() >= closeDate;
 }
 
+export function isDataDisposed(): boolean {
+  const { year, month, day } = WEDDING_CONFIG.date;
+  const disposeDate = kstDate(year, month, day + 14);
+  return nowKST() >= disposeDate;
+}
+
 export function daysBetween(a: Date, b: Date): number {
   const msPerDay = 1000 * 60 * 60 * 24;
   const aDay = new Date(a.getFullYear(), a.getMonth(), a.getDate());

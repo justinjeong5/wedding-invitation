@@ -75,6 +75,7 @@ export default function RootLayout({
                   var html = document.documentElement;
                   var mql = window.matchMedia('(prefers-color-scheme: dark)');
                   function sync() {
+                    if (html.hasAttribute('data-dark-override')) return;
                     var has = html.classList.contains('dark');
                     var should = !html.classList.contains('light') && mql.matches;
                     if (should && !has) html.classList.add('dark');

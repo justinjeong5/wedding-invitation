@@ -35,10 +35,18 @@ export function useDarkMode(): { isDark: boolean; toggle: () => void } {
   useEffect(() => {
     const html = document.documentElement;
     html.classList.remove("dark", "light");
-    if (override === "dark") html.classList.add("dark");
-    else if (override === "light") html.classList.add("light");
+    if (override === "dark") {
+      html.classList.add("dark");
+      html.setAttribute("data-dark-override", "true");
+    } else if (override === "light") {
+      html.classList.add("light");
+      html.setAttribute("data-dark-override", "true");
+    } else {
+      html.removeAttribute("data-dark-override");
+    }
     return () => {
       html.classList.remove("dark", "light");
+      html.removeAttribute("data-dark-override");
     };
   }, [override]);
 

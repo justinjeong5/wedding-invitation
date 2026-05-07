@@ -9,7 +9,7 @@ import { useGuestGalleryOpen } from "@/hooks/useGuestGalleryOpen";
 const NAV_ITEMS = [
   { id: "greeting", label: "인사말" },
   { id: "calendar", label: "예식 일시", hideAfterWedding: true },
-  { id: "gallery", label: "갤러리" },
+  { id: "gallery", label: "갤러리", hideAfterWedding: true },
   { id: "location", label: "오시는 길", hideAfterWedding: true },
   { id: "rsvp", label: "참석 여부", hideAfterWedding: true },
   { id: "contact", label: "연락처" },

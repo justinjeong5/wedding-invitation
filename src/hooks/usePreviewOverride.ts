@@ -12,8 +12,9 @@ export function usePreviewOverride(
     setValue(defaultFn());
 
     const handler = (e: Event) => {
-      const { enabled } = (e as CustomEvent).detail;
-      setValue(enabled ? true : defaultFn());
+      const detail = (e as CustomEvent).detail;
+      if (detail.reset) setValue(defaultFn());
+      else setValue(Boolean(detail.value));
     };
     window.addEventListener(eventName, handler);
     return () => window.removeEventListener(eventName, handler);

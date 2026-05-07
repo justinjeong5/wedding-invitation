@@ -3,6 +3,7 @@
 import { useActionState, useCallback, useEffect } from "react";
 import { useAdminMode } from "@/hooks/useAdminMode";
 import { useSubmissionOpen } from "@/hooks/useSubmissionOpen";
+import { useDataDisposed } from "@/hooks/useDataDisposed";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import RefreshButton from "@/components/ui/RefreshButton";
 import { submitGuestbook, getGuestbookEntries } from "@/features/guestbook/actions";
@@ -20,6 +21,7 @@ export default function Guestbook() {
 
   const { isAdmin, adminPassword } = useAdminMode();
   const submissionOpen = useSubmissionOpen();
+  const dataDisposed = useDataDisposed();
 
   const fetchEntries = useCallback(
     async (cursor?: string) => {
@@ -66,7 +68,11 @@ export default function Guestbook() {
         방명록
       </h2>
 
-      {submissionOpen ? (
+      {dataDisposed ? (
+        <p className="text-center text-sm text-text-muted py-12">
+          개인정보 보호 정책에 따라<br />모든 방명록이 파기되었습니다
+        </p>
+      ) : submissionOpen ? (
         <form action={formAction} className="space-y-3 mb-6" data-1p-ignore>
           <input type="hidden" name="visitor_id" value={visitorId} />
           <div className="flex gap-2">
@@ -110,42 +116,46 @@ export default function Guestbook() {
         </p>
       )}
 
-      {!loading && entries.length > 0 && (
-        <div className="flex justify-end mb-2">
-          <RefreshButton refreshing={refreshing} cooldown={cooldown} onRefresh={refresh} />
-        </div>
-      )}
+      {!dataDisposed && (
+        <>
+          {!loading && entries.length > 0 && (
+            <div className="flex justify-end mb-2">
+              <RefreshButton refreshing={refreshing} cooldown={cooldown} onRefresh={refresh} />
+            </div>
+          )}
 
-      <div className="space-y-3">
-        {loading ? (
-          <GuestbookSkeleton />
-        ) : entries.length === 0 ? (
-          <p className="text-center text-sm text-text-muted py-8">
-            첫 번째 축하 메시지를 남겨주세요
+          <div className="space-y-3">
+            {loading ? (
+              <GuestbookSkeleton />
+            ) : entries.length === 0 ? (
+              <p className="text-center text-sm text-text-muted py-8">
+                첫 번째 축하 메시지를 남겨주세요
+              </p>
+            ) : (
+              <>
+                {entries.map((entry) => (
+                  <GuestbookItem
+                    key={entry.id}
+                    entry={entry}
+                    isAdmin={isAdmin}
+                    adminPassword={adminPassword}
+                    onUpdated={handleUpdated}
+                    onDeleted={handleDeleted}
+                  />
+                ))}
+                <div ref={sentinelRef} className="h-1" />
+                {loadingMore && <GuestbookSkeleton count={2} />}
+              </>
+            )}
+          </div>
+
+          <p className="text-[10px] text-text-muted/60 text-center mt-6 leading-relaxed">
+            모두가 함께 보는 공간이며, 부적절한 내용은 별도의 고지 없이 삭제될 수 있습니다.
+            <br />
+            남겨주신 이름과 메시지는 예식 준비에만 활용되며, 예식 후 2주 내에 모두 파기됩니다.
           </p>
-        ) : (
-          <>
-            {entries.map((entry) => (
-              <GuestbookItem
-                key={entry.id}
-                entry={entry}
-                isAdmin={isAdmin}
-                adminPassword={adminPassword}
-                onUpdated={handleUpdated}
-                onDeleted={handleDeleted}
-              />
-            ))}
-            <div ref={sentinelRef} className="h-1" />
-            {loadingMore && <GuestbookSkeleton count={2} />}
-          </>
-        )}
-      </div>
-
-      <p className="text-[10px] text-text-muted/60 text-center mt-6 leading-relaxed">
-        모두가 함께 보는 공간이며, 부적절한 내용은 별도의 고지 없이 삭제될 수 있습니다.
-        <br />
-        남겨주신 이름·메시지는 결혼식 운영 목적으로만 사용되며, 예식 후 2주 내에 모두 파기됩니다.
-      </p>
+        </>
+      )}
     </SectionWrapper>
   );
 }

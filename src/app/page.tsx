@@ -1,4 +1,3 @@
-import Divider from "@/components/ui/Divider";
 import Footer from "@/components/sections/Footer";
 import AccessibilityToggle from "@/components/ui/AccessibilityToggle";
 import AdminIndicator from "@/components/ui/AdminIndicator";
@@ -6,9 +5,9 @@ import ShareFab from "@/components/ui/ShareFab";
 import BgmPlayer from "@/components/ui/BgmPlayer";
 import Toast from "@/components/ui/Toast";
 import TopNav from "@/components/ui/TopNav";
-import AfterWeddingHide from "@/components/ui/AfterWeddingHide";
 import AfterWeddingShow from "@/components/ui/AfterWeddingShow";
-import GuestGalleryGate from "@/components/ui/GuestGalleryGate";
+import SectionList from "@/components/ui/SectionList";
+import type { SectionEntry } from "@/components/ui/SectionList";
 import VisitTracker from "@/components/VisitTracker";
 import {
   SafeCover,
@@ -25,6 +24,17 @@ import {
   SafeGuestGallery,
   SafeGuestbook,
 } from "./safe-sections";
+
+const SECTIONS: SectionEntry[] = [
+  { key: "calendar", component: <SafeCalendar />, showWhen: "before-wedding" },
+  { key: "gallery", component: <SafeGallery />, showWhen: "before-wedding" },
+  { key: "location", component: <SafeLocation />, showWhen: "before-wedding" },
+  { key: "rsvp", component: <SafeRsvp />, showWhen: "before-wedding" },
+  { key: "contact", component: <SafeContact /> },
+  { key: "account", component: <SafeAccount />, showWhen: "before-wedding" },
+  { key: "guest-gallery", component: <SafeGuestGallery />, showWhen: "guest-gallery-open" },
+  { key: "guestbook", component: <SafeGuestbook /> },
+];
 
 export default function Home() {
   return (
@@ -43,32 +53,7 @@ export default function Home() {
         <SafeThankYouGallery />
       </AfterWeddingShow>
       <SafeCouple />
-      <AfterWeddingHide>
-        <Divider />
-        <SafeCalendar />
-      </AfterWeddingHide>
-      <Divider />
-      <SafeGallery />
-      <AfterWeddingHide>
-        <Divider />
-        <SafeLocation />
-      </AfterWeddingHide>
-      <AfterWeddingHide>
-        <Divider />
-        <SafeRsvp />
-      </AfterWeddingHide>
-      <Divider />
-      <SafeContact />
-      <AfterWeddingHide>
-        <Divider />
-        <SafeAccount />
-      </AfterWeddingHide>
-      <GuestGalleryGate>
-        <Divider />
-        <SafeGuestGallery />
-      </GuestGalleryGate>
-      <Divider />
-      <SafeGuestbook />
+      <SectionList sections={SECTIONS} />
       <Footer />
     </main>
   );

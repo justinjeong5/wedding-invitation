@@ -357,7 +357,7 @@ export default function RsvpForm({
 
         {!isEditing && (
           <p className="text-[10px] text-text-muted/60 text-center mt-4 leading-relaxed">
-            남겨주신 정보는 결혼식 운영 목적으로만 사용되며, 예식 후 2주 내에 모두 파기됩니다.
+            남겨주신 정보는 예식 준비에만 활용되며, 예식 후 2주 내에 모두 파기됩니다.
           </p>
         )}
       </form>

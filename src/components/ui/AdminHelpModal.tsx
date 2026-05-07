@@ -25,6 +25,16 @@ function Item({ label, desc }: { label: string; desc: string }) {
   );
 }
 
+function TimelineRow({ date, label, desc }: { date: string; label: string; desc: string }) {
+  return (
+    <div className="flex gap-2 text-[11px] leading-relaxed mb-2 last:mb-0">
+      <span className="text-orange-400/80 font-medium shrink-0 w-12 text-right">{date}</span>
+      <span className="text-text font-medium shrink-0 w-12">{label}</span>
+      <span className="text-text-muted">{desc}</span>
+    </div>
+  );
+}
+
 export default function AdminHelpModal({ onClose }: AdminHelpModalProps) {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
 
@@ -65,45 +75,82 @@ export default function AdminHelpModal({ onClose }: AdminHelpModalProps) {
 
         {/* Content */}
         <div className="overflow-y-auto px-5 py-4">
-          <Section title="상단 토글 버튼">
+          <Section title="시나리오 미리보기">
             <p className="text-[10px] text-orange-400/80 mb-2.5">
-              모든 토글은 본인 화면에서만 적용되며, 다른 방문자에게는 영향을 주지 않습니다.
+              각 시점의 화면을 미리볼 수 있습니다. 본인 화면에서만 적용되며, 다른 방문자에게는 영향을 주지 않습니다. 선택된 버튼을 다시 누르면 실제 날짜 기준으로 복귀합니다.
             </p>
             <Item
+              label="예식 전"
+              desc="모든 섹션 표시, 하객갤러리 비공개, 방명록·RSVP 등록 가능"
+            />
+            <Item
+              label="당일"
+              desc="하객갤러리 오픈, 사진 업로드 가능"
+            />
+            <Item
               label="예식 후"
-              desc="예식 후 화면을 미리보기합니다. ON 시 일시·지도·참석여부·계좌 섹션이 숨겨지고, 감사 갤러리가 표시됩니다. 실제로는 예식 당일(7/11) 자정 이후 모든 방문자에게 자동 전환됩니다."
+              desc="일시·지도·참석여부·갤러리·계좌 숨김, 감사 갤러리 표시"
             />
             <Item
-              label="하객갤러리"
-              desc="하객 사진 갤러리가 오픈된 화면을 미리보기합니다. 실제로는 예식 당일(7/11) 자정부터 모든 방문자에게 자동 오픈됩니다."
+              label="마감"
+              desc="방명록 작성·갤러리 업로드 차단 (기존 데이터는 열람 가능)"
             />
             <Item
-              label="다크"
-              desc="다크모드 화면을 미리보기합니다. 새로고침 시 리셋되며, OS 시스템 설정으로 자동 복귀합니다."
+              label="파기"
+              desc="방명록·하객갤러리 데이터 비표시 (개인정보 보호)"
             />
           </Section>
 
           <div className="w-full h-px bg-border my-4" />
 
-          <Section title="시간별 자동 전환">
-            <div className="text-[11px] text-text-muted leading-relaxed space-y-2">
-              <div className="flex gap-2">
-                <span className="text-text font-medium shrink-0 w-16">예식 전</span>
-                <span>모든 섹션 표시, 하객갤러리 비공개</span>
-              </div>
-              <div className="flex gap-2">
-                <span className="text-text font-medium shrink-0 w-16">예식 당일</span>
-                <span>하객갤러리 오픈, 사진 업로드 가능</span>
-              </div>
-              <div className="flex gap-2">
-                <span className="text-text font-medium shrink-0 w-16">예식 후</span>
-                <span>일시·지도·참석여부·계좌 숨김, 감사 갤러리 표시</span>
-              </div>
-              <div className="flex gap-2">
-                <span className="text-text font-medium shrink-0 w-16">예식 3일 후</span>
-                <span>방명록 작성·갤러리 업로드 차단</span>
-              </div>
+          <Section title="타임라인">
+            <p className="text-[10px] text-orange-400/80 mb-2.5">
+              아래 시점에 맞춰 자동으로 전환됩니다.
+            </p>
+            <TimelineRow date="~7/10" label="예식 전" desc="기본 화면" />
+            <TimelineRow date="7/11" label="당일" desc="하객갤러리 오픈" />
+            <TimelineRow date="7/12~" label="예식 후" desc="실용 섹션 숨김 + 감사 갤러리" />
+            <TimelineRow date="7/14~" label="마감" desc="등록 차단 (열람 유지)" />
+            <TimelineRow date="7/25~" label="파기" desc="개인정보 데이터 비표시" />
+          </Section>
+
+          <div className="w-full h-px bg-border my-4" />
+
+          <Section title="섹션별 변화">
+            <div className="overflow-x-auto -mx-1">
+              <table className="w-full text-[9px] leading-relaxed">
+                <thead>
+                  <tr className="text-text-muted">
+                    <th className="text-left font-medium pb-1 pr-1">섹션</th>
+                    <th className="font-medium pb-1 px-0.5">전</th>
+                    <th className="font-medium pb-1 px-0.5">당일</th>
+                    <th className="font-medium pb-1 px-0.5">후</th>
+                    <th className="font-medium pb-1 px-0.5">마감</th>
+                    <th className="font-medium pb-1 pl-0.5">파기</th>
+                  </tr>
+                </thead>
+                <tbody className="text-text-muted">
+                  <tr><td className="pr-1">일시·지도·RSVP</td><td className="text-center px-0.5">O</td><td className="text-center px-0.5">O</td><td className="text-center px-0.5">-</td><td className="text-center px-0.5">-</td><td className="text-center pl-0.5">-</td></tr>
+                  <tr><td className="pr-1">갤러리·계좌</td><td className="text-center px-0.5">O</td><td className="text-center px-0.5">O</td><td className="text-center px-0.5">-</td><td className="text-center px-0.5">-</td><td className="text-center pl-0.5">-</td></tr>
+                  <tr><td className="pr-1">감사 갤러리</td><td className="text-center px-0.5">-</td><td className="text-center px-0.5">-</td><td className="text-center px-0.5">O</td><td className="text-center px-0.5">O</td><td className="text-center pl-0.5">O</td></tr>
+                  <tr><td className="pr-1">하객갤러리</td><td className="text-center px-0.5">-</td><td className="text-center px-0.5">O</td><td className="text-center px-0.5">O</td><td className="text-center px-0.5">O</td><td className="text-center pl-0.5">빈</td></tr>
+                  <tr><td className="pr-1">방명록 작성</td><td className="text-center px-0.5">O</td><td className="text-center px-0.5">O</td><td className="text-center px-0.5">O</td><td className="text-center px-0.5">-</td><td className="text-center pl-0.5">-</td></tr>
+                  <tr><td className="pr-1">방명록 열람</td><td className="text-center px-0.5">O</td><td className="text-center px-0.5">O</td><td className="text-center px-0.5">O</td><td className="text-center px-0.5">O</td><td className="text-center pl-0.5">빈</td></tr>
+                </tbody>
+              </table>
             </div>
+            <p className="text-[9px] text-text-muted/60 mt-1.5">
+              O = 표시 &nbsp; - = 숨김 &nbsp; 빈 = 파기 플레이스홀더
+            </p>
+          </Section>
+
+          <div className="w-full h-px bg-border my-4" />
+
+          <Section title="다크모드">
+            <Item
+              label="☀/🌙"
+              desc="다크/라이트 모드를 전환합니다. 새로고침 시 OS 시스템 설정으로 자동 복귀합니다."
+            />
           </Section>
 
           <div className="w-full h-px bg-border my-4" />

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAdminMode } from "@/hooks/useAdminMode";
 import { useSubmissionOpen } from "@/hooks/useSubmissionOpen";
+import { useDataDisposed } from "@/hooks/useDataDisposed";
 import { AnimatePresence, motion } from "framer-motion";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import RefreshButton from "@/components/ui/RefreshButton";
@@ -58,6 +59,7 @@ export default function GuestGallery() {
   const introTriggered = useRef(false);
   const sectionRef = useRef<HTMLDivElement>(null);
   const submissionOpen = useSubmissionOpen();
+  const dataDisposed = useDataDisposed();
 
   useEffect(() => {
     if (!submissionOpen) return;
@@ -130,102 +132,110 @@ export default function GuestGallery() {
         여러분의 눈으로 본 우리의 하루를 나눠주세요
       </p>
 
-      {submissionOpen ? (
+      {dataDisposed ? (
+        <p className="text-center text-sm text-text-muted py-12">
+          개인정보 보호 정책에 따라<br />모든 사진이 파기되었습니다
+        </p>
+      ) : (
         <>
-          <div className="text-center mb-6">
-            <button
-              onClick={() => setFormOpen(!formOpen)}
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs text-primary border border-primary/30 rounded-full hover:bg-primary/5 transition-colors"
-              style={{ minHeight: "auto" }}
-            >
-              <svg
-                viewBox="0 0 24 24"
-                className={`w-3.5 h-3.5 transition-transform duration-200 ${formOpen ? "rotate-45" : ""}`}
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 4.5v15m7.5-7.5h-15"
-                />
-              </svg>
-              사진 남기기
-            </button>
-          </div>
+          {submissionOpen ? (
+            <>
+              <div className="text-center mb-6">
+                <button
+                  onClick={() => setFormOpen(!formOpen)}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs text-primary border border-primary/30 rounded-full hover:bg-primary/5 transition-colors"
+                  style={{ minHeight: "auto" }}
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    className={`w-3.5 h-3.5 transition-transform duration-200 ${formOpen ? "rotate-45" : ""}`}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 4.5v15m7.5-7.5h-15"
+                    />
+                  </svg>
+                  사진 남기기
+                </button>
+              </div>
 
-          <AnimatePresence initial={false}>
-            {formOpen && (
-              <motion.div
-                key="upload-form"
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.25, ease: "easeInOut" }}
-                className="overflow-hidden"
-              >
-                <UploadForm onUploaded={handleUploaded} />
-              </motion.div>
+              <AnimatePresence initial={false}>
+                {formOpen && (
+                  <motion.div
+                    key="upload-form"
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25, ease: "easeInOut" }}
+                    className="overflow-hidden"
+                  >
+                    <UploadForm onUploaded={handleUploaded} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </>
+          ) : (
+            <p className="text-xs text-text-muted/70 text-center mb-6">
+              갤러리 업로드 기간이 종료되었습니다
+            </p>
+          )}
+
+          {!loading && photos.length > 0 && (
+            <div className="flex justify-end mb-2">
+              <RefreshButton refreshing={refreshing} cooldown={cooldown} onRefresh={refresh} />
+            </div>
+          )}
+
+          {loading ? (
+            <GallerySkeleton />
+          ) : photos.length === 0 ? (
+            <EmptyState />
+          ) : (
+            <>
+              <div className="grid grid-cols-3 gap-1">
+                {photos.map((photo, i) => (
+                  <PhotoCard
+                    key={photo.id}
+                    photo={photo}
+                    isAdmin={isAdmin}
+                    adminPassword={adminPassword}
+                    onDelete={handleDeleted}
+                    onClick={() => setLightboxIndex(i)}
+                  />
+                ))}
+              </div>
+              <div ref={sentinelRef} className="h-1" />
+              {loadingMore && (
+                <div className="flex justify-center py-4">
+                  <div className="h-5 w-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                </div>
+              )}
+            </>
+          )}
+
+          <p className="text-[10px] text-text-muted/60 text-center mt-6 leading-relaxed">
+            결혼식과 여러분의 이야기를 사진으로 나눠주세요.
+            <br />
+            모두가 함께 보는 공간이며, 부적절한 이미지는 별도의 고지 없이 삭제될 수 있습니다.
+            <br />
+            공유해주신 사진은 저희 예식을 위해서만 사용하며, 예식 후 2주 내에 모두 삭제됩니다.
+          </p>
+
+          <AnimatePresence>
+            {lightboxIndex !== null && (
+              <Lightbox
+                photos={photos}
+                initialIndex={lightboxIndex}
+                onClose={() => setLightboxIndex(null)}
+              />
             )}
           </AnimatePresence>
         </>
-      ) : (
-        <p className="text-xs text-text-muted/70 text-center mb-6">
-          갤러리 업로드 기간이 종료되었습니다
-        </p>
       )}
-
-      {!loading && photos.length > 0 && (
-        <div className="flex justify-end mb-2">
-          <RefreshButton refreshing={refreshing} cooldown={cooldown} onRefresh={refresh} />
-        </div>
-      )}
-
-      {loading ? (
-        <GallerySkeleton />
-      ) : photos.length === 0 ? (
-        <EmptyState />
-      ) : (
-        <>
-          <div className="grid grid-cols-3 gap-1">
-            {photos.map((photo, i) => (
-              <PhotoCard
-                key={photo.id}
-                photo={photo}
-                isAdmin={isAdmin}
-                adminPassword={adminPassword}
-                onDelete={handleDeleted}
-                onClick={() => setLightboxIndex(i)}
-              />
-            ))}
-          </div>
-          <div ref={sentinelRef} className="h-1" />
-          {loadingMore && (
-            <div className="flex justify-center py-4">
-              <div className="h-5 w-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
-            </div>
-          )}
-        </>
-      )}
-
-      <p className="text-[10px] text-text-muted/60 text-center mt-6 leading-relaxed">
-        결혼식과 여러분의 이야기를 사진으로 나눠주세요.
-        <br />
-        모두가 함께 보는 공간이며, 부적절한 이미지는 별도의 고지 없이 삭제될 수 있습니다.
-        <br />
-        업로드하신 사진은 결혼식 운영 목적으로만 사용되며, 예식 후 2주 내에 모두 파기됩니다.
-      </p>
-
-      <AnimatePresence>
-        {lightboxIndex !== null && (
-          <Lightbox
-            photos={photos}
-            initialIndex={lightboxIndex}
-            onClose={() => setLightboxIndex(null)}
-          />
-        )}
-      </AnimatePresence>
     </SectionWrapper>
     </div>
   );
